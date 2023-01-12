@@ -6,44 +6,49 @@ import android.view.View
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityTestOneBinding
+import com.side.runwithme.util.*
 import net.daum.mf.map.api.MapView
 import java.util.concurrent.TimeUnit
 
 class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_test_one) {
+    private var isPause = false
     override fun init() {
-        val mapView = MapView(this)
-        binding.mapView.addView(mapView)
+//        val mapView = MapView(this)
+//        binding.mapView.addView(mapView)
 
         initClickListener()
         TestOneService.runTime.observe(this) {
-            var milliseconds = it
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
-            milliseconds -= TimeUnit.MINUTES.toMillis(minutes)
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
-
-            val timeText = "${if (minutes < 10) "0" else ""}$minutes:" +
-                    "${if (seconds < 10) "0" else ""}$seconds"
-
-            binding.tvTotalTime.text = timeText
-
+            binding.tvTotalTime.text = runningTimeFormatter(it)
         }
 
     }
 
     fun initClickListener() {
-        binding.btnStart.setOnClickListener {
-            val intent = Intent(this, TestOneService::class.java)
-            startService(intent)
-            binding.btnStart.visibility = View.INVISIBLE
-            binding.btnPause.visibility = View.VISIBLE
-        }
-
-        binding.btnPause.setOnClickListener {
-            TestOneService.isTracking.postValue(false)
-            binding.btnStart.visibility = View.VISIBLE
-            binding.btnPause.visibility = View.INVISIBLE
+        binding.apply {
+            btnStart.setOnClickListener {
+                sendServiceAction(ACTION_START_SERVICE)
+                btnStop.visibility = View.VISIBLE
+            }
+            btnPause.setOnClickListener {
+                if(isPause){
+                    sendServiceAction(ACTION_RESUME_SERVICE)
+                }
+                else {
+                    sendServiceAction(ACTION_PAUSE_SERVICE)
+                }
+                isPause = !isPause
+            }
+            btnStop.setOnClickListener {
+                sendServiceAction(ACTION_STOP_SERVICE)
+            }
         }
     }
 
+    private fun sendServiceAction(action: String){
+        val intent = Intent(this@TestOneActivity, TestOneService::class.java).apply {
+            this.action = action
+        }
+        startService(intent)
+    }
 
 }

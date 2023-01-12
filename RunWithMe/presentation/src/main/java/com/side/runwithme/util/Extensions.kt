@@ -6,6 +6,7 @@ import android.graphics.Insets
 import android.graphics.Point
 import android.view.WindowInsets
 import android.view.WindowManager
+import java.util.concurrent.TimeUnit
 
 fun getDeviceSize(activity: Activity): Point {
     val windowManager = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -34,4 +35,14 @@ fun WindowManager.currentWindowMetricsPointCompat(): Point {
             defaultDisplay.getSize(this)
         }
     }
+}
+
+fun runningTimeFormatter(time: Long): String{
+    var milliseconds = time
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+    milliseconds -= TimeUnit.MINUTES.toMillis(minutes)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
+
+    return "${if (minutes < 10) "0" else ""}$minutes:" +
+            "${if (seconds < 10) "0" else ""}$seconds"
 }

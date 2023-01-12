@@ -27,14 +27,23 @@
             app:layout_constraintTop_toTopOf="@id/tv_total_time" />
 
         <Button
-            android:visibility="invisible"
             android:id="@+id/btn_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="정지"
+            android:text="일시정지"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_start"
             app:layout_constraintTop_toTopOf="@id/tv_total_time" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="정지"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_total_time"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/tv_total_time"
