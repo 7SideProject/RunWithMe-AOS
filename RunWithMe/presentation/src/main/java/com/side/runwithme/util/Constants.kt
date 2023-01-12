@@ -12,3 +12,9 @@ const val ACTION_STOP_SERVICE = "action_stop_service"
  */
 const val GOAL_TYPE_TIME = "time"
 const val GOAL_TYPE_DISTANCE = "distance"
+
+/**
+ * Tracking 옵션
+ */
+const val LOCATION_UPDATE_INTERVAL = 5000L
+const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L

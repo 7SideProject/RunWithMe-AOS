@@ -1,14 +1,22 @@
 package com.side.runwithme.service
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.location.Location
 import android.os.Build
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import com.side.runwithme.util.ACTION_START_OR_RESUME_SERVICE
-import com.side.runwithme.util.ACTION_STOP_SERVICE
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.LatLng
+import com.side.runwithme.service.RunningService_MembersInjector.create
+import com.side.runwithme.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +25,10 @@ import kotlinx.coroutines.launch
 import net.daum.android.map.coord.MapCoordLatLng
 import javax.inject.Inject
 
-typealias PolyLine = MutableList<MapCoordLatLng>
+typealias PolyLine = MutableList<LatLng>
 typealias Polylines = MutableList<PolyLine>
 
+val TAG = "RunningService"
 @AndroidEntryPoint
 class RunningService : LifecycleService() {
 
@@ -29,6 +38,10 @@ class RunningService : LifecycleService() {
     // NotificationCompat.Builder 주입
 //    @Inject
 //    lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
+    // FusedLocationProviderClient 주입
+    @Inject
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // NotificationCompat.Builder 수정하기 위함
     lateinit var currentNotificationBuilder : NotificationCompat.Builder
@@ -53,7 +66,7 @@ class RunningService : LifecycleService() {
         val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
         val isFirstRun = false // 처음 실행 여부 (false = 실행되지않음)
         val sumDistance = MutableLiveData<Float>(0f)
-        val defaultLatLng = MutableLiveData<MapCoordLatLng>()  // 시작 지점인듯?
+        val defaultLatLng = MutableLiveData<LatLng>()  // 시작 지점인듯?
     }
 
     private fun initTextToSpeech() {
@@ -65,12 +78,27 @@ class RunningService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("dddd", "onCreate: ")
         postInitialValues()
 
         // 위치 추적 상태가 되면 업데이트 호출
         isTracking.observe(this){
+            updateLocation(it)
+        }
+    }
 
+    //위치 정보 요청
+    @SuppressLint("MissingPermission")
+    private fun updateLocation(isTracking: Boolean){
+
+        Log.d(TAG, "updateLocation: ${TrackingUtility.hasLocationPermissions(this)}")
+        if(isTracking and TrackingUtility.hasLocationPermissions(this)){
+            val request = LocationRequest.create().apply {
+                interval = LOCATION_UPDATE_INTERVAL
+                fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                maxWaitTime = LOCATION_UPDATE_INTERVAL
+            }
+            fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
         }
     }
 
@@ -98,8 +126,6 @@ class RunningService : LifecycleService() {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimestamp += 1000L
                 }
-                Log.d("dddd", "lapTime: ${lapTime}")
-                Log.d("dddd", "timeRunInMillis: ${timeRunInMillis.value}")
                 delay(50L)
             }
 
@@ -110,6 +136,7 @@ class RunningService : LifecycleService() {
 
     // 서비스가 종료되었을 때
     private fun killService(){
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         serviceKilled = true
         //isFirstRun = false
         pauseService()
@@ -122,10 +149,50 @@ class RunningService : LifecycleService() {
         stopSelf()
     }
 
+    //위치 정보 추가
+    private fun addPathPoint(location: Location?){
+        location?.let {
+            val pos = LatLng(location.latitude, location.latitude)
+            pathPoints.value?.apply {
+                last().add(pos)
+                pathPoints.postValue(this)
+                println("pathPoints : "+ pathPoints.value)
+//                distancePolyline()
+            }
+        }
+    }
+
+
+    //위치정보 수신해 addPathPoint로 추가
+    private val locationCallback = object : LocationCallback(){
+        override fun onLocationResult(result: LocationResult?) {
+            super.onLocationResult(result)
+
+            if(isTracking.value!!){
+                result?.locations?.let{ locations ->
+                    for(location in locations){
+                        addPathPoint(location)
+//                        Log.d(TAG, "onLocationResult: ")
+                    }
+                }
+            }else{
+
+//                result?.locations?.let { locations ->
+//                    for(location in locations) {
+//                        //처음 시작 시 위치 초기화
+//                        if(!isFirstRun){
+//                            defaultLatLng.postValue(LatLng(location.latitude, location.longitude))
+//                            pauseLastLatLng = LatLng(location.latitude, location.longitude)
+//                        }
+////                        addPathPoint(location)
+//                    }
+//                }
+            }
+        }
+    }
+
     // 서비스가 호출 되었을 때
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("dddd", "onStartCommand: service")
-        Log.d("dddd", "onStartCommand: action : ${intent?.action}")
 
         intent?.let{
             when(it.action){
@@ -142,7 +209,6 @@ class RunningService : LifecycleService() {
         }
         return super.onStartCommand(intent, flags, startId)
     }
-
 
     // 서비스 정지
     private fun pauseService(){
