@@ -83,10 +83,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             })
             .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
             .setPermissions(
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
             .check()
     }

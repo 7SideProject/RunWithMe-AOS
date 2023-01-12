@@ -86,30 +86,17 @@ class RunningService : LifecycleService() {
         }
     }
 
-    //위치 정보 요청
-    @SuppressLint("MissingPermission")
-    private fun updateLocation(isTracking: Boolean){
-
-        Log.d(TAG, "updateLocation: ${TrackingUtility.hasLocationPermissions(this)}")
-        if(isTracking and TrackingUtility.hasLocationPermissions(this)){
-            val request = LocationRequest.create().apply {
-                interval = LOCATION_UPDATE_INTERVAL
-                fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                maxWaitTime = LOCATION_UPDATE_INTERVAL
-            }
-            fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
-        }
-    }
 
     // 초기화
     private fun postInitialValues(){
         isTracking.postValue(false)
+        pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
         timeRunInMillis.postValue(0L)
     }
 
     private fun startTimer(){
+        addEmptyPolyline()
         isTracking.postValue(true)
         timeStarted = System.currentTimeMillis()
         isTimerEnabled = true
@@ -134,6 +121,26 @@ class RunningService : LifecycleService() {
         }
     }
 
+    // 빈 polyline 추가
+    private fun addEmptyPolyline() = pathPoints.value?.apply {
+        add(mutableListOf())
+        pathPoints.postValue(this)
+    } ?: pathPoints.postValue(mutableListOf(mutableListOf())) // null 이라면 초기화
+
+    //위치 정보 요청
+    @SuppressLint("MissingPermission")
+    private fun updateLocation(isTracking: Boolean){
+        if(isTracking and TrackingUtility.hasLocationPermissions(this)){
+            val request = LocationRequest.create().apply {
+                interval = LOCATION_UPDATE_INTERVAL
+                fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                maxWaitTime = LOCATION_UPDATE_INTERVAL
+            }
+            fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+        }
+    }
+
     // 서비스가 종료되었을 때
     private fun killService(){
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
@@ -149,19 +156,6 @@ class RunningService : LifecycleService() {
         stopSelf()
     }
 
-    //위치 정보 추가
-    private fun addPathPoint(location: Location?){
-        location?.let {
-            val pos = LatLng(location.latitude, location.latitude)
-            pathPoints.value?.apply {
-                last().add(pos)
-                pathPoints.postValue(this)
-                println("pathPoints : "+ pathPoints.value)
-//                distancePolyline()
-            }
-        }
-    }
-
 
     //위치정보 수신해 addPathPoint로 추가
     private val locationCallback = object : LocationCallback(){
@@ -172,24 +166,29 @@ class RunningService : LifecycleService() {
                 result?.locations?.let{ locations ->
                     for(location in locations){
                         addPathPoint(location)
-//                        Log.d(TAG, "onLocationResult: ")
                     }
                 }
-            }else{
+                return
+            }
 
-//                result?.locations?.let { locations ->
-//                    for(location in locations) {
-//                        //처음 시작 시 위치 초기화
-//                        if(!isFirstRun){
-//                            defaultLatLng.postValue(LatLng(location.latitude, location.longitude))
-//                            pauseLastLatLng = LatLng(location.latitude, location.longitude)
-//                        }
-////                        addPathPoint(location)
-//                    }
-//                }
+
+        }
+    }
+
+
+    //위치 정보 추가
+    private fun addPathPoint(location: Location?){
+        location?.let {
+            val pos = LatLng(location.latitude, location.latitude)
+            pathPoints.value?.apply {
+                last().add(pos)
+                pathPoints.postValue(this)
+                Log.d(TAG, "addPathPoint: ${pathPoints.value}")
+//                distancePolyline()
             }
         }
     }
+
 
     // 서비스가 호출 되었을 때
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
