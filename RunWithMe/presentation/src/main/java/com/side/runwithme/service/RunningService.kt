@@ -15,14 +15,12 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
-import com.side.runwithme.service.RunningService_MembersInjector.create
 import com.side.runwithme.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.daum.android.map.coord.MapCoordLatLng
 import javax.inject.Inject
 
 typealias PolyLine = MutableList<LatLng>
@@ -60,13 +58,15 @@ class RunningService : LifecycleService() {
 
     private var pauseLast = false
 
+    private var pauseLatLng = LatLng(0.0,0.0)
+
     companion object{
         val isTracking = MutableLiveData<Boolean>() // 위치 추적 상태 여부
         val pathPoints = MutableLiveData<Polylines>() // LatLng = 위도, 경도
         val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
-        val isFirstRun = false // 처음 실행 여부 (false = 실행되지않음)
+        var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
         val sumDistance = MutableLiveData<Float>(0f)
-        val defaultLatLng = MutableLiveData<LatLng>()  // 시작 지점인듯?
+        val startLatLng = MutableLiveData<LatLng>()  // 시작 지점
     }
 
     private fun initTextToSpeech() {
@@ -156,22 +156,27 @@ class RunningService : LifecycleService() {
         stopSelf()
     }
 
-
     //위치정보 수신해 addPathPoint로 추가
     private val locationCallback = object : LocationCallback(){
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
 
+            if(isFirstRun){
+                Log.d(TAG, "onLocationResult: isFirstRun")
+                result?.locations?.let{ locations ->
+                    for(location in locations){
+                        startLatLng.postValue(LatLng(location.latitude, location.longitude))
+                        pauseLatLng = LatLng(location.latitude, location.longitude)
+                    }
+                }
+            }
             if(isTracking.value!!){
                 result?.locations?.let{ locations ->
                     for(location in locations){
                         addPathPoint(location)
                     }
                 }
-                return
             }
-
-
         }
     }
 
@@ -179,7 +184,7 @@ class RunningService : LifecycleService() {
     //위치 정보 추가
     private fun addPathPoint(location: Location?){
         location?.let {
-            val pos = LatLng(location.latitude, location.latitude)
+            val pos = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
                 last().add(pos)
                 pathPoints.postValue(this)
@@ -197,12 +202,26 @@ class RunningService : LifecycleService() {
             when(it.action){
                 // 시작, 재개 되었을 때
                 ACTION_START_OR_RESUME_SERVICE ->{
-                    startTimer()
+                    if(isFirstRun){
+//                        startForegroundService()
+                        isFirstRun = false
+
+                    }else{
+                        startTimer()
+                    }
                     startTime = System.currentTimeMillis()
+                }
+                // 일시정지 되었을 때
+                ACTION_PAUSE_SERVICE ->{
+                    pauseService()
                 }
                 // 종료 되었을 때
                 ACTION_STOP_SERVICE ->{
                     killService()
+                }
+                // 처음 화면 켰을 때
+                ACTION_SHOW_RUNNING_ACTIVITY ->{
+                    updateLocation(true)
                 }
             }
         }

@@ -4,11 +4,10 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -16,15 +15,13 @@ import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityRunningBinding
 import com.side.runwithme.service.RunningService
-import com.side.runwithme.util.ACTION_START_OR_RESUME_SERVICE
-import com.side.runwithme.util.ACTION_STOP_SERVICE
-import com.side.runwithme.util.GOAL_TYPE_TIME
-import com.side.runwithme.util.TrackingUtility
+import com.side.runwithme.util.*
 import kotlinx.coroutines.*
 import net.daum.mf.map.api.MapView
-import javax.inject.Inject
 
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running) {
+
+    private lateinit var mapView:MapView
 
     // 라이브 데이터를 받아온 값들
     private var isTracking = false
@@ -41,11 +38,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                permissionDialog()
             }
         }
-
         initMapView()
-
         initClickListener()
         initObserve()
+
+        firstStart()
     }
 
     private fun permissionDialog(){
@@ -90,8 +87,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun firstStart() {
-        if(!RunningService.isFirstRun){
+        Log.d(TAG, "firstStart ${RunningService.isFirstRun}")
+        if(RunningService.isFirstRun){
+            RunningService.startLatLng.observe(this){
+                Log.d(TAG, "firstStart: ${it}")
+                moveCamera()
+            }
             CoroutineScope(Dispatchers.Main).launch {
+                sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
+                delay(1000L)
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
                 delay(1000L)
 
@@ -99,9 +103,23 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
+    // 지도 위치 이동
+    private fun moveCamera(){
+        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+
+        Log.d(TAG, "moveCamera: map ${mapView.mapCenterPoint.mapPointGeoCoord}")
+        Log.d(TAG, "moveCamera: mapPointCONGCoord ${mapView.mapCenterPoint.mapPointCONGCoord.x} ${mapView.mapCenterPoint.mapPointCONGCoord.y}")
+    }
+
     private fun initObserve(){
         RunningService.isTracking.observe(this){
 //            updateTracking(it)
+        }
+
+        RunningService.pathPoints.observe(this){
+//            pathPoints = it
+//            Log.d(TAG, "initObserve: it : ${it}")
+//            Log.d(TAG, "moveCamera: mapPointCONGCoord ${mapView.mapCenterPoint.mapPointCONGCoord.x} ${mapView.mapCenterPoint.mapPointCONGCoord.y}")
         }
 
         // 시간(타이머) 경과 관찰
@@ -124,10 +142,23 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun initClickListener(){
         binding.apply {
             btnStart.setOnClickListener {
+                it.visibility = View.GONE
+                btnPause.visibility = View.VISIBLE
+
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
             }
 
+            btnPause.setOnClickListener{
+                btnStart.visibility = View.VISIBLE
+                btnPause.visibility = View.GONE
+
+                sendCommandToService(ACTION_PAUSE_SERVICE)
+            }
+
             btnStop.setOnClickListener {
+                btnStart.visibility = View.VISIBLE
+                btnPause.visibility = View.GONE
+
                 stopRun()
             }
         }
@@ -139,7 +170,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun initMapView(){
-        val mapView = MapView(this@RunningActivity)
+        mapView = MapView(this@RunningActivity)
         val mapViewContainer = binding.mapView as ViewGroup
         mapViewContainer.addView(mapView)
 

@@ -28,13 +28,21 @@
             android:text="시작"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_distance"/>
+        <Button
+            android:id="@+id/btn_pause"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="일시정지"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_distance"/>
 
         <Button
             android:id="@+id/btn_stop"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="정지"
-            app:layout_constraintStart_toEndOf="@id/btn_start"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_distance"/>
 
         <TextView
