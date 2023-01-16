@@ -136,6 +136,7 @@ class TestOneService : LifecycleService() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+
         notificationBuilder.javaClass.getDeclaredField("mActions").apply {
             isAccessible = true
             set(notificationBuilder, ArrayList<NotificationCompat.Action>())

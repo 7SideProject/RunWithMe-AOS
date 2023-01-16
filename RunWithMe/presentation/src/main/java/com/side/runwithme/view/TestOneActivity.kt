@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit
 class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_test_one) {
     private var isPause = false
     override fun init() {
-//        val mapView = MapView(this)
-//        binding.mapView.addView(mapView)
+        val mapView = MapView(this)
+        binding.mapView.addView(mapView)
 
         initClickListener()
         TestOneService.runTime.observe(this) {
