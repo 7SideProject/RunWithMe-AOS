@@ -161,8 +161,9 @@ class RunningService : LifecycleService() {
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
 
+            Log.d(TAG, "onLocationResult: isFirstRun ${isFirstRun}")
             if(isFirstRun){
-                Log.d(TAG, "onLocationResult: isFirstRun")
+                Log.d(TAG, "onLocationResult: isFirstRun in")
                 result?.locations?.let{ locations ->
                     for(location in locations){
                         startLatLng.postValue(LatLng(location.latitude, location.longitude))

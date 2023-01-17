@@ -95,7 +95,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
             CoroutineScope(Dispatchers.Main).launch {
                 sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
-                delay(1000L)
+                delay(3000L)
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
                 delay(1000L)
 
@@ -107,8 +107,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun moveCamera(){
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
 
-        Log.d(TAG, "moveCamera: map ${mapView.mapCenterPoint.mapPointGeoCoord}")
-        Log.d(TAG, "moveCamera: mapPointCONGCoord ${mapView.mapCenterPoint.mapPointCONGCoord.x} ${mapView.mapCenterPoint.mapPointCONGCoord.y}")
+        Log.d(TAG, "moveCamera: map ${mapView.mapCenterPoint.mapPointGeoCoord.latitude} ${mapView.mapCenterPoint.mapPointGeoCoord.longitude}")
     }
 
     private fun initObserve(){
