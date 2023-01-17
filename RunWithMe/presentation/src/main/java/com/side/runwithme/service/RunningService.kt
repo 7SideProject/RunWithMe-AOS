@@ -1,12 +1,17 @@
 package com.side.runwithme.service
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
@@ -15,12 +20,14 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
+import com.side.runwithme.R
 import com.side.runwithme.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 import javax.inject.Inject
 
 typealias PolyLine = MutableList<LatLng>
@@ -34,8 +41,8 @@ class RunningService : LifecycleService() {
     private var serviceKilled = false
 
     // NotificationCompat.Builder 주입
-//    @Inject
-//    lateinit var baseNotificationBuilder: NotificationCompat.Builder
+    @Inject
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
     // FusedLocationProviderClient 주입
     @Inject
@@ -59,6 +66,7 @@ class RunningService : LifecycleService() {
     private var pauseLast = false
 
     private var pauseLatLng = LatLng(0.0,0.0)
+    private var stopLastLatLng = LatLng(0.0, 0.0)
 
     companion object{
         val isTracking = MutableLiveData<Boolean>() // 위치 추적 상태 여부
@@ -78,11 +86,50 @@ class RunningService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
 
         // 위치 추적 상태가 되면 업데이트 호출
         isTracking.observe(this){
             updateLocation(it)
+            updateNotificationTrackingState(it)
+        }
+    }
+
+    // 알림창 버튼 생성, 액션 추가
+    private fun updateNotificationTrackingState(isTracking: Boolean){
+        val notificationActionText = if (isTracking) "일시정지" else "다시 시작하기"
+        // 정지 or 시작 버튼 클릭 시 그에 맞는 액션 전달
+        val pendingIntent = if (isTracking) {
+            val pauseIntent = Intent(this, RunningService::class.java).apply {
+                action = ACTION_PAUSE_SERVICE
+            }
+            // pending Intent 객체 생성
+            PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_MUTABLE)
+        }else{
+            val resumeIntent = Intent(this, RunningService::class.java).apply {
+                action = ACTION_START_OR_RESUME_SERVICE
+            }
+            PendingIntent.getService(this, 2, resumeIntent, PendingIntent.FLAG_MUTABLE)
+        }
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // 기존 action이 쌓이는 것을 방지
+        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply{
+            isAccessible = true
+            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+
+        // 서비스 종료상태가 아닐 때
+        if(!serviceKilled){
+            currentNotificationBuilder = baseNotificationBuilder
+                .addAction(
+                    R.drawable.ic_launcher_foreground,
+                    notificationActionText,
+                    pendingIntent
+                )
+            notificationManager.notify(NOTIFICATION_ID, currentNotificationBuilder.build())
         }
     }
 
@@ -92,6 +139,7 @@ class RunningService : LifecycleService() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
+        timeRunInMillis.postValue(0L)
         timeRunInMillis.postValue(0L)
     }
 
@@ -177,9 +225,29 @@ class RunningService : LifecycleService() {
                     }
                 }
             }
+
+            result?.locations?.let{ locations ->
+                for(location in locations){
+                    stopLastLatLng = LatLng(location.latitude, location.longitude)
+                    resumeRunning()
+                }
+            }
         }
     }
 
+    private fun resumeRunning(){
+        val result = FloatArray(1)
+        Location.distanceBetween(
+            pauseLatLng.latitude,
+            pauseLatLng.longitude,
+            stopLastLatLng.latitude,
+            stopLastLatLng.longitude,
+            result
+        )
+
+        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
+        /** 해야함 **/
+    }
 
     //위치 정보 추가
     private fun addPathPoint(location: Location?){
@@ -202,7 +270,7 @@ class RunningService : LifecycleService() {
                 // 시작, 재개 되었을 때
                 ACTION_START_OR_RESUME_SERVICE ->{
                     if(isFirstRun){
-//                        startForegroundService()
+                        startForegroundService()
                         isFirstRun = false
 
                     }else{
@@ -225,6 +293,37 @@ class RunningService : LifecycleService() {
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    // Notification 등록, 서비스 시작
+    private fun startForegroundService(){
+        startTimer()
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(notificationManager)
+        }
+
+        startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
+
+        // 초가 흐를 때마다 알림창의 시간 갱신
+        timeRunInSeconds.observe(this){
+            // 서비스 종료 상태가 아닐 때
+            val notification = currentNotificationBuilder.setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000L))
+            notificationManager.notify(NOTIFICATION_ID, notification.build())
+        }
+    }
+
+    // 채널 만들기
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(notificationManager: NotificationManager){
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_LOW // 알림음 없음
+        )
+        notificationManager.createNotificationChannel(channel)
     }
 
     // 서비스 정지
