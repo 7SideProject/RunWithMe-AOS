@@ -161,13 +161,12 @@ class RunningService : LifecycleService() {
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
 
-            Log.d(TAG, "onLocationResult: isFirstRun ${isFirstRun}")
             if(isFirstRun){
-                Log.d(TAG, "onLocationResult: isFirstRun in")
                 result?.locations?.let{ locations ->
                     for(location in locations){
                         startLatLng.postValue(LatLng(location.latitude, location.longitude))
                         pauseLatLng = LatLng(location.latitude, location.longitude)
+                      
                     }
                 }
             }
@@ -189,7 +188,6 @@ class RunningService : LifecycleService() {
             pathPoints.value?.apply {
                 last().add(pos)
                 pathPoints.postValue(this)
-                Log.d(TAG, "addPathPoint: ${pathPoints.value}")
 //                distancePolyline()
             }
         }

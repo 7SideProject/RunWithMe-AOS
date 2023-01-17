@@ -5,19 +5,25 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityRunningBinding
+import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.util.*
 import kotlinx.coroutines.*
+import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapPolyline
 import net.daum.mf.map.api.MapView
+
 
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running) {
 
@@ -31,6 +37,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private var type: String = GOAL_TYPE_TIME
 
+    private lateinit var polyline:MapPolyline
+    private var pathPoints = mutableListOf<PolyLine>()
+
     override fun init() {
         requestPermission{
             if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -43,6 +52,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         initObserve()
 
         firstStart()
+
+        initDrawLine()
+    }
+
+    private fun initDrawLine() {
+        polyline = MapPolyline()
+        polyline.tag = 1000
+        polyline.lineColor = resources.getColor(R.color.mainColor) // Polyline 컬러 지정.
     }
 
     private fun permissionDialog(){
@@ -87,10 +104,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun firstStart() {
-        Log.d(TAG, "firstStart ${RunningService.isFirstRun}")
         if(RunningService.isFirstRun){
             RunningService.startLatLng.observe(this){
-                Log.d(TAG, "firstStart: ${it}")
                 moveCamera()
             }
             CoroutineScope(Dispatchers.Main).launch {
@@ -106,8 +121,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     // 지도 위치 이동
     private fun moveCamera(){
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
-
-        Log.d(TAG, "moveCamera: map ${mapView.mapCenterPoint.mapPointGeoCoord.latitude} ${mapView.mapCenterPoint.mapPointGeoCoord.longitude}")
     }
 
     private fun initObserve(){
@@ -116,9 +129,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
 
         RunningService.pathPoints.observe(this){
-//            pathPoints = it
-//            Log.d(TAG, "initObserve: it : ${it}")
-//            Log.d(TAG, "moveCamera: mapPointCONGCoord ${mapView.mapCenterPoint.mapPointCONGCoord.x} ${mapView.mapCenterPoint.mapPointCONGCoord.y}")
+            pathPoints = it
+            drawPolyline()
         }
 
         // 시간(타이머) 경과 관찰
@@ -128,6 +140,23 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
             changeTimeText(formattedTime)
         }
+    }
+
+    private fun drawPolyline() {
+        if(pathPoints.isEmpty()){
+            return
+        }
+        if( pathPoints.last().isNullOrEmpty()){
+            return
+        }
+
+        val lastPoint = pathPoints.last().last()
+
+
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(lastPoint.latitude, lastPoint.longitude))
+        // Polyline 지도에 올리기.
+        mapView.addPolyline(polyline)
+
     }
 
     private fun changeTimeText(time: String){
