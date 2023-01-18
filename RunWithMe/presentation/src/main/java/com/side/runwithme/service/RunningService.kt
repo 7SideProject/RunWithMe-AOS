@@ -9,7 +9,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -27,7 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.notify
 import javax.inject.Inject
 
 typealias PolyLine = MutableList<LatLng>
@@ -54,7 +52,6 @@ class RunningService : LifecycleService() {
     // 알림창에 표시될 시간
     private val timeRunInSeconds = MutableLiveData<Long>()
 
-    private var isTimerEnabled = false // 타이머 실행 여부
     private var lapTime = 0L // 시작 후 측정한 시간
     private var totalTime = 0L // 정지 시 저장되는 시간
     private var timeStarted = 0L // 측정 시작된 시간
@@ -69,19 +66,11 @@ class RunningService : LifecycleService() {
     private var stopLastLatLng = LatLng(0.0, 0.0)
 
     companion object{
-        val isTracking = MutableLiveData<Boolean>() // 위치 추적 상태 여부
+        val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
         val pathPoints = MutableLiveData<Polylines>() // LatLng = 위도, 경도
         val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
         var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
         val sumDistance = MutableLiveData<Float>(0f)
-        val startLatLng = MutableLiveData<LatLng>()  // 시작 지점
-    }
-
-    private fun initTextToSpeech() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            showToast("음성 안내를 지원하지 않는 버전입니다.")
-            return
-        }
     }
 
     override fun onCreate() {
@@ -89,8 +78,12 @@ class RunningService : LifecycleService() {
 //        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
 
+        initObserve()
+    }
+
+    private fun initObserve(){
         // 위치 추적 상태가 되면 업데이트 호출
-        isTracking.observe(this){
+        isRunning.observe(this){
             updateLocation(it)
             updateNotificationTrackingState(it)
         }
@@ -98,7 +91,7 @@ class RunningService : LifecycleService() {
 
     // 초기화
     private fun postInitialValues(){
-        isTracking.postValue(false)
+        isRunning.postValue(false)
         pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
         timeRunInMillis.postValue(0L)
@@ -117,7 +110,7 @@ class RunningService : LifecycleService() {
 
         // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
         val isMoving = result[0] > 8f && ((System.currentTimeMillis() - startTime) > 4000L)
-        val isResume = !isTracking.value!! and pauseLast
+        val isResume = !isRunning.value!! and pauseLast
 
         if(isMoving && isResume){ // 재시작
             showToast("이동이 감지되어 러닝을 다시 시작합니다.")
@@ -131,13 +124,13 @@ class RunningService : LifecycleService() {
 
     private fun startTimer(){
         addEmptyPolyline()
-        isTracking.postValue(true)
+        isRunning.postValue(true)
         timeStarted = System.currentTimeMillis()
-        isTimerEnabled = true
 
         CoroutineScope(Dispatchers.Main).launch {
-            // 위치 추적 상태일 때
-            while (isTracking.value!!){
+            // 러닝 중 일 때
+            while (isRunning.value!!){
+                /** 코드 이해 **/
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
@@ -157,7 +150,7 @@ class RunningService : LifecycleService() {
 
 
     //위치 정보 요청
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "VisibleForTests")
     private fun updateLocation(isTracking: Boolean){
         if(isTracking and TrackingUtility.hasLocationPermissions(this)){
             val request = LocationRequest.create().apply {
@@ -179,20 +172,21 @@ class RunningService : LifecycleService() {
             if(isFirstRun){
                 result?.locations?.let{ locations ->
                     for(location in locations){
-                        startLatLng.postValue(LatLng(location.latitude, location.longitude))
                         pauseLatLng = LatLng(location.latitude, location.longitude)
                       
                     }
                 }
             }
-            if(isTracking.value!!){
+            if(isRunning.value!!){
                 result?.locations?.let{ locations ->
                     for(location in locations){
                         addPathPoint(location)
                     }
                 }
+                return
             }
 
+            // 일시 정지했을 때
             result?.locations?.let{ locations ->
                 for(location in locations){
                     stopLastLatLng = LatLng(location.latitude, location.longitude)
@@ -270,7 +264,6 @@ class RunningService : LifecycleService() {
                     if(isFirstRun){
                         startForegroundService()
                         isFirstRun = false
-
                     }else{
                         startTimer()
                     }
@@ -296,25 +289,23 @@ class RunningService : LifecycleService() {
 
     // 서비스 정지
     private fun pauseService(){
-        isTracking.postValue(false)
-        isTimerEnabled = false
+        isRunning.postValue(false)
     }
 
     // 서비스가 종료되었을 때
     private fun killService(){
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         serviceKilled = true
-        //isFirstRun = false
         pauseService()
         startTime = 0L
         pauseLast = false
-        //count = 1
 
         postInitialValues()
-//        stopForeground(true)
+        stopForeground(true)
         stopSelf()
     }
 
+    /** 여기서부터 다시 클린 코드 작업**/
     // Notification 등록, 서비스 시작
     private fun startForegroundService(){
         startTimer()
@@ -370,11 +361,6 @@ class RunningService : LifecycleService() {
             isAccessible = true
             set(baseNotificationBuilder, ArrayList<NotificationCompat.Action>())
         }
-
-//        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply{
-//            isAccessible = true
-//            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
-//        }
 
         // 서비스 종료상태가 아닐 때
         if(!serviceKilled){
