@@ -49,7 +49,7 @@ class RunningService : LifecycleService() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // NotificationCompat.Builder 수정하기 위함
-    lateinit var currentNotificationBuilder : NotificationCompat.Builder
+//    lateinit var currentNotificationBuilder : NotificationCompat.Builder
 
     // 알림창에 표시될 시간
     private val timeRunInSeconds = MutableLiveData<Long>()
@@ -86,7 +86,7 @@ class RunningService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        currentNotificationBuilder = baseNotificationBuilder
+//        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
 
         // 위치 추적 상태가 되면 업데이트 호출
@@ -116,20 +116,26 @@ class RunningService : LifecycleService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // 기존 action이 쌓이는 것을 방지
-        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply{
+        baseNotificationBuilder.javaClass.getDeclaredField("mActions").apply{
             isAccessible = true
-            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+            set(baseNotificationBuilder, ArrayList<NotificationCompat.Action>())
         }
+
+//        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply{
+//            isAccessible = true
+//            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+//        }
 
         // 서비스 종료상태가 아닐 때
         if(!serviceKilled){
-            currentNotificationBuilder = baseNotificationBuilder
+//            currentNotificationBuilder = baseNotificationBuilder
+            baseNotificationBuilder
                 .addAction(
                     R.drawable.ic_launcher_foreground,
                     notificationActionText,
                     pendingIntent
                 )
-            notificationManager.notify(NOTIFICATION_ID, currentNotificationBuilder.build())
+            notificationManager.notify(NOTIFICATION_ID, baseNotificationBuilder.build())
         }
     }
 
@@ -245,8 +251,18 @@ class RunningService : LifecycleService() {
             result
         )
 
-        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
-        /** 해야함 **/
+        /** 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴**/
+
+
+
+        val isResume = !isTracking.value!! and pauseLast
+        if(isResume){ // 재시작
+            Toast.makeText(this, "이동이 감지되어 러닝을 다시 시작합니다.", Toast.LENGTH_SHORT).show()
+            startTimer()
+            startTime = System.currentTimeMillis()
+            pauseLast = false
+        }
+
     }
 
     //위치 정보 추가
@@ -256,11 +272,41 @@ class RunningService : LifecycleService() {
             pathPoints.value?.apply {
                 last().add(pos)
                 pathPoints.postValue(this)
-//                distancePolyline()
+                distancePolyline()
             }
         }
     }
 
+    // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
+    private fun distancePolyline(){
+        val polylines = pathPoints.value!!
+        val possiblePolyline = polylines.isNotEmpty() and (polylines.last().size > 1)
+
+        if(possiblePolyline){
+            val preLastLatLng = polylines.last().get(polylines.last().size - 2) // 마지막 전 경로
+            val lastLatLng = polylines.last().last() // 마지막 경로
+
+            // 이동거리 계산
+            val result = FloatArray(1)
+            Location.distanceBetween(
+                preLastLatLng.latitude,
+                preLastLatLng.longitude,
+                lastLatLng.latitude,
+                lastLatLng.longitude,
+                result
+            )
+
+            // 비동기
+            sumDistance.postValue(sumDistance.value!!.plus(result[0]))
+
+            /** 5초 이상 이동했는데 이동거리가 2.3m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 4초) **/
+
+            /** 5초 이상 이동했는데 이동거리가 50m 이상인 경우 정지 (최소 오차 4초) -> 너무 빠른 경우 **/
+
+
+        }
+
+    }
 
     // 서비스가 호출 되었을 때
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -310,7 +356,7 @@ class RunningService : LifecycleService() {
         // 초가 흐를 때마다 알림창의 시간 갱신
         timeRunInSeconds.observe(this){
             // 서비스 종료 상태가 아닐 때
-            val notification = currentNotificationBuilder.setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000L))
+            val notification = baseNotificationBuilder.setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000L))
             notificationManager.notify(NOTIFICATION_ID, notification.build())
         }
     }
