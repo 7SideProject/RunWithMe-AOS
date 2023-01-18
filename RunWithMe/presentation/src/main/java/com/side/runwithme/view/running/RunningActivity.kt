@@ -32,13 +32,17 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     // 라이브 데이터를 받아온 값들
     private var isTracking = false
     private var currentTimeInMillis = 0L
+    private var pathPoints = mutableListOf<PolyLine>()
+
 
     private var job: Job = Job()
 
     private var type: String = GOAL_TYPE_TIME
 
     private lateinit var polyline:MapPolyline
-    private var pathPoints = mutableListOf<PolyLine>()
+
+    //총 이동 거리
+    private var sumDistance = 0f
 
     override fun init() {
         requestPermission{
@@ -106,7 +110,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun firstStart() {
         if(RunningService.isFirstRun){
             RunningService.startLatLng.observe(this){
-                moveCamera()
+                startTackingMode()
             }
             CoroutineScope(Dispatchers.Main).launch {
                 sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
@@ -119,7 +123,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     // 지도 위치 이동
-    private fun moveCamera(){
+    private fun startTackingMode(){
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
     }
 
@@ -140,13 +144,27 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
             changeTimeText(formattedTime)
         }
+
+        // 거리
+        RunningService.sumDistance.observe(this){
+            sumDistance = it
+            changeDistanceText()
+        }
+
+        changeDistanceText()
+    }
+
+    private fun changeDistanceText(){
+        binding.apply {
+            tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
+        }
     }
 
     private fun drawPolyline() {
         if(pathPoints.isEmpty()){
             return
         }
-        if( pathPoints.last().isNullOrEmpty()){
+        if( pathPoints.last().isEmpty()){
             return
         }
 
@@ -203,6 +221,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         mapViewContainer.addView(mapView)
 
         mapView.currentLocationTrackingMode
+        mapView.setZoomLevelFloat(0.1F, true)
 
     }
 
