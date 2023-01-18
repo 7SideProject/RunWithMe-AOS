@@ -91,5 +91,8 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
+    // 네이버 지도 SDK
+    implementation("com.naver.maps:map-sdk:3.16.1")
+
 
 }

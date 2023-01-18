@@ -6,9 +6,15 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.opengl.GLES20
+import android.opengl.GLSurfaceView
 import android.util.Log
+import android.view.SurfaceHolder
 import android.view.View
 import androidx.core.app.ActivityCompat
+import androidx.core.view.drawToBitmap
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityTestOneBinding
@@ -16,10 +22,15 @@ import com.side.runwithme.util.*
 import net.daum.mf.map.api.CameraUpdateFactory
 import net.daum.mf.map.api.MapPointBounds
 import net.daum.mf.map.api.MapView
+import javax.microedition.khronos.egl.EGLConfig
+import javax.microedition.khronos.opengles.GL10
 
 
-class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_test_one) {
+private const val TAG ="TestOneActivity"
+class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_test_one){
     private var isPause = false
+    private lateinit var mapView: MapView
+    private lateinit var surfaceView: GLSurfaceView
     override fun init() {
 
         requestPermission(onSuccess = {
@@ -31,8 +42,9 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
         }, onFailed = { showToast("권한을 허용해주세요") })
 
 
-        val mapView = MapView(this)
-        binding.mapView.addView(mapView)
+
+//        mapView = MapView(this)
+//        binding.mapView.addView(mapView)
 
         initClickListener()
         TestOneService.runTime.observe(this) {
@@ -86,6 +98,18 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
             btnStop.setOnClickListener {
                 sendServiceAction(ACTION_STOP_SERVICE)
             }
+            btnCapture.setOnClickListener {
+////                val bitmap = Bitmap.createBitmap(mapView.width, mapView.height, Bitmap.Config.ARGB_8888)
+//                val bitmap = mapView.drawToBitmap()
+//                val holder = this@TestOneActivity.mapView.holder
+////                val canvas = holder.lockCanvas()
+//                val canvas =Canvas(bitmap)
+//                Log.d(TAG, "initClickListener: ${canvas}")
+//                mapView.draw(canvas)
+//                test.setImageBitmap(bitmap)
+//                test.bringToFront()
+//                Log.d(TAG, "initClickListener: ${bitmap.height}")
+            }
         }
     }
 
@@ -95,5 +119,6 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
         }
         startService(intent)
     }
+
 
 }
