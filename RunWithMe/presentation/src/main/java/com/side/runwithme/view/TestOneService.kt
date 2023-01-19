@@ -19,6 +19,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.overlay.MultipartPathOverlay
+import com.naver.maps.map.overlay.PathOverlay
 import com.side.runwithme.R
 import com.side.runwithme.util.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,11 +34,14 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapPolyline
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class TestOneService : LifecycleService() {
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private lateinit var notificationManager : NotificationManager
 
     private var timeStarted = 0L
     private var lapTime = 0L
@@ -44,20 +50,14 @@ class TestOneService : LifecycleService() {
     private lateinit var notificationChannel: NotificationChannel
     private lateinit var notificationBuilder: NotificationCompat.Builder
 
-    private var polyLines = MapPolyline()
 
     companion object {
+        val positionList = MutableLiveData<MutableList<LatLng>>(mutableListOf())
         val isTracking = MutableLiveData<Boolean>(false)
         val runTime = MutableLiveData(0L)
-        val pathPoints = MutableLiveData<MapPolyline>()
-    }
+        val pathPoints = MutableLiveData<MultipartPathOverlay>()
 
-    override fun onCreate() {
-        super.onCreate()
-        polyLines.tag = 1000
-        polyLines.lineColor = Color.argb(128,255,51,0)
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -65,13 +65,17 @@ class TestOneService : LifecycleService() {
             ACTION_START_SERVICE -> {
                 startForegroundService()
                 startTimer()
+                initPathPoints()
             }
             ACTION_RESUME_SERVICE -> {
                 updateNotification(true)
                 isTracking.postValue(true)
+                addEmptyPolyLine()
                 startTimer()
+
             }
             ACTION_PAUSE_SERVICE -> {
+                positionList.value = mutableListOf()
                 updateNotification(false)
                 isTracking.postValue(false)
             }
@@ -84,10 +88,23 @@ class TestOneService : LifecycleService() {
 
         isTracking.observe(this) {
             updateLocation(it)
-            updateNotification(isTracking.value!!)
+            updateNotification(it)
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun initPathPoints() {
+
+        positionList.observe(this) {
+            if (it.size == 2) {
+                Log.d("test123", "initPathPoints: ")
+                val mpo = MultipartPathOverlay()
+                mpo.coordParts = listOf(positionList.value)
+                pathPoints.postValue(mpo)
+            }
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -129,21 +146,25 @@ class TestOneService : LifecycleService() {
     }
 
     private fun addPathPoint(location: Location) {
-        val position = MapCoordLatLng(location.latitude, location.longitude)
-        polyLines.addPoint(
-            MapPoint.mapPointWithGeoCoord(
-                position.latitude,
-                position.longitude
-            )
-        )
+        val position = LatLng(location.latitude, location.longitude)
+        positionList.value = positionList.value!!.apply {
+            this.add(position)
+        }
 
-        pathPoints.value = polyLines
+        if (positionList.value!!.size < 2) {
+            return
+        }
+
+        Log.d("test123", "addPathPoint: ${positionList.value}")
+        pathPoints.value = pathPoints.value?.apply {
+            this.coordParts.last().add(position)
+        }
 
     }
 
 
     private fun startTimer() {
-        addEmptyPolyLine()
+
         timeStarted = System.currentTimeMillis()
         isTracking.value = true
 
@@ -163,7 +184,15 @@ class TestOneService : LifecycleService() {
     }
 
     private fun addEmptyPolyLine() {
-//        pathPoints.value?.addPoint(MapPoint.mapPointWithGeoCoord())
+
+        if(positionList.value!!.size < 2){
+            return
+        }
+        pathPoints.value = pathPoints.value?.apply {
+            this.coordParts.add(listOf())
+        }
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -178,7 +207,7 @@ class TestOneService : LifecycleService() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startForegroundService() {
-        val notificationManager =
+        notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -198,7 +227,9 @@ class TestOneService : LifecycleService() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification(isTracking: Boolean) {
+        Log.d("test123", "updateNotification: ")
         var intent: Intent? = null
         var pendingIntent: PendingIntent?
         var actionText = ""
@@ -217,9 +248,15 @@ class TestOneService : LifecycleService() {
             actionText = "다시 시작"
         }
 
-        val notificationManager =
+        notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(notificationManager)
+        }
+        notificationBuilder =
+            NotificationCompat.Builder(this, notificationChannel.id)
+                .setSmallIcon(R.drawable.ic_launcher_background)
 
         notificationBuilder.javaClass.getDeclaredField("mActions").apply {
             isAccessible = true
