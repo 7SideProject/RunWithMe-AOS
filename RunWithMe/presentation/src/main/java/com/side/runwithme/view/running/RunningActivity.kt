@@ -16,6 +16,13 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.NaverMapOptions
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.UiSettings
+import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityRunningBinding
@@ -23,19 +30,19 @@ import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.util.*
 import kotlinx.coroutines.*
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapPolyline
-import net.daum.mf.map.api.MapView
 
 
-class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running) {
+class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running), OnMapReadyCallback {
 
-    private lateinit var mapView:MapView
+//    private lateinit var mapView:MapView
 
     // 라이브 데이터를 받아온 값들
     private var pathPoints = mutableListOf<PolyLine>()
 
-    private lateinit var polyline:MapPolyline
+//    private lateinit var polyline:MapPolyline
+
+    private lateinit var locationSource: FusedLocationSource
+    private lateinit var naverMap: NaverMap
 
 
     override fun init() {
@@ -77,16 +84,19 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
     private fun initMapView(){
-        mapView = MapView(this@RunningActivity)
-        val mapViewContainer = binding.mapView as ViewGroup
-        mapViewContainer.addView(mapView)
+        val fm = supportFragmentManager
+        val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
+            ?: MapFragment.newInstance().also {
+                fm.beginTransaction().add(R.id.map_view, it).commit()
+            }
+        mapFragment.getMapAsync(this)
 
-        mapView.setZoomLevelFloat(0.1F, true)
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
 
     private fun initDrawLine() {
-        polyline = MapPolyline()
-        polyline.lineColor = ContextCompat.getColor(this, R.color.mainColor) // Polyline 컬러 지정.
+//        polyline = MapPolyline()
+//        polyline.lineColor = ContextCompat.getColor(this, R.color.mainColor) // Polyline 컬러 지정.
     }
 
     private fun initObserve(){
@@ -158,6 +168,23 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             .check()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+
+        if (locationSource.onRequestPermissionsResult(requestCode, permissions,
+                grantResults)) {
+            if (!locationSource.isActivated) { // 권한 거부됨
+                naverMap.locationTrackingMode = LocationTrackingMode.None
+            }
+            return
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     private fun firstStart() {
         if(RunningService.isFirstRun){
             startTackingMode()
@@ -179,7 +206,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 지도 위치 이동
     private fun startTackingMode(){
-        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+//        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
     }
 
 
@@ -193,9 +220,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         val lastPoint = pathPoints.last().last()
 
-        polyline.addPoint(MapPoint.mapPointWithGeoCoord(lastPoint.latitude, lastPoint.longitude))
-        // Polyline 지도에 올리기.
-        mapView.addPolyline(polyline)
+//        polyline.addPoint(MapPoint.mapPointWithGeoCoord(lastPoint.latitude, lastPoint.longitude))
+//        // Polyline 지도에 올리기.
+//        mapView.addPolyline(polyline)
 
     }
 
@@ -218,6 +245,18 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             it.action = action
             this.startService(it)
         }
+    }
+
+    override fun onMapReady(naverMap: NaverMap) {
+        // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
+        this.naverMap = naverMap
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+        naverMap.isLiteModeEnabled = true
+
+        // 현위치 버튼 활성화
+        naverMap.uiSettings.isLocationButtonEnabled = true
+
     }
 
 

@@ -51,6 +51,10 @@
         </activity>
 
         <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="${naverApiKey}" />
+
+        <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${kakaoApiKey}" />
     </application>

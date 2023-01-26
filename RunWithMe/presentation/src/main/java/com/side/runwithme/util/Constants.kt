@@ -24,3 +24,6 @@ const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
 const val NOTIFICATION_CHANNEL_ID = "notification_channel_id"
 const val NOTIFICATION_CHANNEL_NAME = "notification_channel_name"
 const val NOTIFICATION_ID = 1 // 채널 ID는 0이면 안됨
+
+
+const val LOCATION_PERMISSION_REQUEST_CODE = 1000
