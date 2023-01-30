@@ -200,7 +200,6 @@ class RunningService : LifecycleService() {
                 result?.locations?.let { locations ->
                     for (location in locations) {
                         pauseLatLng = LatLng(location.latitude, location.longitude)
-
                     }
                 }
             }

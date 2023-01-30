@@ -12,16 +12,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.android.gms.maps.model.LatLng
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.UiSettings
+import com.naver.maps.map.overlay.MultipartPathOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
@@ -39,11 +39,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     // 라이브 데이터를 받아온 값들
     private var pathPoints = mutableListOf<PolyLine>()
 
-//    private lateinit var polyline:MapPolyline
+    private lateinit var multipartPolyline:MultipartPathOverlay
 
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
 
+    private var naverLatLng = mutableListOf<MutableList<LatLng>>(mutableListOf())
 
     override fun init() {
         requestPermission()
@@ -95,15 +96,33 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun initDrawLine() {
-//        polyline = MapPolyline()
-//        polyline.lineColor = ContextCompat.getColor(this, R.color.mainColor) // Polyline 컬러 지정.
+        multipartPolyline = MultipartPathOverlay()
     }
 
+    var isFirst = true
     private fun initObserve(){
 
         RunningService.pathPoints.observe(this){
-            pathPoints = it
-            drawPolyline()
+            if(it.isNotEmpty() && it.last().isNotEmpty()){
+                val lat = it.last().last().latitude
+                val lng = it.last().last().longitude
+
+                // 처음 뛸 때
+                if(naverLatLng.isEmpty() && isFirst){
+                    naverLatLng.add(mutableListOf(LatLng(lat, lng), LatLng(lat,lng)))
+                    naverLatLng.add(mutableListOf())
+                }
+                // 중지 후 다시 뛸 때
+                if(it.last().isEmpty() && !isFirst){
+                    naverLatLng.add(mutableListOf())
+                }
+                isFirst = false
+                naverLatLng.last().add(LatLng(lat,lng))
+
+                if(it.last().size >= 2){
+                    drawPolyline()
+                }
+            }
         }
 
         // 시간(타이머) 경과 관찰
@@ -211,19 +230,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
 
     private fun drawPolyline() {
-        if(pathPoints.isEmpty()){
-            return
-        }
-        if( pathPoints.last().isEmpty()){
-            return
-        }
+        multipartPolyline.coordParts = naverLatLng
 
-        val lastPoint = pathPoints.last().last()
+        multipartPolyline.colorParts = listOf(
+            MultipartPathOverlay.ColorPart(
+                Color.RED, Color.WHITE, Color.GRAY, Color.LTGRAY
+            )
+        )
 
-//        polyline.addPoint(MapPoint.mapPointWithGeoCoord(lastPoint.latitude, lastPoint.longitude))
-//        // Polyline 지도에 올리기.
-//        mapView.addPolyline(polyline)
-
+        multipartPolyline.map = naverMap
     }
 
     private fun changeTimeText(time: String){
