@@ -15,12 +15,7 @@ import androidx.core.app.ActivityCompat
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.NaverMapOptions
-import com.naver.maps.map.OnMapReadyCallback
-import com.naver.maps.map.UiSettings
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.MultipartPathOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
@@ -265,10 +260,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     override fun onMapReady(naverMap: NaverMap) {
         // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
         this.naverMap = naverMap
+        naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
         naverMap.isLiteModeEnabled = true
-
         // 현위치 버튼 활성화
         naverMap.uiSettings.isLocationButtonEnabled = true
 
