@@ -7,14 +7,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import com.naver.maps.map.CameraUpdate
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.MultipartPathOverlay
 import com.naver.maps.map.util.FusedLocationSource
@@ -29,8 +29,6 @@ import kotlinx.coroutines.*
 
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running), OnMapReadyCallback {
 
-//    private lateinit var mapView:MapView
-
     // 라이브 데이터를 받아온 값들
     private var pathPoints = mutableListOf<PolyLine>()
 
@@ -41,8 +39,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private var naverLatLng = mutableListOf<MutableList<LatLng>>(mutableListOf())
 
+    private lateinit var latLngBoundsBuilder: LatLngBounds.Builder
+
     override fun init() {
         requestPermission()
+
+        initLatLngBounds()
 
         initMapView()
 
@@ -53,6 +55,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         firstStart()
 
         initDrawLine()
+    }
+
+    private fun initLatLngBounds() {
+        latLngBoundsBuilder = LatLngBounds.Builder()
     }
 
     private fun initClickListener(){
@@ -76,9 +82,27 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 btnPause.visibility = View.GONE
 
                 stopRun()
+                takeSnapShot()
             }
         }
     }
+
+    private fun takeSnapShot() {
+        binding.img.visibility = View.VISIBLE
+
+        moveLatLngBounds()
+
+        naverMap.takeSnapshot {
+            binding.img.setImageBitmap(it)
+        }
+    }
+
+    // 이동한 전체 polyLine 담기
+    private fun moveLatLngBounds() {
+        val bounds = latLngBoundsBuilder.build()
+        naverMap.moveCamera(CameraUpdate.fitBounds(bounds, 300))
+    }
+
     private fun initMapView(){
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
@@ -99,6 +123,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         RunningService.pathPoints.observe(this){
             if(it.isNotEmpty() && it.last().isNotEmpty()){
+
                 val lat = it.last().last().latitude
                 val lng = it.last().last().longitude
 
@@ -113,6 +138,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 }
                 isFirst = false
                 naverLatLng.last().add(LatLng(lat,lng))
+
+                latLngBoundsBuilder.include(LatLng(lat,lng))
 
                 if(it.last().size >= 2){
                     drawPolyline()
@@ -268,6 +295,4 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap.uiSettings.isLocationButtonEnabled = true
 
     }
-
-
 }
