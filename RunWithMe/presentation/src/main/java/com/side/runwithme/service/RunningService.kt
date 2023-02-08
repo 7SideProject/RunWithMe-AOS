@@ -151,7 +151,7 @@ class RunningService : LifecycleService() {
     }
 
     private fun startTimerJob() {
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
             while (isRunning.value!!){
                 /** 코드 이해 **/
