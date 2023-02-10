@@ -41,7 +41,7 @@ class TestOneService : LifecycleService() {
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var notificationManager : NotificationManager
+    private lateinit var notificationManager: NotificationManager
 
     private var timeStarted = 0L
     private var lapTime = 0L
@@ -52,10 +52,16 @@ class TestOneService : LifecycleService() {
 
 
     companion object {
+        val allPositionList = MutableLiveData<MutableList<MutableList<LatLng>>>(
+            mutableListOf(
+                mutableListOf()
+            )
+        )
         val positionList = MutableLiveData<MutableList<LatLng>>(mutableListOf())
         val isTracking = MutableLiveData<Boolean>(false)
         val runTime = MutableLiveData(0L)
         val pathPoints = MutableLiveData<MultipartPathOverlay>()
+
 
     }
 
@@ -68,6 +74,7 @@ class TestOneService : LifecycleService() {
                 initPathPoints()
             }
             ACTION_RESUME_SERVICE -> {
+                Log.d("test123", "onStartCommand: RESUME")
                 updateNotification(true)
                 isTracking.postValue(true)
                 addEmptyPolyLine()
@@ -99,9 +106,17 @@ class TestOneService : LifecycleService() {
         positionList.observe(this) {
             if (it.size == 2) {
                 Log.d("test123", "initPathPoints: ")
-                val mpo = MultipartPathOverlay()
-                mpo.coordParts = listOf(positionList.value)
-                pathPoints.postValue(mpo)
+
+                it.forEach { l ->
+                    allPositionList.value = allPositionList.value!!.apply {
+                        this.last().add(l)
+                    }
+                }
+
+
+//                val mpo = MultipartPathOverlay()
+//                mpo.coordParts = listOf(positionList.value)
+//                pathPoints.postValue(mpo)
             }
         }
 
@@ -147,6 +162,7 @@ class TestOneService : LifecycleService() {
 
     private fun addPathPoint(location: Location) {
         val position = LatLng(location.latitude, location.longitude)
+
         positionList.value = positionList.value!!.apply {
             this.add(position)
         }
@@ -155,11 +171,14 @@ class TestOneService : LifecycleService() {
             return
         }
 
-        Log.d("test123", "addPathPoint: ${positionList.value}")
-        pathPoints.value = pathPoints.value?.apply {
-            this.coordParts.last().add(position)
+        Log.d("test123", "addPathPoint1: ${positionList.value}")
+
+
+        allPositionList.value = allPositionList.value!!.apply {
+            this.last().add(position)
         }
 
+        Log.d("test123", "addPathPoint2: ${pathPoints.value}")
     }
 
 
@@ -185,13 +204,11 @@ class TestOneService : LifecycleService() {
 
     private fun addEmptyPolyLine() {
 
-        if(positionList.value!!.size < 2){
-            return
-        }
-        pathPoints.value = pathPoints.value?.apply {
-            this.coordParts.add(listOf())
-        }
-
+        allPositionList.value!!.add(mutableListOf())
+//        pathPoints.value = pathPoints.value?.apply {
+//            this.coordParts.add(listOf())
+//        }
+        Log.d("test123", "addEmptyPolyLine: ${pathPoints.value}")
 
     }
 
@@ -229,7 +246,7 @@ class TestOneService : LifecycleService() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification(isTracking: Boolean) {
-        Log.d("test123", "updateNotification: ")
+//        Log.d("test123", "updateNotification: ")
         var intent: Intent? = null
         var pendingIntent: PendingIntent?
         var actionText = ""

@@ -18,11 +18,11 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.view.drawToBitmap
 import com.google.android.gms.dynamic.SupportFragmentWrapper
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.MultipartPathOverlay
+import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityTestOneBinding
@@ -45,10 +45,29 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
 
     private lateinit var mapFragment: MapFragment
     private lateinit var surfaceView: GLSurfaceView
+    private lateinit var locationSource: FusedLocationSource
+    private lateinit var naverMap: NaverMap
+    private lateinit var marker: Marker
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (locationSource.onRequestPermissionsResult(
+                requestCode, permissions,
+                grantResults
+            )
+        ) {
+            if (!locationSource.isActivated) { // 권한 거부됨
+                naverMap.locationTrackingMode = LocationTrackingMode.None
+            }
+            return
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 
     override fun init() {
-
 
         requestPermission(onSuccess = {
             if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
@@ -59,7 +78,8 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
         }, onFailed = { showToast("권한을 허용해주세요") })
 
         initNaverMap()
-
+        marker = Marker()
+        locationSource = FusedLocationSource(this, 1000)
 
         initClickListener()
         TestOneService.runTime.observe(this) {
@@ -131,30 +151,42 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
     }
 
     override fun onMapReady(p0: NaverMap) {
-        TestOneService.pathPoints.observe(this) {
-            if (it != null) {
-                Log.d("test123", "onMapReady: ${it.coordParts}")
-                it.colorParts = listOf(
-                    MultipartPathOverlay.ColorPart(
-                        Color.RED, Color.WHITE, Color.GRAY, Color.LTGRAY),
-                    MultipartPathOverlay.ColorPart(
-                        Color.GREEN, Color.WHITE, Color.DKGRAY, Color.LTGRAY)
-                )
+        naverMap = p0
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+        naverMap.addOnLocationChangeListener {
+            Log.d("test123", "init: ${it.latitude} ${it.longitude}")
+            naverMap.moveCamera(CameraUpdate.scrollTo(LatLng(it.latitude, it.longitude)))
+            naverMap.locationTrackingMode = LocationTrackingMode.None
 
-                it.map = p0
-                p0.moveCamera(CameraUpdate.scrollTo(it.coordParts.last().last()))
+            marker.position = LatLng(it.latitude, it.longitude)
+            marker.map = naverMap
+        }
 
-
+        TestOneService.allPositionList.observe(this) {
+            if (it.last().isEmpty()) {
+                return@observe
             }
 
-//            if(it.last().coords.size > 2){
-//                for(i in it.indices) {
-//                    it[i].map = p0
-//
+            Log.d("test123", "onMapReady: $it")
+            naverMap.moveCamera(CameraUpdate.scrollTo(it.last().last()))
 
-//                }
-//            }
+            marker.position = it.last().last()
+            marker.map = naverMap
 
+            if (it.last().size < 2) {
+                return@observe
+            }
+
+            val mpo = MultipartPathOverlay()
+            mpo.coordParts = it
+            mpo.colorParts =
+                listOf(
+                    MultipartPathOverlay.ColorPart(
+                        Color.RED, Color.WHITE, Color.GRAY, Color.LTGRAY
+                    )
+                )
+            mpo.map = naverMap
 
         }
 
