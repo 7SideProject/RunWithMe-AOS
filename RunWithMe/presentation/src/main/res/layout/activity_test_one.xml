@@ -58,6 +58,7 @@
             app:layout_constraintTop_toBottomOf="@id/map_fragment" />
 
         <Button
+            android:text="캡쳐"
             android:id="@+id/btn_capture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

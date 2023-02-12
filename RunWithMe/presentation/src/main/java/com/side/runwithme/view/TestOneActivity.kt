@@ -6,19 +6,13 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.os.Bundle
 import android.util.Log
-import android.view.SurfaceHolder
 import android.view.View
 import androidx.core.app.ActivityCompat
-import androidx.core.view.drawToBitmap
-import com.google.android.gms.dynamic.SupportFragmentWrapper
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.MultipartPathOverlay
@@ -27,14 +21,6 @@ import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityTestOneBinding
 import com.side.runwithme.util.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import net.daum.mf.map.api.CameraUpdateFactory
-import net.daum.mf.map.api.MapPointBounds
-import net.daum.mf.map.api.MapView
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.opengles.GL10
 
 
 private const val TAG = "TestOneActivity"
@@ -48,6 +34,7 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
     private lateinit var marker: Marker
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -69,6 +56,25 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
 
     override fun init() {
 
+        initRequestPermission()
+        initNaverMap()
+        initMarker()
+        initClickListener()
+        observeRunningTime()
+
+    }
+
+    private fun observeRunningTime() {
+        TestOneService.runTime.observe(this) {
+            binding.tvTotalTime.text = runningTimeFormatter(it)
+        }
+    }
+
+    private fun initMarker() {
+        marker = Marker()
+    }
+
+    private fun initRequestPermission() {
         requestPermission(onSuccess = {
             if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 == PackageManager.PERMISSION_DENIED
@@ -76,17 +82,6 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
                 permissionDialog()
             }
         }, onFailed = { showToast("권한을 허용해주세요") })
-
-        initNaverMap()
-        marker = Marker()
-        locationSource = FusedLocationSource(this, 1000)
-
-        initClickListener()
-        TestOneService.runTime.observe(this) {
-            binding.tvTotalTime.text = runningTimeFormatter(it)
-        }
-
-
     }
 
     private fun initNaverMap() {
@@ -101,10 +96,10 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
     }
 
     private fun permissionDialog() {
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("백그라운드 위치 권한을 위해 항상 허용으로 설정해주세요.")
 
-        var listener = DialogInterface.OnClickListener { _, p1 ->
+        val listener = DialogInterface.OnClickListener { _, p1 ->
             when (p1) {
                 DialogInterface.BUTTON_POSITIVE -> ActivityCompat.requestPermissions(
                     this,
@@ -122,10 +117,12 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
 
     fun initClickListener() {
         binding.apply {
+
             btnStart.setOnClickListener {
                 sendServiceAction(ACTION_START_SERVICE)
                 btnStop.visibility = View.VISIBLE
             }
+
             btnPause.setOnClickListener {
                 if (isPause) {
                     sendServiceAction(ACTION_RESUME_SERVICE)
@@ -134,13 +131,35 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
                 }
                 isPause = !isPause
             }
+
             btnStop.setOnClickListener {
                 sendServiceAction(ACTION_STOP_SERVICE)
             }
+
             btnCapture.setOnClickListener {
+
+                setLatLngBounds()
+
+                naverMap.takeSnapshot {
+                    test.setImageBitmap(it)
+                }
 
             }
         }
+    }
+
+    private fun setLatLngBounds() {
+        val latlng = TestOneService.allPositionList.value
+
+        val bound = LatLngBounds.Builder()
+        latlng!!.forEach {
+            it.forEach { latlng ->
+                bound.include(latlng)
+            }
+        }
+
+        val boundBuilder = bound.build()
+        naverMap.moveCamera(CameraUpdate.fitBounds(boundBuilder, 400))
     }
 
     private fun sendServiceAction(action: String) {
@@ -152,8 +171,54 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
 
     override fun onMapReady(p0: NaverMap) {
         naverMap = p0
+        setCurrentPosition()
+        getPositionList()
+
+    }
+
+    private fun getPositionList() {
+        TestOneService.allPositionList.observe(this) { latLngList ->
+            if (latLngList.last().isEmpty()) {
+                return@observe
+            }
+
+            Log.d("test123", "onMapReady: $latLngList")
+
+            naverMap.moveCamera(CameraUpdate.scrollTo(latLngList.last().last()))
+
+            moveMarker(latLngList)
+
+            if (latLngList.last().size < 2) {
+                return@observe
+            }
+
+            drawPolyLine(latLngList)
+
+        }
+    }
+
+    private fun drawPolyLine(latLngList: MutableList<MutableList<LatLng>>) {
+        val mpo = MultipartPathOverlay()
+        mpo.coordParts = latLngList
+        mpo.colorParts =
+            listOf(
+                MultipartPathOverlay.ColorPart(
+                    Color.RED, Color.WHITE, Color.GRAY, Color.LTGRAY
+                )
+            )
+        mpo.map = naverMap
+    }
+
+    private fun moveMarker(latLngList: MutableList<MutableList<LatLng>>) {
+        marker.position = latLngList.last().last()
+        marker.map = naverMap
+    }
+
+    private fun setCurrentPosition() {
+        locationSource = FusedLocationSource(this, 1000)
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
+
         naverMap.addOnLocationChangeListener {
             Log.d("test123", "init: ${it.latitude} ${it.longitude}")
             naverMap.moveCamera(CameraUpdate.scrollTo(LatLng(it.latitude, it.longitude)))
@@ -162,34 +227,6 @@ class TestOneActivity : BaseActivity<ActivityTestOneBinding>(R.layout.activity_t
             marker.position = LatLng(it.latitude, it.longitude)
             marker.map = naverMap
         }
-
-        TestOneService.allPositionList.observe(this) {
-            if (it.last().isEmpty()) {
-                return@observe
-            }
-
-            Log.d("test123", "onMapReady: $it")
-            naverMap.moveCamera(CameraUpdate.scrollTo(it.last().last()))
-
-            marker.position = it.last().last()
-            marker.map = naverMap
-
-            if (it.last().size < 2) {
-                return@observe
-            }
-
-            val mpo = MultipartPathOverlay()
-            mpo.coordParts = it
-            mpo.colorParts =
-                listOf(
-                    MultipartPathOverlay.ColorPart(
-                        Color.RED, Color.WHITE, Color.GRAY, Color.LTGRAY
-                    )
-                )
-            mpo.map = naverMap
-
-        }
-
     }
 
 
