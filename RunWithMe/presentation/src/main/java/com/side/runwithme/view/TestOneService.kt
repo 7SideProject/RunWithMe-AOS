@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -102,9 +103,9 @@ class TestOneService : LifecycleService() {
         positionList.observe(this) {
             if (it.size == 2) {
 
-                it.forEach { l ->
+                it.forEach { latlng ->
                     allPositionList.value = allPositionList.value!!.apply {
-                        this.last().add(l)
+                        this.last().add(latlng)
                     }
                 }
 
@@ -176,7 +177,7 @@ class TestOneService : LifecycleService() {
         timeStarted = System.currentTimeMillis()
         isTracking.value = true
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             while (isTracking.value!!) {
                 lapTime = System.currentTimeMillis() - timeStarted
                 runTime.postValue(totalTime + lapTime)
