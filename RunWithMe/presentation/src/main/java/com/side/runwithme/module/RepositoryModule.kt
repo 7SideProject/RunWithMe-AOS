@@ -1,23 +1,22 @@
 package com.side.runwithme.module
 
-import com.side.data.datasource.UserRemoteDataSource
 import com.side.data.repository.UserRepositoryImpl
 import com.side.domain.repository.UserRepository
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+abstract class RepositoryModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideUserRepository(
-        userRemoteDataSource: UserRemoteDataSource
-    ): UserRepository{
-        return UserRepositoryImpl(userRemoteDataSource)
-    }
+    abstract fun provideUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
+
+
 }

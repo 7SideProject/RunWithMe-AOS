@@ -17,7 +17,7 @@ class LoginViewModel @Inject constructor(
 
     fun login(accessToken: String){
         viewModelScope.launch(Dispatchers.IO){
-            loginUseCase.execute(accessToken).collectLatest {
+            loginUseCase(accessToken).collectLatest {
                 if(it is ResultType.Success){
 
                 }
