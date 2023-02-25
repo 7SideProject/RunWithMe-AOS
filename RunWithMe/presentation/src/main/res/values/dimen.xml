@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar">24dp</dimen>
+    <dimen name="elevation_small">6dp</dimen>
+
+    <dimen name="bottom_navi_size">50dp</dimen>
+
+
+</resources>
