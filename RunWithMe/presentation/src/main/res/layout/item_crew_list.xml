@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="crew"
+            type="com.side.domain.model.Crew" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tv_crew_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{crew.duration}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@{crew.duration}" />
+
+        <TextView
+            android:id="@+id/tv_crew_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{crew.name}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_crew_duration"
+            tools:text="대전 1반" />
+
+        <TextView
+            android:id="@+id/tv_crew_founder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{crew.founder}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tv_crew_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_crew_name"
+            tools:text="슈퍼쏘니" />
+
+        <LinearLayout
+            android:id="@+id/ll_crew_goal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/tv_crew_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_crew_name">
+
+            <TextView
+                android:id="@+id/tv_crew_method"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/tv_round"
+                android:paddingHorizontal="10dp"
+                android:text="@{crew.method}"
+                tools:text="거리" />
+
+            <TextView
+                android:id="@+id/tv_often"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/tv_round"
+                android:paddingHorizontal="10dp"
+                android:text="@{crew.often}"
+                tools:text="주 1회" />
+
+            <TextView
+                android:id="@+id/tv_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tv_round"
+                android:paddingHorizontal="10dp"
+                android:text="@{crew.distance}"
+                tools:text="12km" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_crew_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/ll_crew_goal">
+
+            <LinearLayout
+
+                android:id="@+id/ll_crew_member"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="멤버 수" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{String.valueOf(crew.memberCount)}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    tools:text="3 / 15" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_crew_cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/ll_crew_member">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="참가비" />
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{String.valueOf(crew.cost)}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    tools:text="0 P" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
