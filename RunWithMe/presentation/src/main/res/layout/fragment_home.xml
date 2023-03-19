@@ -13,17 +13,17 @@
         tools:context=".view.home.HomeFragment">
 
         <com.side.runwithme.component.CustomToolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:back_image="@drawable/baseline_arrow_back_24"
-            app:title="런윗미"
+            app:title="@string/app_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_my_running"
+            android:id="@+id/cv_my_running"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
@@ -32,7 +32,7 @@
             app:cardElevation="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_main">
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -52,18 +52,18 @@
                     android:id="@+id/tv_my_running"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="내 러닝 챌린지"
+                    android:text="@string/my_running_challenge"
                     android:layout_marginVertical="12dp"
                     android:layout_marginStart="8dp"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/fontsize_h5"
                     android:textColor="@color/main_black"
-                    android:fontFamily="@font/notosanskr_bold"
+                    android:fontFamily="@font/noto_sans_bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_my_running"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageView
-                    android:id="@+id/btn_show_my_running"
+                    android:id="@+id/iv_show_my_running"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_keyboard_arrow_right_24"
@@ -77,7 +77,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_challenge"
+            android:id="@+id/cv_challenge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
@@ -86,7 +86,7 @@
             app:cardElevation="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_my_running">
+            app:layout_constraintTop_toBottomOf="@id/cv_my_running">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -106,18 +106,18 @@
                     android:id="@+id/tv_challenge"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="모집 중인 챌린지"
+                    android:text="@string/recruiting_challenge"
                     android:layout_marginVertical="12dp"
-                    android:layout_marginStart="8dp"
-                    android:textSize="14sp"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:textSize="@dimen/fontsize_h5"
                     android:textColor="@color/main_black"
-                    android:fontFamily="@font/notosanskr_bold"
+                    android:fontFamily="@font/noto_sans_bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_challenge"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageView
-                    android:id="@+id/btn_show_challenge"
+                    android:id="@+id/iv_show_challenge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_keyboard_arrow_right_24"
@@ -132,7 +132,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_recommend_course"
+            android:id="@+id/cv_recommend_course"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/parent_margin"
@@ -140,7 +140,7 @@
             app:cardElevation="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_challenge">
+            app:layout_constraintTop_toBottomOf="@id/cv_challenge">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -160,18 +160,18 @@
                     android:id="@+id/tv_recommend_course"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="유저들이 추천하는 러닝 코스"
+                    android:text="@string/recommend_course_by_user"
                     android:layout_marginVertical="12dp"
-                    android:layout_marginStart="8dp"
-                    android:textSize="14sp"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:textSize="@dimen/fontsize_h5"
                     android:textColor="@color/main_black"
-                    android:fontFamily="@font/notosanskr_bold"
+                    android:fontFamily="@font/noto_sans_bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_recommend_course"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageView
-                    android:id="@+id/btn_show_recommend_course"
+                    android:id="@+id/iv_show_recommend_course"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/baseline_keyboard_arrow_right_24"

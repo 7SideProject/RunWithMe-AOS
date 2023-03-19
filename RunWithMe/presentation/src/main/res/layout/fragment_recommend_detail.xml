@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.recommend_detail.RecommendDetailFragment">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <TextView
+                    android:id="@+id/tv_title_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2022년 8월 7일 러닝"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                
+                <TextView
+                    android:id="@+id/tv_title_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="안드맨"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:textColor="@color/main_blue"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="@id/tv_title_date"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_date"/>
+                
+                <ImageView
+                    android:id="@+id/iv_favorite"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/favorite"
+                    android:layout_marginEnd="@dimen/parent_horizontal_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_title_date"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_title_user"/>
+
+
+                <View
+                    android:id="@+id/view_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/main_light_grey"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                    android:layout_marginTop="@dimen/margin_regular"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_user"/>
+
+
+                <TextView
+                    android:id="@+id/tv_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontsize_h2"
+                    android:text="0.13km"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    app:layout_constraintStart_toStartOf="@id/view_line"
+                    app:layout_constraintTop_toBottomOf="@id/view_line"/>
+
+                <TextView
+                    android:id="@+id/tv_distance_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/distance_header"
+                    android:textColor="@color/main_grey"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="@id/tv_distance"
+                    app:layout_constraintTop_toBottomOf="@id/tv_distance"/>
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontsize_h2"
+                    android:text="6:36"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    app:layout_constraintEnd_toEndOf="@id/view_line"
+                    app:layout_constraintTop_toBottomOf="@id/view_line"/>
+
+                <TextView
+                    android:id="@+id/tv_time_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_header"
+                    android:textColor="@color/main_grey"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:layout_marginTop="@dimen/margin_small"
+                    app:layout_constraintStart_toStartOf="@id/tv_time"
+                    app:layout_constraintTop_toBottomOf="@id/tv_distance"/>
+
+
+                <ImageView
+                    android:id="@+id/iv_recommend_sight"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="@dimen/margin_regular"
+                    android:background="@drawable/my_running"
+                    android:clipToOutline="true"
+                    android:scaleType="fitXY"
+                    app:layout_constraintStart_toStartOf="@id/view_line"
+                    app:layout_constraintEnd_toEndOf="@id/view_line"
+                    app:layout_constraintTop_toBottomOf="@id/tv_distance_header"/>
+
+
+                <TextView
+                    android:id="@+id/tv_time_start_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/timer_24"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:text="06:05 - 06:25"
+                    android:textColor="@color/main_grey"
+                    android:textSize="@dimen/fontsize_caption"
+                    app:layout_constraintStart_toStartOf="@id/iv_recommend_sight"
+                    app:layout_constraintTop_toBottomOf="@id/iv_recommend_sight"/>
+
+                <TextView
+                    android:id="@+id/tv_crew_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/run_24"
+                    android:drawablePadding="4dp"
+                    android:gravity="right"
+                    android:layout_gravity="center"
+                    android:text="손 크루"
+                    android:textSize="@dimen/fontsize_caption"
+                    android:textColor="@color/main_grey"
+                    app:layout_constraintEnd_toEndOf="@id/iv_recommend_sight"
+                    app:layout_constraintTop_toBottomOf="@id/iv_recommend_sight"/>
+
+
+                <TextView
+                    android:id="@+id/tv_recommend_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="추천 경로에 대한 상세내용이 적히는 곳"
+                    android:text="추천 경로 설명"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:textColor="@color/main_black"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:layout_marginVertical="@dimen/parent_vertical_margin"
+                    app:layout_constraintStart_toStartOf="@id/iv_recommend_sight"
+                    app:layout_constraintEnd_toEndOf="@id/iv_recommend_sight"
+                    app:layout_constraintTop_toBottomOf="@id/tv_time_start_end"/>
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_route"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    android:text="@string/route_detail"
+                    android:textSize="@dimen/fontsize_h4"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:background="@drawable/btn_stroke_lightgrey"
+                    app:layout_constraintStart_toStartOf="@id/tv_recommend_content"
+                    app:layout_constraintEnd_toEndOf="@id/tv_recommend_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_recommend_content"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_ok"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    android:background="@drawable/btn_round_main_color"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:text="@string/ok"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/fontsize_h4"
+                    app:layout_constraintStart_toStartOf="@id/btn_route"
+                    app:layout_constraintEnd_toEndOf="@id/btn_route"
+                    app:layout_constraintTop_toBottomOf="@id/btn_route"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+                
+    
+                
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
