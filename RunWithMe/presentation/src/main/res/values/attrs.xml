@@ -4,6 +4,8 @@
     <declare-styleable name="CustomToolbar">
         <attr name="title" format="string"/>
         <attr name="back_image" format="reference|integer"/>
+        <attr name="option_flag" format="boolean"/>
+        <attr name="option_image" format="reference|integer"/>
     </declare-styleable>
 
 </resources>

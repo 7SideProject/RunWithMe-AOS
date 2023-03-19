@@ -15,5 +15,13 @@
     <fragment
         android:id="@+id/crewListFragment"
         android:name="com.side.runwithme.view.crew.CrewListFragment"
-        android:label="CrewListFragment" />
+        android:label="CrewListFragment" >
+        <action
+            android:id="@+id/action_crewListFragment_to_crewSearchFragment"
+            app:destination="@id/crewSearchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/crewSearchFragment"
+        android:name="com.side.runwithme.view.crew.CrewSearchFragment"
+        android:label="CrewSearchFragment" />
 </navigation>

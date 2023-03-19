@@ -13,8 +13,12 @@ class CrewListAdapter() : ListAdapter<Crew, CrewListAdapter.CrewListViewHolder>(
     inner class CrewListViewHolder(val binding: ItemCrewListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(crew: Crew) {
-            binding.crew = crew
-            binding.executePendingBindings()
+            binding.apply {
+                this.crew = crew
+                tvCrewMember.text = "${crew.memberCount} / ${crew.totalMemberCount}"
+                tvCrewCost.text = "${crew.cost} P"
+                executePendingBindings()
+            }
 
         }
     }

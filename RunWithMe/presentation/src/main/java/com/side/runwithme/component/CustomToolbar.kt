@@ -30,6 +30,12 @@ class CustomToolbar @JvmOverloads constructor(
         binding.apply {
             val backImage = typedArray.getResourceId(R.styleable.CustomToolbar_back_image, R.drawable.baseline_arrow_back_24)
             setBackImage(backImage)
+            val optionFlag = typedArray.getBoolean(R.styleable.CustomToolbar_option_flag,false)
+
+            if(optionFlag){
+                val optionImage = typedArray.getResourceId(R.styleable.CustomToolbar_option_image,R.drawable.ic_launcher_foreground)
+                setOptionImage(optionImage)
+            }
 
             val title = typedArray.getString(R.styleable.CustomToolbar_title)
             setTitle(title!!)
@@ -44,12 +50,22 @@ class CustomToolbar @JvmOverloads constructor(
         binding.ivBackButton.setImageResource(image)
     }
 
+    fun setOptionImage(image: Int){
+        binding.ivOptionButton.setImageResource(image)
+    }
+
     fun setTitle(title: String){
         binding.tvTitle.text = title
     }
 
     fun setBackButtonClickEvent(onClick: () -> Unit){
         binding.ivBackButton.setOnClickListener {
+            onClick()
+        }
+    }
+
+    fun setOptionButtonClickEvent(onClick: () -> Unit){
+        binding.ivOptionButton.setOnClickListener {
             onClick()
         }
     }
