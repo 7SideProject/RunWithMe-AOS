@@ -16,6 +16,7 @@
 
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_regular">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
 
     <dimen name="fontsize_caption">14sp</dimen>
     <dimen name="fontsize_h5">16sp</dimen>
