@@ -6,7 +6,7 @@
     <dimen name="bottom_navi_size">50dp</dimen>
 
     <dimen name="parent_horizontal_margin">16dp</dimen>
-    <dimen name="parent_vertical_margin">24dp</dimen>
+    <dimen name="parent_vertical_margin">16dp</dimen>
     <dimen name="parent_margin">16dp</dimen>
 
     <dimen name="margin_small">8dp</dimen>
