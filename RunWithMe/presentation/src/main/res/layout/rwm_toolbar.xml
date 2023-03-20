@@ -29,14 +29,11 @@
 
                 <TextView
                     android:id="@+id/tv_title"
-                    android:layout_width="120dp"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/toolbar_text"
                     android:layout_marginStart="@dimen/toolbar"
                     android:gravity="center|start"
-                    android:textColor="?android:textColorPrimary"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="툴바 제목" />
 
             </LinearLayout>
