@@ -13,10 +13,12 @@ import com.gun0912.tedpermission.normal.TedPermission
 import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.core.app.ActivityCompat
 import androidx.navigation.ui.setupWithNavController
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityMainBinding
+import com.side.runwithme.view.running_list.RunningListActivity
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
 
@@ -26,6 +28,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
         requestPermission()
 
         initNavigation()
+
+        initClickListener()
+    }
+
+    private fun initClickListener(){
+        binding.apply {
+            floatingActionButton.setOnClickListener {
+                startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
