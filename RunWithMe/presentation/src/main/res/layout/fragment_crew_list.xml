@@ -19,8 +19,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/rv_crew_list"
             app:layout_constraintTop_toTopOf="parent"
-            app:option_flag="true"
-            app:option_image="@drawable/baseline_search_24"
+            app:uses_option_one="true"
+            app:option_one_image="@drawable/baseline_search_24"
+            app:uses_option_two="true"
+            app:option_two_image="@drawable/ic_launcher_foreground"
             app:title="모집 중인 챌린지 크루" />
 
         <androidx.recyclerview.widget.RecyclerView
