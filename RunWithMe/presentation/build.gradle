@@ -87,4 +87,7 @@ dependencies {
 
     // BaseView and SingleLiveEvent
     implementation 'com.github.skw4223:SeoBaseView:1.3'
+
+    // MPAndroid chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
