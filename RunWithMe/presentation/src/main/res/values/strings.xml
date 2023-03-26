@@ -8,6 +8,7 @@
 
     <string name="my_running_challenge">러닝 환경</string>
     <string name="recruiting_challenge">모집 중인 챌린지</string>
+    <string name="my_challenge">내 챌린지</string>
     <string name="recommend_course_by_user">유저들이 추천하는 러닝 코스</string>
 
     <string name="research_in_range">범위 내 재검색</string>
@@ -17,6 +18,7 @@
     <string name="time_header">소요 시간</string>
     <string name="calorie_header">칼로리</string>
     <string name="speed_header">평균 속도</string>
+    <string name="goal">목표</string>
 
 
     <string name="ok">확인</string>
