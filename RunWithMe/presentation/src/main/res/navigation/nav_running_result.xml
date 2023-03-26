@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_running_result"
+    app:startDestination="@id/ruuningResultFragment">
+
+    <fragment
+        android:id="@+id/ruuningResultFragment"
+        android:name="com.side.runwithme.view.running_result.RuuningResultFragment"
+        android:label="RuuningResultFragment">
+
+        <action
+            android:id="@+id/action_ruuningResultFragment_to_routeDetailFragment"
+            app:destination="@id/routeDetailFragment" />
+        <action
+            android:id="@+id/action_ruuningResultFragment_to_createRecommendFragment"
+            app:destination="@id/createRecommendFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createRecommendFragment"
+        android:name="com.side.runwithme.view.create_recommend.CreateRecommendFragment"
+        android:label="CreateRecommendFragment" />
+    <fragment
+        android:id="@+id/routeDetailFragment"
+        android:name="com.side.runwithme.view.route_detail.RouteDetailFragment"
+        android:label="RouteDetailFragment" />
+</navigation>
