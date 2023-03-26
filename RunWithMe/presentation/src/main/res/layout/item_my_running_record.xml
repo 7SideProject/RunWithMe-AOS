@@ -34,7 +34,7 @@
                 android:padding="4dp">
 
                 <ImageView
-                    android:id="@+id/img_run_record"
+                    android:id="@+id/iv_run_record"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_marginStart="8dp"
@@ -56,8 +56,8 @@
                     android:includeFontPadding="false"
                     android:textColor="@color/main_black"
                     android:textSize="24sp"
-                    app:layout_constraintStart_toEndOf="@id/img_run_record"
-                    app:layout_constraintTop_toTopOf="@id/img_run_record"
+                    app:layout_constraintStart_toEndOf="@id/iv_run_record"
+                    app:layout_constraintTop_toTopOf="@id/iv_run_record"
                     tools:text="감크루" />
 
                 <TextView

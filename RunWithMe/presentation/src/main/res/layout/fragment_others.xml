@@ -13,7 +13,7 @@
         tools:context=".view.my_page.others.OthersFragment"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <com.side.runwithme.component.CustomToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
                 android:id="@+id/text"
                 style="@style/toolbar_text"
                 android:text="더 보기"/>
-        </com.google.android.material.appbar.MaterialToolbar>
+        </com.side.runwithme.component.CustomToolbar>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_alert"

@@ -8,15 +8,11 @@ import android.view.ViewGroup
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentHomeBinding
+import com.side.runwithme.databinding.FragmentOthersBinding
 
-class OthersFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_others) {
+class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_others) {
     override fun init() {
         TODO("Not yet implemented")
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
 }

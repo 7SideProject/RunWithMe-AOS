@@ -16,7 +16,7 @@
             android:layout_marginHorizontal="18dp"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/image_achieve_num_one"
+                android:id="@+id/iv_achieve_num_one"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -24,7 +24,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/runcount1" />
             <ImageView
-                android:id="@+id/image_achieve_num_ten"
+                android:id="@+id/iv_achieve_num_ten"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -32,7 +32,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/runcount10" />
             <ImageView
-                android:id="@+id/image_achieve_num_hundred"
+                android:id="@+id/iv_achieve_num_hundred"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -40,7 +40,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/runcount100" />
             <ImageView
-                android:id="@+id/image_achieve_num_thousand"
+                android:id="@+id/iv_achieve_num_thousand"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -90,7 +90,7 @@
             android:layout_marginHorizontal="18dp"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/image_achieve_time_ten"
+                android:id="@+id/iv_achieve_time_ten"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -98,7 +98,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaltime36000" />
             <ImageView
-                android:id="@+id/image_achieve_time_hundred"
+                android:id="@+id/iv_achieve_time_hundred"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -106,7 +106,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaltime360000" />
             <ImageView
-                android:id="@+id/image_achieve_time_thousand"
+                android:id="@+id/iv_achieve_time_thousand"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -114,7 +114,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaltime3600000"/>
             <ImageView
-                android:id="@+id/image_achieve_time_ten_thousand"
+                android:id="@+id/iv_achieve_time_ten_thousand"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -163,7 +163,7 @@
             android:layout_marginHorizontal="18dp"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/image_achieve_distance_ten"
+                android:id="@+id/iv_achieve_distance_ten"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -171,7 +171,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaldistance10000" />
             <ImageView
-                android:id="@+id/image_achieve_distance_hundred"
+                android:id="@+id/iv_achieve_distance_hundred"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -179,7 +179,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaldistance100000" />
             <ImageView
-                android:id="@+id/image_achieve_distance_thousand"
+                android:id="@+id/iv_achieve_distance_thousand"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -187,7 +187,7 @@
                 android:alpha="0.2"
                 android:src="@drawable/totaldistance1000000" />
             <ImageView
-                android:id="@+id/image_achieve_distance_ten_thousand"
+                android:id="@+id/iv_achieve_distance_ten_thousand"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
@@ -234,9 +234,9 @@
             android:id="@+id/tv_crew_history"
             style="@style/header_text"
             android:text="종료된 챌린지 크루"
-            android:layout_marginTop="44dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginTop="@dimen/margin_header_txt_top"
+            android:layout_marginStart="@dimen/margin_header_txt_start"
+            android:layout_marginBottom="@dimen/margin_header_txt_bottom"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_my_crew_history"

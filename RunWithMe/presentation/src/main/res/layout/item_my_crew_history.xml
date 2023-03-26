@@ -74,7 +74,7 @@
                     app:layout_constraintStart_toEndOf="@id/tv_goal_achieve"/>
 
                 <ImageView
-                    android:id="@+id/image_my_crew"
+                    android:id="@+id/iv_my_crew"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"

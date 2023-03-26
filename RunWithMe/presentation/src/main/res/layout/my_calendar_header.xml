@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/legendLayout"
+        android:id="@+id/dayOfWeekLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -15,7 +15,7 @@
         tools:ignore="HardcodedText">
 
         <TextView
-            android:id="@+id/legendText1"
+            android:id="@+id/dayOfWeekText1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -25,7 +25,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText2"
+            android:id="@+id/dayOfWeekText2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -35,7 +35,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText3"
+            android:id="@+id/dayOfWeekText3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -45,7 +45,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText4"
+            android:id="@+id/dayOfWeekText4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -55,7 +55,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText5"
+            android:id="@+id/dayOfWeekText5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -65,7 +65,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText6"
+            android:id="@+id/dayOfWeekText6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -75,7 +75,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/legendText7"
+            android:id="@+id/dayOfWeekText7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
