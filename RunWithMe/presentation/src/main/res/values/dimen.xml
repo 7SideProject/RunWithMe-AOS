@@ -12,6 +12,8 @@
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_regular">16dp</dimen>
 
+    <dimen name="margin_large">32dp</dimen>
+
     <dimen name="padding_ratingbar">8dp</dimen>
 
     <dimen name="padding_small">4dp</dimen>
@@ -23,5 +25,6 @@
     <dimen name="fontsize_h4">20sp</dimen>
     <dimen name="fontsize_h3">24sp</dimen>
     <dimen name="fontsize_h2">36sp</dimen>
+    <dimen name="fontsize_h1">42sp</dimen>
 
 </resources>
