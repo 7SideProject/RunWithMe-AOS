@@ -14,6 +14,11 @@ dependencyResolutionManagement {
 
         // SeoBaseView
         maven { url 'https://jitpack.io' }
+
+        // naver map
+        maven {
+            url 'https://naver.jfrog.io/artifactory/maven/'
+        }
     }
 }
 rootProject.name = "RunWithMe"
