@@ -89,15 +89,7 @@ dependencies {
 
     // BaseView and SingleLiveEvent
     implementation 'com.github.skw4223:SeoBaseView:1.3'
-
-<<<<<<< HEAD
-    // Circle ImageView
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    // CalendarView
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'com.github.kizitonwose:CalendarView:1.0.4'
-=======
+    
     // Naver Map
     implementation 'com.naver.maps:map-sdk:3.16.1'
 
@@ -106,5 +98,25 @@ dependencies {
 
     // SimpleRatingBar
     implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
->>>>>>> d1c3401c56a46280029106abd42ad88fd45578ac
+
+    // lottie
+    implementation 'com.airbnb.android:lottie:5.2.0'
+
+
+    // Circle ImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // CalendarView
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    implementation 'com.github.kizitonwose:CalendarView:1.0.4'
+
+    // Naver Map
+    implementation 'com.naver.maps:map-sdk:3.16.1'
+
+    // google location
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+
+    // SimpleRatingBar
+    implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
+
 }
