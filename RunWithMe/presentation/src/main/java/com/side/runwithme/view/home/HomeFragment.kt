@@ -1,8 +1,8 @@
 package com.side.runwithme.view.home
 
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentHomeBinding
 
 
