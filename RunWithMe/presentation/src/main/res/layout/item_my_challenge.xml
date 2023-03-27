@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_card_my_challenge"
+        android:layout_width="match_parent"
+        android:layout_height="135dp"
+        android:paddingHorizontal="@dimen/padding_large">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginHorizontal="4dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_card_challenge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_challenge"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/image_round"
+                    android:clipToOutline="true"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@color/main_black" />
+
+                <TextView
+                    android:id="@+id/tv_challenge_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:text="감크루"
+                    android:textColor="@color/main_black"
+                    android:textSize="@dimen/fontsize_h4"
+                    app:layout_constraintStart_toEndOf="@id/iv_challenge"
+                    app:layout_constraintTop_toBottomOf="@id/tv_challenge_start_duration"
+                    tools:text="김크루" />
+
+                <TextView
+                    android:id="@+id/tv_challenge_start_duration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:textColor="@color/main_grey"
+                    android:textSize="@dimen/fontsize_caption"
+                    app:layout_constraintStart_toEndOf="@id/iv_challenge"
+                    app:layout_constraintTop_toTopOf="@id/iv_challenge"
+                    tools:text="2022/07/21 ~ 2022/08/21" />
+
+
+                <TextView
+                    android:id="@+id/tv_goal_amount_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/goal"
+                    android:textColor="@color/main_grey"
+                    app:layout_constraintTop_toBottomOf="@id/tv_challenge_name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/tv_challenge_name" />
+
+
+                <TextView
+                    android:id="@+id/tv_goal_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/parent_horizontal_margin"
+                    android:textColor="@color/main_black"
+                    android:textSize="@dimen/fontsize_h5"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_goal_amount_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_goal_amount_header"
+                    tools:text="30분" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

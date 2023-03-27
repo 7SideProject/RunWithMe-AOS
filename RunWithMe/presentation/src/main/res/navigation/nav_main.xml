@@ -23,5 +23,20 @@
     <fragment
         android:id="@+id/recommendDetailFragment"
         android:name="com.side.runwithme.view.recommend_detail.RecommendDetailFragment"
-        android:label="RecommendDetailFragment" />
+        android:label="RecommendDetailFragment" >
+        <action
+            android:id="@+id/action_recommendDetailFragment_to_routeDetailFragment"
+            app:destination="@id/routeDetailFragment" />
+        <action
+            android:id="@+id/action_recommendDetailFragment_to_favoriteDialog"
+            app:destination="@id/favoriteDialog" />
+    </fragment>
+    <fragment
+        android:id="@+id/routeDetailFragment"
+        android:name="com.side.runwithme.view.route_detail.RouteDetailFragment"
+        android:label="RouteDetailFragment" />
+    <dialog
+        android:id="@+id/favoriteDialog"
+        android:name="com.side.runwithme.view.recommend_detail.favorite.FavoriteDialog"
+        android:label="FavoriteDialog" />
 </navigation>

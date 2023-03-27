@@ -69,7 +69,7 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/noto_sans_bold"
+                    android:textStyle="bold"
                     android:text="감스트 님의 추천경로"
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h5"
