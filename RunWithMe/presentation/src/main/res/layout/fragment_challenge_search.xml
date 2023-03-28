@@ -25,7 +25,7 @@
                 android:id="@+id/tv_challenge_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="크루명"
+                android:text="@string/challnege_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
                         android:id="@+id/cb_challenge_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="시작 범위"
+                        android:text="@string/challenge_start_date_range"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,7 +110,7 @@
                         android:id="@+id/cb_running_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="러닝 시작 시간"
+                        android:text="@string/running_start_time"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/btn_start_date" />
 
@@ -174,7 +174,7 @@
                         android:id="@+id/cb_challenge_cost"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="참가비"
+                        android:text="@string/cost"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -255,13 +255,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="시간" />
+                            android:text="@string/time" />
 
                         <RadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="거리" />
+                            android:text="@string/distance" />
 
                     </RadioGroup>
 
@@ -317,7 +317,7 @@
                         android:id="@+id/tv_challenge_often_week"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="주"
+                        android:text="@string/week"
                         app:layout_constraintBottom_toBottomOf="@id/cb_challenge_often"
                         app:layout_constraintEnd_toStartOf="@id/btn_challenge_often_start"
                         app:layout_constraintStart_toEndOf="@id/cb_challenge_often"
@@ -365,7 +365,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
-                        android:text="일"
+                        android:text="@string/day"
                         app:layout_constraintBottom_toBottomOf="@id/btn_challenge_often_end"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/btn_challenge_often_end"
@@ -380,7 +380,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_round_main_color"
-                android:text="검색"
+                android:text="@string/search"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

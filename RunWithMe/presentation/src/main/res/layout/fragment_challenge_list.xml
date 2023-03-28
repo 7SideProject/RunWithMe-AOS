@@ -21,8 +21,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:uses_option_one="true"
             app:option_one_image="@drawable/baseline_search_24"
-
-            app:title="모집 중인 챌린지 크루" />
+            app:title="모집 중인 챌린지" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_challenge_list"
