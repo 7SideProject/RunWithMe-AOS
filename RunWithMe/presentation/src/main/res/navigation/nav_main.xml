@@ -9,19 +9,19 @@
         android:name="com.side.runwithme.view.home.HomeFragment"
         android:label="HomeFragment" >
         <action
-            android:id="@+id/action_homeFragment_to_crewListFragment"
-            app:destination="@id/crewListFragment" />
+            android:id="@+id/action_homeFragment_to_challengeListFragment"
+            app:destination="@id/challengeListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/crewListFragment"
-        android:name="com.side.runwithme.view.crew.CrewListFragment"
-        android:label="CrewListFragment" >
+        android:id="@+id/challengeListFragment"
+        android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
+        android:label="ChallengeListFragment" >
         <action
-            android:id="@+id/action_crewListFragment_to_crewSearchFragment"
-            app:destination="@id/crewSearchFragment" />
+            android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
+            app:destination="@id/challengeSearchFragment" />
     </fragment>
     <fragment
-        android:id="@+id/crewSearchFragment"
-        android:name="com.side.runwithme.view.crew.CrewSearchFragment"
-        android:label="CrewSearchFragment" />
+        android:id="@+id/challengeSearchFragment"
+        android:name="com.side.runwithme.view.challenge.ChallengeSearchFragment"
+        android:label="ChallengeSearchFragment" />
 </navigation>

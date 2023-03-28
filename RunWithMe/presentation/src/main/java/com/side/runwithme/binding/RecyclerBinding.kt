@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.side.domain.model.Crew
+import com.side.domain.model.Challenge
 import com.side.domain.utils.ResultType
-import com.side.runwithme.view.crew.CrewListAdapter
+import com.side.runwithme.view.challenge.ChallengeListAdapter
 
 object RecyclerBinding {
 
@@ -15,9 +15,9 @@ object RecyclerBinding {
     fun bindSubmitList(view : RecyclerView, result : ResultType<*>?){
         if(result is ResultType.Success){
             when(view.adapter){
-                is CrewListAdapter -> {
+                is ChallengeListAdapter -> {
                     Log.d("test123", "bindSubmitList: ")
-                    (view.adapter as ListAdapter<Any,*>).submitList(result.data as List<Crew>)
+                    (view.adapter as ListAdapter<Any,*>).submitList(result.data as List<Challenge>)
                 }
             }
         }

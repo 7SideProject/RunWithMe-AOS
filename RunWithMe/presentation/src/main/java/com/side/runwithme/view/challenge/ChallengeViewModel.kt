@@ -1,21 +1,21 @@
-package com.side.runwithme.view.crew
+package com.side.runwithme.view.challenge
 
 import androidx.lifecycle.ViewModel
-import com.side.domain.model.Crew
+import com.side.domain.model.Challenge
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class CrewViewModel : ViewModel() {
+class ChallengeViewModel : ViewModel() {
 
-    private val _crewList: MutableStateFlow<ResultType<List<Crew>>> =
+    private val _challengeList: MutableStateFlow<ResultType<List<Challenge>>> =
         MutableStateFlow(ResultType.Uninitialized)
-    val crewList get() = _crewList.asStateFlow()
+    val challengeList get() = _challengeList.asStateFlow()
 
-    fun getCrews() {
+    fun getChallenges() {
 
-        val list  = listOf<Crew>(
-            Crew(1,
+        val list  = listOf<Challenge>(
+            Challenge(1,
                 "크루 1",
                 "만든 사람 1",
                 "1111-11-11 ~ 1111-11-11",
@@ -26,7 +26,7 @@ class CrewViewModel : ViewModel() {
                 3,
                 100
             ),
-            Crew(2,
+            Challenge(2,
                 "크루 2",
                 "만든 사람 2",
                 "1111-11-11 ~ 1111-11-11",
@@ -37,7 +37,7 @@ class CrewViewModel : ViewModel() {
                 3,
                 100
             ),
-            Crew(3,
+            Challenge(3,
                 "크루 3",
                 "만든 사람 3",
                 "1111-11-11 ~ 1111-11-11",
@@ -49,8 +49,8 @@ class CrewViewModel : ViewModel() {
                 100
             ),
         )
-        val a = ResultType.Success<List<Crew>>(list)
-        _crewList.value = a
+        val a = ResultType.Success<List<Challenge>>(list)
+        _challengeList.value = a
 
     }
 

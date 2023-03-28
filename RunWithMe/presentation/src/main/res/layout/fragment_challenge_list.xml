@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="crewVM"
-            type="com.side.runwithme.view.crew.CrewViewModel" />
+            name="challengeVM"
+            type="com.side.runwithme.view.challenge.ChallengeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,26 +14,25 @@
         android:layout_height="match_parent">
 
         <com.side.runwithme.component.CustomToolbar
-            android:id="@+id/toolbar_crew_list"
+            android:id="@+id/toolbar_challenge_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/rv_crew_list"
+            app:layout_constraintBottom_toTopOf="@id/rv_challenge_list"
             app:layout_constraintTop_toTopOf="parent"
             app:uses_option_one="true"
             app:option_one_image="@drawable/baseline_search_24"
-            app:uses_option_two="true"
-            app:option_two_image="@drawable/ic_launcher_foreground"
+
             app:title="모집 중인 챌린지 크루" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_crew_list"
-            submitList="@{crewVM.crewList}"
+            android:id="@+id/rv_challenge_list"
+            submitList="@{challengeVM.challengeList}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_crew_list"
-            tools:listitem="@layout/item_crew_list" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar_challenge_list"
+            tools:listitem="@layout/item_challenge_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
