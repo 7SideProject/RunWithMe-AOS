@@ -12,6 +12,18 @@
             android:id="@+id/action_homeFragment_to_recommendFragment"
             app:destination="@id/recommendFragment" />
     </fragment>
+       <fragment
+        android:id="@+id/challengeListFragment"
+        android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
+        android:label="ChallengeListFragment" >
+        <action
+            android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
+            app:destination="@id/challengeSearchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/challengeSearchFragment"
+        android:name="com.side.runwithme.view.challenge.ChallengeSearchFragment"
+        android:label="ChallengeSearchFragment" />
     <fragment
         android:id="@+id/recommendFragment"
         android:name="com.side.runwithme.view.recomend.RecommendFragment"

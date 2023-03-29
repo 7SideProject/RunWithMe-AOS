@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">RunWithMe</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
     <string name="recommend_course">추천 코스</string>
     <string name="running_hard">러닝 난이도</string>
@@ -26,6 +26,15 @@
     <string name="ok">확인</string>
     <string name="cancel">취소</string>
     <string name="route_detail">상세 경로</string>
-
+    
+    <string name="challnege_name">챌린지명</string>
+    <string name="challenge_start_date_range">시작 범위</string>
+    <string name="running_start_time">러닝 시작 시간</string>
+    <string name="cost">참가비</string>
+    <string name="time">시간</string>
+    <string name="distance">거리</string>
+    <string name="week">주</string>
+    <string name="day">일</string>
+    <string name="search">검색</string>
 
 </resources>
