@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.running_result.RunningResultFragment">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_running_result_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    android:layout_marginStart="@dimen/parent_horizontal_margin"
+                    android:textStyle="bold"
+                    android:text="2022년 1월 1일 러닝"
+                    android:textColor="@color/main_black"
+                    android:textSize="@dimen/fontsize_h5" />
+
+                <TextView
+                    android:id="@+id/tv_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="@dimen/parent_horizontal_margin"
+                    android:textStyle="bold"
+                    android:textColor="@color/main_blue"
+                    android:textSize="@dimen/fontsize_h5"
+                    tools:text="도날드 트럼프" />
+
+                <View
+                    android:id="@+id/view_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/main_light_grey"
+                    android:layout_marginTop="@dimen/parent_vertical_margin"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fontsize_h1"
+                        android:textStyle="bold"
+                        android:text="0.3km"
+                        android:layout_marginStart="@dimen/parent_horizontal_margin"
+                        android:layout_marginTop="@dimen/parent_vertical_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/iv_complete"
+                        android:layout_width="180dp"
+                        android:layout_height="100dp"
+                        tools:src="@drawable/success_stamp"
+                        android:paddingStart="@dimen/padding_large"
+                        android:layout_marginTop="@dimen/parent_vertical_margin"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_distance"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_distance_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/distance_header"
+                        android:textColor="@color/main_grey"
+                        android:textSize="@dimen/fontsize_h5"
+                        android:layout_marginStart="@dimen/parent_horizontal_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_distance"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_distance_header">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_marginTop="@dimen/parent_vertical_margin"
+                            android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_calorie"
+                                android:text="14 kcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/fontsize_h5" />
+
+                            <TextView
+                                android:id="@+id/tv_calorie_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/calorie_header"
+                                android:textColor="@color/main_grey"
+                                android:textSize="@dimen/fontsize_caption" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_margin="@dimen/parent_margin"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:text="07 : 27"
+                                android:textSize="@dimen/fontsize_h5" />
+
+                            <TextView
+                                android:id="@+id/tv_time_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/time_header"
+                                android:textColor="@color/main_grey"
+                                android:textSize="@dimen/fontsize_caption" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_margin="@dimen/parent_margin"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_speed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:text="8.3km/h"
+                                android:textSize="@dimen/fontsize_h5" />
+
+                            <TextView
+                                android:id="@+id/tv_speed_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/speed_header"
+                                android:textColor="@color/main_grey"
+                                android:textSize="@dimen/fontsize_caption" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                <ImageView
+                    android:id="@+id/iv_run_record"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                    android:layout_marginTop="@dimen/margin_regular"
+                    android:background="@drawable/image_round"
+                    android:clipToOutline="true"
+                    android:scaleType="fitXY"
+                    tools:src="@color/black"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                    android:layout_marginTop="@dimen/margin_regular">
+
+                    <TextView
+                        android:id="@+id/tv_time_start_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/timer_24"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:text="06:05 - 06:25"
+                        android:textColor="@color/main_grey"
+                        android:textSize="@dimen/fontsize_caption" />
+
+                    <TextView
+                        android:id="@+id/tv_crew_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/run_24"
+                        android:drawablePadding="4dp"
+                        android:gravity="right"
+                        android:layout_gravity="center"
+                        android:text="손 크루"
+                        android:textColor="@color/main_grey" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_route"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="@dimen/margin_regular"
+                    android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
+                    android:text="@string/route_detail"
+                    android:textSize="@dimen/fontsize_h4"
+                    android:textStyle="bold"
+                    android:background="@drawable/btn_round_lightgrey"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_ok"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin_regular"
+                        android:layout_marginBottom="@dimen/parent_vertical_margin"
+                        android:background="@drawable/btn_round_main_color"
+                        android:layout_weight="1"
+                        android:text="@string/ok"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/fontsize_h4" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_recommend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/margin_regular"
+                        android:layout_marginBottom="@dimen/parent_vertical_margin"
+                        android:background="@drawable/btn_round_main_color"
+                        android:layout_weight="1"
+                        android:text="@string/recommend"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fontsize_h4" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

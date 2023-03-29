@@ -5,5 +5,26 @@
 
     <dimen name="bottom_navi_size">50dp</dimen>
 
+    <dimen name="parent_horizontal_margin">16dp</dimen>
+    <dimen name="parent_vertical_margin">16dp</dimen>
+    <dimen name="parent_margin">16dp</dimen>
+
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_regular">16dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+
+    <dimen name="padding_ratingbar">8dp</dimen>
+
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_regular">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <dimen name="fontsize_caption">14sp</dimen>
+    <dimen name="fontsize_h5">16sp</dimen>
+    <dimen name="fontsize_h4">20sp</dimen>
+    <dimen name="fontsize_h3">24sp</dimen>
+    <dimen name="fontsize_h2">36sp</dimen>
+    <dimen name="fontsize_h1">42sp</dimen>
 
 </resources>
