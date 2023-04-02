@@ -1,4 +1,4 @@
-package com.side.runwithme.view
+package com.side.runwithme.view.running
 
 import androidx.appcompat.app.AppCompatActivity
 

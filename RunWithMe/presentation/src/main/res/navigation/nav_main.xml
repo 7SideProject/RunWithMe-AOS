@@ -7,5 +7,36 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.side.runwithme.view.home.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_recommendFragment"
+            app:destination="@id/recommendFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommendFragment"
+        android:name="com.side.runwithme.view.recomend.RecommendFragment"
+        android:label="RecommendFragment" >
+        <action
+            android:id="@+id/action_recommendFragment_to_recommendDetailFragment"
+            app:destination="@id/recommendDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommendDetailFragment"
+        android:name="com.side.runwithme.view.recommend_detail.RecommendDetailFragment"
+        android:label="RecommendDetailFragment" >
+        <action
+            android:id="@+id/action_recommendDetailFragment_to_routeDetailFragment"
+            app:destination="@id/routeDetailFragment" />
+        <action
+            android:id="@+id/action_recommendDetailFragment_to_favoriteDialog"
+            app:destination="@id/favoriteDialog" />
+    </fragment>
+    <fragment
+        android:id="@+id/routeDetailFragment"
+        android:name="com.side.runwithme.view.route_detail.RouteDetailFragment"
+        android:label="RouteDetailFragment" />
+    <dialog
+        android:id="@+id/favoriteDialog"
+        android:name="com.side.runwithme.view.recommend_detail.favorite.FavoriteDialog"
+        android:label="FavoriteDialog" />
 </navigation>
