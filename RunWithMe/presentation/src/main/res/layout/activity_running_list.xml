@@ -251,7 +251,7 @@
                     app:srb_clickable="false"
                     app:srb_isIndicator="true"
                     app:srb_numStars="5"
-                    app:hardPoint="4"
+                    app:hard_point="4"
                     app:srb_scrollable="true"
                     app:srb_starHeight="18dp"
                     app:srb_starPadding="2dp"
