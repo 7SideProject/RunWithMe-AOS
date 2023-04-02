@@ -121,5 +121,7 @@ dependencies {
 
     // lottie
     implementation 'com.airbnb.android:lottie:5.2.0'
-}
 
+    // MPAndroid chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+}
