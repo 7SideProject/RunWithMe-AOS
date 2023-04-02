@@ -53,11 +53,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             request: WebResourceRequest?
         ): Boolean {
 
-            request?.let {
-                if (request.url.toString().startsWith(REDIRECT_URL)) {
-                    val responseState = request.url.getQueryParameter("state")
+
+            request?.run {
+                if (url.toString().startsWith(REDIRECT_URL)) {
+                    val responseState = url.getQueryParameter("state")
                     if (responseState == uniqueState) {
-                        request.url.getQueryParameter("code")?.let { code ->
+
+                        url.getQueryParameter("code")?.let { code ->
                             // code를 서버로 전송
                             loginViewModel.login(code, uniqueState)
                         } ?: run {
@@ -68,8 +70,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 }
 
             }
-            return super.shouldOverrideUrlLoading(view, request)
 
+            return super.shouldOverrideUrlLoading(view, request)
         }
     }
     fun loadWebview(){
