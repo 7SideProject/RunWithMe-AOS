@@ -2,6 +2,7 @@ package com.side.runwithme.view.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seobaseview.util.SingleLiveEvent
 import com.side.domain.usecase.user.LoginUseCase
 import com.side.domain.utils.ResultType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +16,15 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ): ViewModel() {
 
-    fun login(accessToken: String){
-        viewModelScope.launch(Dispatchers.IO){
-            loginUseCase(accessToken).collectLatest {
-                if(it is ResultType.Success){
+    val joinEvent = SingleLiveEvent<String>()
 
+    fun login(code: String, state: String){
+        viewModelScope.launch(Dispatchers.IO){
+            loginUseCase(code, state).collectLatest {
+                if(it is ResultType.Success){
+                    // 로그인 성공 -> Home으로 보내기
+                    // 회원가입
+                    joinEvent.call()
                 }
                 if(it is ResultType.Fail){
 

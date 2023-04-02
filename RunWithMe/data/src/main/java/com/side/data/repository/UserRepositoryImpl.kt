@@ -18,14 +18,14 @@ class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource
 ): UserRepository {
 
-    override fun loginUser(accessToken: String): Flow<UserResponse> = flow {
+    override fun login(code: String, state: String): Flow<ResultType<BaseResponse<String>>> = flow {
         emit(ResultType.Loading)
-        userRemoteDataSource.loginUser(LoginRequest(accessToken)).collectLatest{
+        userRemoteDataSource.login(LoginRequest(code, state)).collectLatest{
             emit(
                 ResultType.Success(
                     BaseResponse(
                         it.message,
-                        it.data.mapperToUser()
+                        it.data
                     )
                 )
             )

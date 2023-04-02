@@ -56,6 +56,18 @@ object RemoteDataModule {
             .build()
     }
 
+    //Retrofit DI
+    @Provides
+    @Singleton
+    @Named("kakaoRetrofit")
+    fun provideRetrofit2Instance(gson: Gson, client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("kauth.kakao.com")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client)
+            .build()
+    }
+
     @Provides
     @Singleton
     fun provideUserApi(@Named("mainRetrofit") retrofit: Retrofit): UserApi{
