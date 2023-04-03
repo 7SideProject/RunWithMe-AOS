@@ -5,7 +5,7 @@ import com.willy.ratingbar.ScaleRatingBar
 
 object ViewBindingAdapter {
 
-    @BindingAdapter
+    @BindingAdapter("hardPoint")
     @JvmStatic
     fun ScaleRatingBar.setHardPoint(point: Int){
         this.rating = point.toFloat()

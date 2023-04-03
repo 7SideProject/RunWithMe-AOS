@@ -4,6 +4,7 @@ import com.d201.eyeson.util.XAccessTokenInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
+import com.side.runwithme.util.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,23 +51,12 @@ object RemoteDataModule {
     @Named("mainRetrofit")
     fun provideRetrofitInstance(gson: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("192.168.0.1")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
     }
 
-    //Retrofit DI
-    @Provides
-    @Singleton
-    @Named("kakaoRetrofit")
-    fun provideRetrofit2Instance(gson: Gson, client: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("kauth.kakao.com")
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(client)
-            .build()
-    }
 
     @Provides
     @Singleton

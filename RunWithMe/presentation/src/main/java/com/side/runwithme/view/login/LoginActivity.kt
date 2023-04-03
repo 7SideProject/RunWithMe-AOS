@@ -1,7 +1,10 @@
 package com.side.runwithme.view.login
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,16 +12,21 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.seobaseview.base.BaseActivity
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityLoginBinding
 import com.side.runwithme.util.KAKAO_LOGIN_URL
 import com.side.runwithme.util.KAKAO_REST_API_KEY
 import com.side.runwithme.util.REDIRECT_URL
 import com.side.runwithme.view.join.JoinActivity
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
 
     private val loginViewModel by viewModels<LoginViewModel>()
@@ -27,6 +35,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
 
     override fun init() {
+
+        requestPermission()
 
         initClickListener()
 
@@ -84,13 +94,38 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             .appendQueryParameter("state", uniqueState)
             .build()
 
+
         binding.webviewKakao.apply {
             visibility = View.VISIBLE
-            loadUrl(uri.toString())
             webViewClient = webViewClientResponseLogin
+            settings.loadWithOverviewMode = true // WebView 화면 크기에 맞추도록 설정
+            settings.useWideViewPort = true // wide viewport 설정 - loadWithOverviewMode와 같이 써야함
+            settings.javaScriptEnabled = true
+            loadUrl(uri.toString())
         }
     }
 
 
+    private fun requestPermission(){
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+                @RequiresApi(Build.VERSION_CODES.Q)
+                override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED) {
+
+                    }
+                }
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    showToast("권한을 허가해주세요.")
+                }
+            })
+            .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
+            .setPermissions(
+                Manifest.permission.INTERNET,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            .check()
+    }
 }
 
