@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
-    @POST("login/oauth2/code/kakao")
+    @GET("login/oauth2/code/kakao")
     suspend fun login(@Query("code") code: String, @Query("state") state: String): BaseResponse<String>
 
 }

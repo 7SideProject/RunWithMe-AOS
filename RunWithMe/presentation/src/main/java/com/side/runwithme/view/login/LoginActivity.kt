@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -68,6 +69,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 if (url.toString().startsWith(REDIRECT_URL)) {
                     val responseState = url.getQueryParameter("state")
                     if (responseState == uniqueState) {
+                        val code = url.getQueryParameter("code")
+                        Log.d("eettt", "shouldOverrideUrlLoading: $code")
 
                         url.getQueryParameter("code")?.let { code ->
                             // code를 서버로 전송

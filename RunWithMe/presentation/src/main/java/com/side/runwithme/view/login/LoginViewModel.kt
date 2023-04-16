@@ -1,5 +1,6 @@
 package com.side.runwithme.view.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seobaseview.util.SingleLiveEvent
@@ -21,6 +22,7 @@ class LoginViewModel @Inject constructor(
     fun login(code: String, state: String){
         viewModelScope.launch(Dispatchers.IO){
             loginUseCase(code, state).collectLatest {
+
                 if(it is ResultType.Success){
                     // 로그인 성공 -> Home으로 보내기
                     // 회원가입
@@ -30,9 +32,11 @@ class LoginViewModel @Inject constructor(
 
                 }
                 if(it is ResultType.Error){
-
+                    Log.d("eettt", "login: ${it.exception}")
                 }
             }
         }
     }
+
+
 }

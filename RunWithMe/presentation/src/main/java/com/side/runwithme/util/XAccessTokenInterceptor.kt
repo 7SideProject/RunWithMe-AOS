@@ -1,4 +1,4 @@
-package com.d201.eyeson.util
+package com.side.runwithme.util
 
 import android.content.SharedPreferences
 import kotlinx.coroutines.runBlocking
