@@ -1,56 +1,46 @@
 package com.side.runwithme.view.challenge
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
+import com.side.domain.usecase.user.getChallengeListUseCase
 import com.side.domain.utils.ResultType
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChallengeViewModel : ViewModel() {
+@HiltViewModel
+class ChallengeViewModel @Inject constructor(
+    private val getChallengeListUseCase: getChallengeListUseCase
+) : ViewModel() {
 
-    private val _challengeList: MutableStateFlow<ResultType<List<Challenge>>> =
+    private val _challengeList: MutableStateFlow<ResultType<BaseResponse<List<Challenge>>>> =
         MutableStateFlow(ResultType.Uninitialized)
     val challengeList get() = _challengeList.asStateFlow()
 
     fun getChallenges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("test123", "getChallenges: 1")
+            getChallengeListUseCase().collectLatest {
+                Log.d("test123", "getChallenges: 2")
+                if (it is ResultType.Success) {
+                    Log.d("test123", "S: ${it.data.data}")
+                    _challengeList.value = it
+                }else if( it is ResultType.Error){
+                    Log.d("test123", "E: ${it.exception.message}")
+                    Log.d("test123", "E: ${it.exception.cause}")
+                }else if( it is ResultType.Fail){
+                    Log.d("test123", "F: ${it.data.data}")
+                }
+            }
+        }
 
-        val list  = listOf<Challenge>(
-            Challenge(1,
-                "크루 1",
-                "만든 사람 1",
-                "1111-11-11 ~ 1111-11-11",
-                "거리",
-                "주 1회",
-                "1KM",
-                10,
-                3,
-                100
-            ),
-            Challenge(2,
-                "크루 2",
-                "만든 사람 2",
-                "1111-11-11 ~ 1111-11-11",
-                "시간",
-                "주 2회",
-                "2KM",
-                10,
-                3,
-                100
-            ),
-            Challenge(3,
-                "크루 3",
-                "만든 사람 3",
-                "1111-11-11 ~ 1111-11-11",
-                "거리",
-                "주 3회",
-                "3KM",
-                10,
-                3,
-                100
-            ),
-        )
-        val a = ResultType.Success<List<Challenge>>(list)
-        _challengeList.value = a
 
     }
 

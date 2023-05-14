@@ -19,7 +19,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityMainBinding
 import com.side.runwithme.view.running_list.RunningListActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
 
     private lateinit var navController : NavController

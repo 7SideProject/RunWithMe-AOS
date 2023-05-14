@@ -5,7 +5,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChallengeListFragment : BaseFragment<FragmentChallengeListBinding>(R.layout.fragment_challenge_list) {
 
     private val challengeViewModel: ChallengeViewModel by viewModels()
