@@ -1,7 +1,12 @@
 package com.side.runwithme.view.running
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.location.Location
+import android.os.IBinder
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
@@ -18,12 +23,10 @@ import com.side.runwithme.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Math.round
 
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running),
     OnMapReadyCallback {
-
-    // 라이브 데이터를 받아온 값들
-    private var pathPoints = mutableListOf<PolyLine>()
 
     private lateinit var polyline: PathOverlay
 
@@ -34,14 +37,31 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var latLngBoundsBuilder: LatLngBounds.Builder
 
+    private lateinit var runningService: RunningService
+
+    private var firstRun = true
+
+    private var type: String = GOAL_TYPE_TIME
+    private var goal = 60 * 1000L
+    private var weight = 70
+
+    // 라이브 데이터 받아온 값들
+    private var caloriesBurned: Int = 0
+    private var sumDistance: Float = 0f
+    private var currentTimeInMillis = 0L
+
     override fun init() {
         initLatLngBounds()
+
+//        weight = sharedPref.getInt(USER_WEIGHT, 70)
+//        type = sharedPref.getString(RUN_GOAL_TYPE, GOAL_TYPE_TIME)!!
+
 
         initMapView()
 
         initClickListener()
 
-        initObserve()
+//        initObserve()
 
         firstStart()
 
@@ -56,6 +76,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             ibStart.setOnClickListener {
                 ibStart.visibility = View.GONE
+                ibStop.visibility = View.GONE
                 ibPause.visibility = View.VISIBLE
 
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
@@ -63,6 +84,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
             ibPause.setOnClickListener{
                 ibStart.visibility = View.VISIBLE
+                ibStop.visibility = View.VISIBLE
                 ibPause.visibility = View.GONE
 
                 sendCommandToService(ACTION_PAUSE_SERVICE)
@@ -107,7 +129,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun initObserve(){
 
-        RunningService.pathPoints.observe(this){
+        // 좌표 observe
+        runningService.pathPoints.observe(this){
             if(it.isNotEmpty()){
 
                 val lat = it.last().latitude
@@ -126,22 +149,51 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 if(it.size >= 4){
                     optimizationPolyLine()
                 }
+
             }
         }
 
-        // 시간(타이머) 경과 관찰
-        RunningService.timeRunInMillis.observe(this){
+        // 시간(타이머) 경과 observe
+        runningService.timeRunInMillis.observe(this){
+            currentTimeInMillis = it
             val formattedTime = TrackingUtility.getFormattedStopWatchTimeSummery(it)
             changeTimeText(formattedTime)
+
+            // 프로그래스바 진행도 변경
+            if(it > 0 && type == GOAL_TYPE_TIME) {
+                binding.progressBarGoal.progress = if ((it / (goal / 100)).toInt() >= 100) 100 else (it / (goal / 100)).toInt()
+            }
         }
 
-        // 거리
-        RunningService.sumDistance.observe(this){
-            changeDistanceText(it)
+        // 거리 observe
+        runningService.sumDistance.observe(this){
+            sumDistance = it
+            changeDistanceText(sumDistance)
+            changeCalorie(sumDistance)
+
+            // 프로그래스바 진행도 변경
+            if(sumDistance > 0 && type == GOAL_TYPE_DISTANCE) {
+                binding.progressBarGoal.progress = if ((sumDistance / (goal / 100)).toInt() >= 100) 100 else (sumDistance / (goal / 100)).toInt()
+            }
         }
 
-        val initSumDistance = 0F
-        changeDistanceText(initSumDistance)
+        // 러닝 뛰고 있는 지 observe
+        runningService.isRunning.observe(this){
+            if(it){ // 러닝을 뛰고 있는 경우
+                binding.apply {
+                    ibStart.visibility = View.GONE
+                    ibStop.visibility = View.GONE
+                    ibPause.visibility = View.VISIBLE
+                }
+            }else{ // 일시 정지 된 경우
+                binding.apply {
+                    ibStart.visibility = View.VISIBLE
+                    ibStop.visibility = View.VISIBLE
+                    ibPause.visibility = View.GONE
+                }
+            }
+        }
+
     }
 
     // 경로 최적화 알고리즘
@@ -165,7 +217,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         // 10미터 미만으로 너무 가까운 점이면 삭제
         if(lastDistance < 10){
-            naverLatLng.removeAt(naverLatLng.size - 2)
+            naverLatLng.removeAt(naverLatLng.size - 3)
             return
         }
 
@@ -181,12 +233,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // 거리가 가까울 땐 +- 5도 (거의 직선인 경우 삭제)
         if(lastDistance < 50){
             if(cosine > Math.cos(deg2rad(20.0))){
-                naverLatLng.removeAt(naverLatLng.size - 2)
+                naverLatLng.removeAt(naverLatLng.size - 3)
                 return
             }
         }else{ // 거리가 멀어지면 여유범위 줄이기
             if(cosine > Math.cos(deg2rad(10.0))){
-                naverLatLng.removeAt(naverLatLng.size - 2)
+                naverLatLng.removeAt(naverLatLng.size - 3)
                 return
             }
 
@@ -237,12 +289,16 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun firstStart() {
-        if(RunningService.isFirstRun){
-
+//        if(RunningService.isFirstRun){
+        if(firstRun){
             lifecycleScope.launch(Dispatchers.Main) {
                 sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
                 delay(3000L)
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+                // bindService
+                Intent(this@RunningActivity, RunningService::class.java).also { intent ->
+                    bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+                }
                 delay(1000L)
 
             }
@@ -251,6 +307,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun(){
+        unbindService(serviceConnection)
         sendCommandToService(ACTION_STOP_SERVICE)
     }
 
@@ -264,13 +321,26 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun changeTimeText(time: String){
         binding.apply {
             tvTime.text = time
+
+            if(type == GOAL_TYPE_TIME){
+                /** goal amount 변경 **/
+            }
         }
     }
 
     private fun changeDistanceText(sumDistance : Float){
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
+
+            if(type == GOAL_TYPE_DISTANCE){
+                /** goal amount 변경 **/
+            }
         }
+    }
+
+    private fun changeCalorie(sumDistance: Float){
+        caloriesBurned = round((sumDistance / 1000f) * weight).toInt()
+        binding.tvCalorie.text = "$caloriesBurned"
     }
 
 
@@ -279,6 +349,18 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         Intent(this, RunningService::class.java).also {
             it.action = action
             this.startService(it)
+        }
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val bind = service as RunningService.LocalBinder
+            runningService = bind.getService()
+            initObserve()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            TODO("Not yet implemented")
         }
     }
 

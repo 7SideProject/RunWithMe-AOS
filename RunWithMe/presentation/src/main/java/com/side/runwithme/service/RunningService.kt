@@ -7,8 +7,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Binder
 import android.os.Build
+import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -31,6 +34,9 @@ typealias PolyLine = MutableList<LatLng>
 
 @AndroidEntryPoint
 class RunningService : LifecycleService() {
+
+    // Binder
+    private val binder = LocalBinder()
 
     // 서비스 종료 여부
     private var serviceKilled = false
@@ -62,12 +68,21 @@ class RunningService : LifecycleService() {
     private var pauseLatLng = LatLng(0.0, 0.0)
     private var stopLastLatLng = LatLng(0.0, 0.0)
 
-    companion object {
+//    companion object {
         val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
         val pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
         val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
         var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
         val sumDistance = MutableLiveData<Float>(0f)
+//    }
+
+    inner class LocalBinder : Binder() {
+        fun getService() : RunningService = this@RunningService
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        return binder
     }
 
     override fun onCreate() {
@@ -127,7 +142,7 @@ class RunningService : LifecycleService() {
     }
 
     private fun startTimerJob() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
             while (isRunning.value!!){
                 /** 코드 이해 **/
@@ -215,7 +230,7 @@ class RunningService : LifecycleService() {
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
     private fun distancePolyline() {
         val polylines = pathPoints.value!!
-        val possiblePolyline = polylines.isNotEmpty()
+        val possiblePolyline = polylines.isNotEmpty() && polylines.size >= 2
 
         if (possiblePolyline) {
             val preLastLatLng = polylines.get(polylines.size - 2) // 마지막 전 경로
