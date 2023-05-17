@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">RunWithMe</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="recommend_course">추천 코스</string>
     <string name="running_hard">러닝 난이도</string>
@@ -20,21 +18,35 @@
     <string name="time_header">소요 시간</string>
     <string name="calorie_header">칼로리</string>
     <string name="speed_header">평균 속도</string>
+    <string name="weight">몸무게</string>
+    <string name="weight_unit">kg</string>
+    <string name="height">키</string>
+    <string name="height_unit">cm</string>
     <string name="goal">목표</string>
+    <string name="nickname">닉네임</string>
 
 
     <string name="ok">확인</string>
     <string name="cancel">취소</string>
+    <string name="add">등록</string>
+    <string name="edit">수정</string>
+
     <string name="route_detail">상세 경로</string>
-    
+
     <string name="challnege_name">챌린지명</string>
     <string name="challenge_start_date_range">시작 범위</string>
     <string name="running_start_time">러닝 시작 시간</string>
     <string name="cost">참가비</string>
     <string name="time">시간</string>
     <string name="distance">거리</string>
+    <string name="km">km</string>
     <string name="week">주</string>
     <string name="day">일</string>
     <string name="search">검색</string>
+
+    <string name="my_page">마이페이지</string>
+    <string name="edit_profile">프로필 수정</string>
+    <string name="register_profile">프로필 수정</string>
+    <string name="join">회원가입</string>
 
 </resources>
