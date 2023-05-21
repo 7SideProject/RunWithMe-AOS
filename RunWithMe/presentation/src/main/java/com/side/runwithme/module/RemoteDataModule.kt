@@ -5,7 +5,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
 import com.side.runwithme.util.BASE_URL
-import com.side.runwithme.util.XAccessTokenInterceptor
+import com.side.runwithme.util.XAccessTokenRequestInterceptor
+import com.side.runwithme.util.XAccessTokenResponseInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +15,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -32,10 +32,12 @@ object RemoteDataModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        xAccessTokenInterceptor: XAccessTokenInterceptor
+        xAccessTokenInterceptor: XAccessTokenRequestInterceptor,
+        xAccessTokenResponseInterceptor: XAccessTokenResponseInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addNetworkInterceptor(xAccessTokenInterceptor)
+            .addNetworkInterceptor(xAccessTokenResponseInterceptor)
             .build()
     }
 
@@ -61,7 +63,7 @@ object RemoteDataModule {
 
     @Provides
     @Singleton
-    fun provideUserApi(@Named("mainRetrofit") retrofit: Retrofit): UserApi{
+    fun provideUserApi(@Named("mainRetrofit") retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
 }

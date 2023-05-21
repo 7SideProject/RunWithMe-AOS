@@ -2,6 +2,7 @@ package com.side.data.repository
 
 import android.util.Log
 import com.side.data.datasource.UserRemoteDataSource
+import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
 import com.side.data.mapper.mapperToUser
 import com.side.data.model.request.LoginRequest
@@ -38,8 +39,6 @@ class UserRepositoryImpl @Inject constructor(
 
         }
     }.catch {
-        Log.d("eettt", "login: ${it.message}")
-        Log.d("eettt", "login: ${it.cause}")
         emit(
             ResultType.Error(
                 it.cause!!
@@ -81,8 +80,42 @@ class UserRepositoryImpl @Inject constructor(
 
         }
     }.catch {
-        Log.d("eettt", "join: ${it.message}")
-        Log.d("eettt", "join: ${it.cause}")
+        emit(
+            ResultType.Error(
+                it.cause!!
+            )
+        )
+    }
+
+    override fun loginWithEmail(user: User): Flow<UserResponse> = flow {
+        emit(ResultType.Loading)
+        userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).collect {
+            when (it.code) {
+                "U001" -> {
+                    emit(
+                        ResultType.Success(
+                            BaseResponse(
+                                it.code,
+                                it.message,
+                                it.data.mapperToUser()
+                            )
+                        )
+                    )
+                }
+                "U102" -> {
+                    emit(
+                        ResultType.Fail(
+                            BaseResponse(
+                                it.code,
+                                it.message,
+                                it.data.mapperToUser()
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }.catch {
         emit(
             ResultType.Error(
                 it.cause!!

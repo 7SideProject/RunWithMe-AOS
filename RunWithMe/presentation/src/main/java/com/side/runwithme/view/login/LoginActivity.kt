@@ -5,8 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.WebResourceRequest
@@ -18,13 +16,18 @@ import androidx.lifecycle.ViewModel
 import com.example.seobaseview.base.BaseActivity
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.side.domain.model.User
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityLoginBinding
 import com.side.runwithme.util.KAKAO_LOGIN_URL
 import com.side.runwithme.util.KAKAO_REST_API_KEY
 import com.side.runwithme.util.REDIRECT_URL
+import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.join.JoinActivity
+import com.side.runwithme.view.login.LoginViewModel.Event
+
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 
 @AndroidEntryPoint
@@ -54,44 +57,60 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 //회원가입
                 startActivity(Intent(this@LoginActivity, JoinActivity::class.java))
             }
+
+            btnLogin.setOnClickListener {
+                loginViewModel.loginWithEmail(
+                    User(
+                        seq = 0L,
+                        email = "abcdef@naver.com",
+                        password = "12341234",
+                        nickname = "닉네임1",
+                        height = 100,
+                        weight = 100,
+                        point = 0,
+                        profileImgSeq = 0L
+                    )
+                )
+            }
         }
     }
 
     private fun initViewModelCallBack() {
-        loginViewModel.joinEvent.observe(this) {
-            startActivity(Intent(this, JoinActivity::class.java))
-        }
-    }
-
-    private val webViewClientResponseLogin: WebViewClient = object : WebViewClient() {
-        override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): Boolean {
-
-
-            request?.run {
-                if (url.toString().startsWith(REDIRECT_URL)) {
-                    val responseState = url.getQueryParameter("state")
-                    if (responseState == uniqueState) {
-                        val code = url.getQueryParameter("code")
-                        Log.d("eettt", "shouldOverrideUrlLoading: $code")
-
-                        url.getQueryParameter("code")?.let { code ->
-                            // code를 서버로 전송
-                            loginViewModel.login(code, uniqueState)
-                        } ?: run {
-                            // 로그인 에러
-                            showToast("다시 로그인해주세요.")
-                        }
-                    }
-                }
+        repeatOnStarted {
+            loginViewModel.loginEventFlow.collectLatest { event ->
+                handleEvent(event)
 
             }
-
-            return super.shouldOverrideUrlLoading(view, request)
         }
     }
+
+//    private val webViewClientResponseLogin: WebViewClient = object : WebViewClient() {
+//        override fun shouldOverrideUrlLoading(
+//            view: WebView?,
+//            request: WebResourceRequest?
+//        ): Boolean {
+//            request?.run {
+//                if (url.toString().startsWith(REDIRECT_URL)) {
+//                    val responseState = url.getQueryParameter("state")
+//                    if (responseState == uniqueState) {
+//                        val code = url.getQueryParameter("code")
+//                        Log.d("eettt", "shouldOverrideUrlLoading: $code")
+//
+//                        url.getQueryParameter("code")?.let { code ->
+//                            // code를 서버로 전송
+////                            loginViewModel.login(code, uniqueState)
+//                        } ?: run {
+//                            // 로그인 에러
+//                            showToast("다시 로그인해주세요.")
+//                        }
+//                    }
+//                }
+//
+//            }
+//
+//            return super.shouldOverrideUrlLoading(view, request)
+//        }
+//    }
 
     fun loadWebview() {
 
@@ -104,14 +123,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             .build()
 
 
-        binding.webviewKakao.apply {
-            visibility = View.VISIBLE
-            webViewClient = webViewClientResponseLogin
-            settings.loadWithOverviewMode = true // WebView 화면 크기에 맞추도록 설정
-            settings.useWideViewPort = true // wide viewport 설정 - loadWithOverviewMode와 같이 써야함
-            settings.javaScriptEnabled = true
-            loadUrl(uri.toString())
-        }
+//        binding.webviewKakao.apply {
+//            visibility = View.VISIBLE
+//            webViewClient = webViewClientResponseLogin
+//            settings.loadWithOverviewMode = true // WebView 화면 크기에 맞추도록 설정
+//            settings.useWideViewPort = true // wide viewport 설정 - loadWithOverviewMode와 같이 써야함
+//            settings.javaScriptEnabled = true
+//            loadUrl(uri.toString())
+//        }
     }
 
 
@@ -137,6 +156,18 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
             .check()
+    }
+
+    private fun handleEvent(event: Event) {
+        when (event) {
+            is Event.Success -> {
+                showToast(event.message)
+
+            }
+            is Event.Fail -> {
+                showToast(event.message)
+            }
+        }
     }
 }
 

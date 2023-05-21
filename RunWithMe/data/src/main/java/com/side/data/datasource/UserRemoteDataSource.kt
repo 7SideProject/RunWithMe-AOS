@@ -2,8 +2,10 @@ package com.side.data.datasource
 
 import android.util.Log
 import com.side.data.api.UserApi
+import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
+import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.JoinResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
@@ -21,7 +23,11 @@ class UserRemoteDataSource @Inject constructor(
     }
 
     fun join(joinRequest: JoinRequest): Flow<BaseResponse<JoinResponse>> = flow {
-        Log.d("test123", "UserRemoteDataSource join: ")
         emit(userApi.join(joinRequest))
     }
+
+    fun loginWithEmail(emailLoginRequest: EmailLoginRequest): Flow<BaseResponse<EmailLoginResponse>> =
+        flow {
+            emit(userApi.loginWithEmail(emailLoginRequest))
+        }
 }

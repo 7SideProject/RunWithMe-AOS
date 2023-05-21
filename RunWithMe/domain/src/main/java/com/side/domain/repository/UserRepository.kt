@@ -9,6 +9,7 @@ typealias UserResponse = ResultType<BaseResponse<User>>
 
 interface UserRepository {
     fun login(code: String, state: String): Flow<UserResponse>
-
     fun join(user: User): Flow<UserResponse>
+
+    fun loginWithEmail(user: User) : Flow<UserResponse>
 }
