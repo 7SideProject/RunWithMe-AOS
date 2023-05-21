@@ -13,3 +13,9 @@ const val REDIRECT_URL = BuildConfig.redirectURL
 const val BASE_URL = BuildConfig.baseURL
 
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+
+const val DATASTORE_NAME = "preferences_datastore"
+
+const val KEY_INT = 0
+const val KEY_STRING = 1
+const val KEY_BOOLEAN = 2
