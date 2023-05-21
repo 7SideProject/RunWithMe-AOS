@@ -44,16 +44,21 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         initViewModelCallBack()
     }
 
-    private fun initClickListener(){
+    private fun initClickListener() {
         binding.apply {
             btnLoginKakao.setOnClickListener {
                 loadWebview()
             }
+
+            btnJoin.setOnClickListener {
+                //회원가입
+                startActivity(Intent(this@LoginActivity, JoinActivity::class.java))
+            }
         }
     }
 
-    private fun initViewModelCallBack(){
-        loginViewModel.joinEvent.observe(this){
+    private fun initViewModelCallBack() {
+        loginViewModel.joinEvent.observe(this) {
             startActivity(Intent(this, JoinActivity::class.java))
         }
     }
@@ -87,7 +92,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             return super.shouldOverrideUrlLoading(view, request)
         }
     }
-    fun loadWebview(){
+
+    fun loadWebview() {
 
         val uri = Uri.parse(KAKAO_LOGIN_URL)
             .buildUpon()
@@ -109,16 +115,18 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     }
 
 
-    private fun requestPermission(){
+    private fun requestPermission() {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 @RequiresApi(Build.VERSION_CODES.Q)
                 override fun onPermissionGranted() {
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_DENIED) {
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
 
                     }
                 }
+
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
                     showToast("권한을 허가해주세요.")
                 }
