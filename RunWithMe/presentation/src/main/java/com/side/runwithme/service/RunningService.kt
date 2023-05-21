@@ -68,16 +68,14 @@ class RunningService : LifecycleService() {
     private var pauseLatLng = LatLng(0.0, 0.0)
     private var stopLastLatLng = LatLng(0.0, 0.0)
 
-//    companion object {
-        val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
-        val pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
-        val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
-        var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
-        val sumDistance = MutableLiveData<Float>(0f)
-//    }
+    val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
+    val pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
+    val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
+    var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
+    val sumDistance = MutableLiveData<Float>(0f)
 
     inner class LocalBinder : Binder() {
-        fun getService() : RunningService = this@RunningService
+        fun getService(): RunningService = this@RunningService
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -144,14 +142,13 @@ class RunningService : LifecycleService() {
     private fun startTimerJob() {
         lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
-            while (isRunning.value!!){
-                /** 코드 이해 **/
+            while (isRunning.value!!) {
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
                 timeRunInMillis.postValue(totalTime + lapTime)
                 // 알림창에 표시될 시간 초 단위로 계산함
-                if(timeRunInMillis.value!! >= lastSecondTimestamp + 1000L){
+                if (timeRunInMillis.value!! >= lastSecondTimestamp + 1000L) {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimestamp += 1000L
                 }
@@ -317,7 +314,6 @@ class RunningService : LifecycleService() {
         stopSelf()
     }
 
-    /** 여기서부터 다시 클린 코드 작업**/
     // Notification 등록, 서비스 시작
     private fun startForegroundService() {
         startTimer()
@@ -334,7 +330,7 @@ class RunningService : LifecycleService() {
         // 초가 흐를 때마다 알림창의 시간 갱신
         timeRunInSeconds.observe(this) {
             // 서비스 종료 상태가 아닐 때
-            if(!serviceKilled) {
+            if (!serviceKilled) {
                 val notification = currentNotificationBuilder.setContentText(
                     TrackingUtility.getFormattedStopWatchTime(it * 1000L)
                 )
