@@ -3,44 +3,52 @@ package com.side.runwithme.view.login
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.util.Log
-import android.view.View
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModel
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.side.domain.model.User
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityLoginBinding
-import com.side.runwithme.util.KAKAO_LOGIN_URL
-import com.side.runwithme.util.KAKAO_REST_API_KEY
-import com.side.runwithme.util.REDIRECT_URL
-import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.util.*
+import com.side.runwithme.util.preferencesKeys.EMAIL
+import com.side.runwithme.util.preferencesKeys.JWT
+import com.side.runwithme.util.preferencesKeys.REFRESH_TOKEN
+import com.side.runwithme.util.preferencesKeys.SEQ
+import com.side.runwithme.util.preferencesKeys.WEIGHT
 import com.side.runwithme.view.join.JoinActivity
+import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
 
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
 
+    @Inject
+    lateinit var dataStore: DataStore<Preferences>
+
     private val loginViewModel by viewModels<LoginViewModel>()
 
-    private val uniqueState = UUID.randomUUID().toString()
 
 
     override fun init() {
 
         requestPermission()
+
+        binding.apply {
+            loginVM = loginViewModel
+        }
 
         initClickListener()
 
@@ -50,27 +58,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun initClickListener() {
         binding.apply {
             btnLoginKakao.setOnClickListener {
-                loadWebview()
+
             }
 
-            btnJoin.setOnClickListener {
+            tvJoin.setOnClickListener {
                 //회원가입
                 startActivity(Intent(this@LoginActivity, JoinActivity::class.java))
             }
 
             btnLogin.setOnClickListener {
-                loginViewModel.loginWithEmail(
-                    User(
-                        seq = 0L,
-                        email = "abcdef@naver.com",
-                        password = "12341234",
-                        nickname = "닉네임1",
-                        height = 100,
-                        weight = 100,
-                        point = 0,
-                        profileImgSeq = 0L
-                    )
-                )
+                loginViewModel.loginWithEmail()
             }
         }
     }
@@ -82,55 +79,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
             }
         }
-    }
-
-//    private val webViewClientResponseLogin: WebViewClient = object : WebViewClient() {
-//        override fun shouldOverrideUrlLoading(
-//            view: WebView?,
-//            request: WebResourceRequest?
-//        ): Boolean {
-//            request?.run {
-//                if (url.toString().startsWith(REDIRECT_URL)) {
-//                    val responseState = url.getQueryParameter("state")
-//                    if (responseState == uniqueState) {
-//                        val code = url.getQueryParameter("code")
-//                        Log.d("eettt", "shouldOverrideUrlLoading: $code")
-//
-//                        url.getQueryParameter("code")?.let { code ->
-//                            // code를 서버로 전송
-////                            loginViewModel.login(code, uniqueState)
-//                        } ?: run {
-//                            // 로그인 에러
-//                            showToast("다시 로그인해주세요.")
-//                        }
-//                    }
-//                }
-//
-//            }
-//
-//            return super.shouldOverrideUrlLoading(view, request)
-//        }
-//    }
-
-    fun loadWebview() {
-
-        val uri = Uri.parse(KAKAO_LOGIN_URL)
-            .buildUpon()
-            .appendQueryParameter("client_id", KAKAO_REST_API_KEY)
-            .appendQueryParameter("redirect_uri", REDIRECT_URL)
-            .appendQueryParameter("response_type", "code")
-            .appendQueryParameter("state", uniqueState)
-            .build()
-
-
-//        binding.webviewKakao.apply {
-//            visibility = View.VISIBLE
-//            webViewClient = webViewClientResponseLogin
-//            settings.loadWithOverviewMode = true // WebView 화면 크기에 맞추도록 설정
-//            settings.useWideViewPort = true // wide viewport 설정 - loadWithOverviewMode와 같이 써야함
-//            settings.javaScriptEnabled = true
-//            loadUrl(uri.toString())
-//        }
     }
 
 
@@ -161,11 +109,50 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun handleEvent(event: Event) {
         when (event) {
             is Event.Success -> {
-                showToast(event.message)
+//                val token = event.data.token
+                val user = event.data
+//
+//                lifecycleScope.launch(Dispatchers.IO) {
+//                    saveToken(token)
+//                    saveUser(user)
+//                }
+
+//                lifecycleScope.launch {
+//                    // 로딩 0.5초간 정지
+//                    // user하고 token 저장하기 위함
+//                    loading()
+//
+//                    showToast("로그인 성공")
+//
+//                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+//                    finish()
+//                }
 
             }
             is Event.Fail -> {
                 showToast(event.message)
+            }
+        }
+    }
+
+    private suspend fun saveUser(user: User){
+        dataStore.saveEncryptStringValue(EMAIL, user.email)
+        dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
+        dataStore.saveValue(WEIGHT, user.weight)
+    }
+    private suspend fun saveToken(jwt: String, refreshToken: String){
+        dataStore.saveEncryptStringValue(JWT, jwt)
+        dataStore.saveEncryptStringValue(REFRESH_TOKEN, refreshToken)
+    }
+
+    private fun loading(){
+        val loadingDialog = LoadingDialog(this)
+        loadingDialog.show()
+        // 로딩이 진행되지 않았을 경우
+        lifecycleScope.launch {
+            delay(500)
+            if(loadingDialog.isShowing){
+                loadingDialog.dismiss()
             }
         }
     }

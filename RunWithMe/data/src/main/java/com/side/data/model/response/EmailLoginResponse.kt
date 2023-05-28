@@ -8,5 +8,4 @@ data class EmailLoginResponse(
     val weight: Int,
     val point: Int
 
-) {
-}
+)
