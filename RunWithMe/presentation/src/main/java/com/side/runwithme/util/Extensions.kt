@@ -12,6 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import decrypt
+import encrypt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -54,12 +56,22 @@ fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
     }
 }
 
+// DataStore 확장 함수
 object preferencesKeys {
     val JWT = stringPreferencesKey("jwt")
+    val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
+    val EMAIL = stringPreferencesKey("email")
+    val SEQ = stringPreferencesKey("seq")
+    val WEIGHT = intPreferencesKey("weight")
 }
 
 suspend fun <T> DataStore<Preferences>.saveValue(key: Preferences.Key<T>, value: T) {
     edit { prefs -> prefs[key] = value }
+}
+
+// 암호화 적용
+suspend fun DataStore<Preferences>.saveEncryptStringValue(key: Preferences.Key<String>, value: String) {
+    edit { prefs -> prefs[key] = encrypt(value) }
 }
 
 suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: Int): Flow<Any> {
@@ -85,5 +97,21 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: I
                 }
                 else -> {}
             }
+        }
+}
+
+// 암호화 적용
+suspend fun DataStore<Preferences>.getDecryptStringValue(key: Preferences.Key<String>): Flow<Any> {
+    return data
+        .catch { exception ->
+            if (exception is IOException) {
+                exception.printStackTrace()
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { prefs ->
+            decrypt(prefs[key] ?: "")
         }
 }
