@@ -9,4 +9,18 @@ data class User(
     val point: Int,
     val profileImgSeq: Long,
     val password: String? = null
-)
+) {
+
+    constructor(email: String, password: String) : this(
+        seq = 0,
+        email = email,
+        nickname = "",
+        height = 0,
+        weight = 0,
+        point = 0,
+        profileImgSeq = 0,
+        password = password
+    )
+
+
+}
