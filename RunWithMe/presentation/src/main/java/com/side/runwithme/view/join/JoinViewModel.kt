@@ -11,8 +11,12 @@ import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,26 +24,70 @@ class JoinViewModel @Inject constructor(
     private val joinUseCase: JoinUseCase
 ) : ViewModel() {
 
+    val email: MutableStateFlow<String> = MutableStateFlow("")
+
+    val password: MutableStateFlow<String> = MutableStateFlow("")
+
+    val nickname: MutableStateFlow<String> = MutableStateFlow("")
+
+    private val _weight = MutableStateFlow<Int>(0)
+    val weight get() = _weight.asStateFlow()
+
+    private val _height = MutableStateFlow<Int>(0)
+    val height get() = _height.asStateFlow()
+
+    private val _imgFile = MutableStateFlow<MultipartBody.Part?>(null)
+    val imgFile get() = _imgFile.asStateFlow()
 
     private val _joinEventFlow = MutableEventFlow<Event>()
     val joinEventFlow get() = _joinEventFlow.asEventFlow()
 
-    fun join(user: User) {
+    fun setHeight(height: Int){
+        this._height.update { height }
+    }
+
+    fun setWeight(weight: Int){
+        this._weight.update { weight }
+    }
+
+    fun setImgFile(imgFile: MultipartBody.Part){
+        this._imgFile.update { imgFile }
+    }
+
+    fun join() {
+        val user = User(
+            seq = 0L,
+            email = "abcdef@naver.com",
+            password = "12341234",
+            nickname = "닉네임1",
+            height = 100,
+            weight = 100,
+            point = 0,
+            profileImgSeq = 0L
+        )
+//        val user = User(
+//            seq = 0L,
+//            email = email.value,
+//            password = password.value,
+//            nickname = nickname.value,
+//            height = height.value,
+//            weight = weight.value,
+//            point = 0,
+//            profileImgSeq = 0L
+//        )
+
         viewModelScope.launch(Dispatchers.IO) {
             joinUseCase(user).collectLatest {
                 when (it) {
                     is ResultType.Success -> {
-                        Log.d("test123", "join: success")
                         _joinEventFlow.emit(Event.Success("회원가입 완료"))
                     }
 
                     is ResultType.Fail -> {
-                        Log.d("test123", "join: fail")
                         _joinEventFlow.emit(Event.Fail(it.data.message))
                     }
 
                     is ResultType.Error -> {
-                        Log.d("test123", "join: error")
                         Log.d("joinError", "${it.exception.message} ")
                     }
                     else -> {
@@ -48,9 +96,8 @@ class JoinViewModel @Inject constructor(
                 }
             }
         }
-
-
     }
+
 
     sealed class Event {
         data class Success(val message: String) : Event()
