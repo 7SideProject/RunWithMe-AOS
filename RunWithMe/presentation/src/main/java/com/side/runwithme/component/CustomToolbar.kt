@@ -56,7 +56,7 @@ class CustomToolbar @JvmOverloads constructor(
 
 
             val title = typedArray.getString(R.styleable.CustomToolbar_title)
-            setTitle(title!!)
+            setTitle(title ?: "")
         }
 
         // 데이터를 캐싱해두어 가비지컬렉션에서 제외시키도록 하는 함수

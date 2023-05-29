@@ -5,8 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
 import com.side.runwithme.util.BASE_URL
-import com.side.runwithme.util.XAccessTokenRequestInterceptor
-import com.side.runwithme.util.XAccessTokenResponseInterceptor
+import com.side.runwithme.util.XAccessTokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,12 +31,10 @@ object RemoteDataModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        xAccessTokenInterceptor: XAccessTokenRequestInterceptor,
-        xAccessTokenResponseInterceptor: XAccessTokenResponseInterceptor
+        xAccessTokenInterceptor: XAccessTokenInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addNetworkInterceptor(xAccessTokenInterceptor)
-            .addNetworkInterceptor(xAccessTokenResponseInterceptor)
             .build()
     }
 
