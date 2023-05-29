@@ -33,7 +33,6 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             loginWithEmailUseCase(user).collectLatest {
-                Log.d("test123", "loginWithEmail: ${it}")
                 when (it) {
                     is ResultType.Success -> {
                         _loginEventFlow.emit(Event.Success(it.data.data))

@@ -21,11 +21,13 @@ import com.side.runwithme.util.preferencesKeys.JWT
 import com.side.runwithme.util.preferencesKeys.REFRESH_TOKEN
 import com.side.runwithme.util.preferencesKeys.SEQ
 import com.side.runwithme.util.preferencesKeys.WEIGHT
+import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.join.JoinActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
 
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -111,22 +113,21 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             is Event.Success -> {
 //                val token = event.data.token
                 val user = event.data
-//
-//                lifecycleScope.launch(Dispatchers.IO) {
-//                    saveToken(token)
-//                    saveUser(user)
-//                }
 
-//                lifecycleScope.launch {
-//                    // 로딩 0.5초간 정지
-//                    // user하고 token 저장하기 위함
-//                    loading()
-//
-//                    showToast("로그인 성공")
-//
-//                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-//                    finish()
-//                }
+                lifecycleScope.launch(Dispatchers.IO) {
+                    saveUser(user)
+                }
+
+                lifecycleScope.launch {
+                    // 로딩 0.5초간 정지
+                    // user하고 token 저장하기 위함
+                    loading()
+
+                    showToast("로그인 성공")
+
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                }
 
             }
             is Event.Fail -> {
@@ -139,10 +140,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         dataStore.saveEncryptStringValue(EMAIL, user.email)
         dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
         dataStore.saveValue(WEIGHT, user.weight)
-    }
-    private suspend fun saveToken(jwt: String, refreshToken: String){
-        dataStore.saveEncryptStringValue(JWT, jwt)
-        dataStore.saveEncryptStringValue(REFRESH_TOKEN, refreshToken)
     }
 
     private fun loading(){
