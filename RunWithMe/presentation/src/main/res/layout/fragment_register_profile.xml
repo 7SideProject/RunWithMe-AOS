@@ -9,21 +9,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <com.side.runwithme.component.CustomToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/toolbar_margin"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/toolbar_margin"
-            android:background="@color/white"
-            app:navigationIcon="@drawable/ic_baseline_arrow_back_24">
-
-            <TextView
-                android:id="@+id/text"
-                style="@style/toolbar_text"
-                android:text="프로필 등록" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:back_image="@drawable/baseline_arrow_back_24"
+            app:title="@string/register_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_profile_top"
@@ -62,7 +56,7 @@
                 style="@style/header_text"
                 tools:text="감스트"
                 android:textColor="@color/white"
-                android:textSize="@dimen/profile_modify"
+                android:textSize="@dimen/fontsize_h4"
                 android:layout_marginStart="24dp"
                 app:layout_constraintBottom_toTopOf="@id/tv_profile_email_value"
                 app:layout_constraintStart_toEndOf="@id/image_user_profile"
@@ -73,7 +67,7 @@
                 style="@style/header_text"
                 tools:text="gamst@gmail.com"
                 android:textColor="@color/white"
-                android:textSize="@dimen/profile_modify"
+                android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@id/tv_user_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_user_name"
                 app:layout_constraintBottom_toBottomOf="@id/image_user_profile"/>
@@ -92,7 +86,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:text="닉네임"
-                android:textSize="@dimen/profile_modify"
+                android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -112,7 +106,7 @@
                 style="@style/header_text"
                 android:layout_marginTop="16dp"
                 android:text="키"
-                android:textSize="@dimen/profile_modify"
+                android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@+id/tv_join_nickname"
                 app:layout_constraintTop_toBottomOf="@id/edit_join_nickname" />
 
@@ -140,7 +134,7 @@
                 style="@style/header_text"
                 android:layout_marginTop="16dp"
                 android:text="몸무게"
-                android:textSize="@dimen/profile_modify"
+                android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@+id/tv_join_nickname"
                 app:layout_constraintTop_toBottomOf="@id/spinner_edit_height" />
 
