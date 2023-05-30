@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.side.runwithme.view.login
 
 import com.google.common.truth.Truth.assertThat
@@ -52,9 +50,9 @@ class LoginViewModelTest() {
         )
 
         val event = loginViewModel.loginEventFlow.first()
-        val result = if(event is LoginViewModel.Event.Success){
+        val result = if (event is LoginViewModel.Event.Success) {
             event.data
-        }else{
+        } else {
             emptyUser
         }
 
@@ -78,6 +76,4 @@ class LoginViewModelTest() {
         // Then
         assertThat(result).isInstanceOf(LoginViewModel.Event.Fail::class.java)
     }
-
-
 }

@@ -34,19 +34,22 @@
     <string name="edit">수정</string>
 
     <string name="route_detail">상세 경로</string>
-    
+
     <string name="challnege_name">챌린지명</string>
     <string name="challenge_start_date_range">시작 범위</string>
     <string name="running_start_time">러닝 시작 시간</string>
     <string name="cost">참가비</string>
     <string name="time">시간</string>
     <string name="distance">거리</string>
+    <string name="km">km</string>
     <string name="week">주</string>
     <string name="day">일</string>
     <string name="search">검색</string>
 
     <string name="my_page">마이페이지</string>
     <string name="edit_profile">프로필 수정</string>
+    <string name="register_profile">프로필 등록</string>
+    <string name="btn_register">등록하기</string>
     <string name="join">회원가입</string>
 
 </resources>
