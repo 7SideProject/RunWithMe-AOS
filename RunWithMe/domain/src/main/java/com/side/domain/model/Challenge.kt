@@ -1,14 +1,15 @@
 package com.side.domain.model
 
+import java.util.Date
+
 data class Challenge(
     val seq : Long,
+    val managerSeq: Long,
     val name: String,
-    val founder: String,
-    val duration: String,
-    val method: String,
-    val often: String,
-    val distance: String,
-    val totalMemberCount : Int,
-    val memberCount: Int,
-    val cost: Int
+    val imgSeq: Long,
+    val goalDays: Long,
+    val goalType: String,
+    val goalAmount: Long,
+    val timeStart : Date,
+    val timeEnd: Date
 )

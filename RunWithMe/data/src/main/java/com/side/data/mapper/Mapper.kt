@@ -14,14 +14,6 @@ fun UserResponse.mapperToUser(): User = this.run {
 fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
     Challenge(
         seq,
-        name,
-        founder,
-        duration,
-        method,
-        often,
-        distance,
-        totalMemberCount,
-        memberCount,
-        cost
+        managerSeq, name, imgSeq, goalDays, goalType, goalAmount, timeStart, timeEnd
     )
 }

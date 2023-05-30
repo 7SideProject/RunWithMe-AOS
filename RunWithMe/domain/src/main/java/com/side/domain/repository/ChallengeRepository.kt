@@ -9,5 +9,9 @@ typealias ChallengeListResponse = ResultType<BaseResponse<List<Challenge>>>
 
 interface ChallengeRepository {
 
-    fun getChallengeList(): Flow<ChallengeListResponse>
+    fun getChallengeList(
+        page: Int,
+        size: Int,
+        sort: Array<String>
+    ): Flow<ChallengeListResponse>
 }

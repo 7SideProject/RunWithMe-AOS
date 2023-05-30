@@ -6,8 +6,12 @@ import retrofit2.http.GET
 
 interface ChallengeApi {
 
-    @GET("challenge")
-    suspend fun getChallengeList(): BaseResponse<List<ChallengeResponse>>
+    @GET("challenge/all")
+    suspend fun getChallengeList(
+        page: Int,
+        size: Int,
+        sort: Array<String>
+    ): BaseResponse<List<ChallengeResponse>>
 
 
 }

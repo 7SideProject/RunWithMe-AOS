@@ -24,6 +24,7 @@ class UserRepositoryImpl @Inject constructor(
             emit(
                 ResultType.Success(
                     BaseResponse(
+                        it.code,
                         it.message,
                         it.data.mapperToUser()
                     )

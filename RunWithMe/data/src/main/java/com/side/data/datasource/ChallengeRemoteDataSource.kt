@@ -12,7 +12,11 @@ import javax.inject.Singleton
 class ChallengeRemoteDataSource @Inject constructor(
     private val challengeApi: ChallengeApi
 ) {
-    fun getChallengeList(): Flow<BaseResponse<List<ChallengeResponse>>> = flow {
-        emit(challengeApi.getChallengeList())
+    fun getChallengeList(
+        page: Int,
+        size: Int,
+        sort: Array<String>
+    ): Flow<BaseResponse<List<ChallengeResponse>>> = flow {
+        emit(challengeApi.getChallengeList(page, size, sort))
     }
 }

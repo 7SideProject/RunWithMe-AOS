@@ -15,8 +15,8 @@ class ChallengeListAdapter() : ListAdapter<Challenge, ChallengeListAdapter.Chall
         fun bind(challenge: Challenge) {
             binding.apply {
                 this.challenge = challenge
-                tvChallengeMember.text = "${challenge.memberCount} / ${challenge.totalMemberCount}"
-                tvChallengeCost.text = "${challenge.cost} P"
+//                tvChallengeMember.text = "${challenge.memberCount} / ${challenge.totalMemberCount}"
+//                tvChallengeCost.text = "${challenge.cost} P"
                 executePendingBindings()
             }
 

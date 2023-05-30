@@ -5,8 +5,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class getChallengeListUseCase @Inject constructor(
+class GetChallengeListUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ) {
-    operator fun invoke() = challengeRepository.getChallengeList()
+    operator fun invoke(
+        page: Int,
+        size: Int,
+        sort: Array<String>
+    ) = challengeRepository.getChallengeList(page, size, sort)
 }

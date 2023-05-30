@@ -35,7 +35,7 @@ class ChallengeListFragment : BaseFragment<FragmentChallengeListBinding>(R.layou
     }
 
     private fun initChallengeList() {
-        challengeViewModel.getChallenges()
+//        challengeViewModel.getChallenges()
         challengeListAdapter = ChallengeListAdapter()
         binding.rvChallengeList.adapter = challengeListAdapter
     }
