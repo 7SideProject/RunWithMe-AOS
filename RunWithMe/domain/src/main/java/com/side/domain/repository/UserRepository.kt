@@ -8,5 +8,8 @@ import kotlinx.coroutines.flow.Flow
 typealias UserResponse = ResultType<BaseResponse<User>>
 
 interface UserRepository {
-    fun loginUser(accessToken: String): Flow<UserResponse>
+    fun login(code: String, state: String): Flow<UserResponse>
+    fun join(user: User): Flow<UserResponse>
+
+    fun loginWithEmail(user: User) : Flow<UserResponse>
 }

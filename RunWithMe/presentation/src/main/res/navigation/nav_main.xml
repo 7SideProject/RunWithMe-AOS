@@ -2,17 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_main"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/HomeFragment"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/HomeFragment"
         android:name="com.side.runwithme.view.home.HomeFragment"
-        android:label="HomeFragment" >
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_recommendFragment"
             app:destination="@id/recommendFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_myPageFragment"
+            app:destination="@id/myPageFragment" />
     </fragment>
-       <fragment
+    <fragment
         android:id="@+id/challengeListFragment"
         android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
         android:label="ChallengeListFragment" >
@@ -51,4 +56,8 @@
         android:id="@+id/favoriteDialog"
         android:name="com.side.runwithme.view.recommend_detail.favorite.FavoriteDialog"
         android:label="FavoriteDialog" />
+    <fragment
+        android:id="@+id/myPageFragment"
+        android:name="com.side.runwithme.view.my_page.MyPageFragment"
+        android:label="MyPageFragment" />
 </navigation>

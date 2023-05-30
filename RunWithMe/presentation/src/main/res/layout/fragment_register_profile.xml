@@ -85,7 +85,7 @@
                 style="@style/header_text"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
-                android:text="닉네임"
+                android:text="@string/nickname"
                 android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -105,7 +105,7 @@
                 android:id="@+id/tv_join_height"
                 style="@style/header_text"
                 android:layout_marginTop="16dp"
-                android:text="키"
+                android:text="@string/height"
                 android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@+id/tv_join_nickname"
                 app:layout_constraintTop_toBottomOf="@id/edit_join_nickname" />
@@ -122,7 +122,7 @@
                 android:id="@+id/tv_join_height_unit"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="cm"
+                android:text="@string/height_unit"
                 android:fontFamily="@font/noto_sans_regular"
                 android:textColor="@color/black_high_emphasis"
                 android:textSize="12sp"
@@ -133,7 +133,7 @@
                 android:id="@+id/tv_join_weight"
                 style="@style/header_text"
                 android:layout_marginTop="16dp"
-                android:text="몸무게"
+                android:text="@string/weight"
                 android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@+id/tv_join_nickname"
                 app:layout_constraintTop_toBottomOf="@id/spinner_edit_height" />
@@ -150,7 +150,7 @@
                 android:id="@+id/tv_join_weight_unit"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="kg"
+                android:text="@string/weight_unit"
                 android:fontFamily="@font/noto_sans_regular"
                 android:textColor="@color/black_high_emphasis"
                 android:textSize="12sp"
@@ -158,12 +158,12 @@
                 app:layout_constraintBottom_toBottomOf="@id/spinner_edit_weight" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_modify"
+                android:id="@+id/btn_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginBottom="16dp"
-                android:text="등록 하기"
+                android:text="@string/btn_register"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:fontFamily="@font/noto_sans_bold"
