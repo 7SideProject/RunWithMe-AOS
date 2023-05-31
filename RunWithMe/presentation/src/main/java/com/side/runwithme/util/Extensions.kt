@@ -6,6 +6,20 @@ import android.graphics.Insets
 import android.graphics.Point
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import decrypt
+import encrypt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 fun getDeviceSize(activity: Activity): Point {
     val windowManager = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -34,4 +48,70 @@ fun WindowManager.currentWindowMetricsPointCompat(): Point {
             defaultDisplay.getSize(this)
         }
     }
+}
+
+fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
+    lifecycleScope.launch {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED, block)
+    }
+}
+
+// DataStore 확장 함수
+object preferencesKeys {
+    val JWT = stringPreferencesKey("jwt")
+    val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
+    val EMAIL = stringPreferencesKey("email")
+    val SEQ = stringPreferencesKey("seq")
+    val WEIGHT = intPreferencesKey("weight")
+}
+
+suspend fun <T> DataStore<Preferences>.saveValue(key: Preferences.Key<T>, value: T) {
+    edit { prefs -> prefs[key] = value }
+}
+
+// 암호화 적용
+suspend fun DataStore<Preferences>.saveEncryptStringValue(key: Preferences.Key<String>, value: String) {
+    edit { prefs -> prefs[key] = encrypt(value) }
+}
+
+suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: Int): Flow<Any> {
+    return data
+        .catch { exception ->
+            if (exception is IOException) {
+                exception.printStackTrace()
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { prefs ->
+            prefs[key] ?: when (type) {
+                KEY_INT -> {
+                    0
+                }
+                KEY_BOOLEAN -> {
+                    false
+                }
+                KEY_STRING -> {
+                    ""
+                }
+                else -> {}
+            }
+        }
+}
+
+// 암호화 적용
+suspend fun DataStore<Preferences>.getDecryptStringValue(key: Preferences.Key<String>): Flow<Any> {
+    return data
+        .catch { exception ->
+            if (exception is IOException) {
+                exception.printStackTrace()
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { prefs ->
+            decrypt(prefs[key] ?: "")
+        }
 }
