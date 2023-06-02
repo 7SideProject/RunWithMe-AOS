@@ -8,6 +8,8 @@ import android.location.Location
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.naver.maps.geometry.LatLng
@@ -20,13 +22,19 @@ import com.side.runwithme.databinding.ActivityRunningBinding
 import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.util.*
+import com.side.runwithme.util.preferencesKeys.WEIGHT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.Math.round
+import javax.inject.Inject
 
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running),
     OnMapReadyCallback {
+
+    @Inject
+    lateinit var dataStore: DataStore<Preferences>
 
     private lateinit var polyline: PathOverlay
 
@@ -38,8 +46,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private lateinit var latLngBoundsBuilder: LatLngBounds.Builder
 
     private lateinit var runningService: RunningService
-
-    private var firstRun = true
 
     private var type: String = GOAL_TYPE_TIME
     private var goal = 60 * 1000L
@@ -55,13 +61,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
 //        weight = sharedPref.getInt(USER_WEIGHT, 70)
 //        type = sharedPref.getString(RUN_GOAL_TYPE, GOAL_TYPE_TIME)!!
+        lifecycleScope.launch {
+            weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
+        }
 
 
         initMapView()
 
         initClickListener()
-
-//        initObserve()
 
         firstStart()
 
@@ -72,7 +79,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         latLngBoundsBuilder = LatLngBounds.Builder()
     }
 
-    private fun initClickListener(){
+    private fun initClickListener() {
         binding.apply {
             ibStart.setOnClickListener {
                 ibStart.visibility = View.GONE
@@ -82,7 +89,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
             }
 
-            ibPause.setOnClickListener{
+            ibPause.setOnClickListener {
                 ibStart.visibility = View.VISIBLE
                 ibStop.visibility = View.VISIBLE
                 ibPause.visibility = View.GONE
@@ -112,7 +119,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap.moveCamera(CameraUpdate.fitBounds(bounds, 300))
     }
 
-    private fun initMapView(){
+    private fun initMapView() {
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
             ?: MapFragment.newInstance().also {
@@ -127,11 +134,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         polyline = PathOverlay()
     }
 
-    private fun initObserve(){
+    private fun initObserve() {
 
         // 좌표 observe
-        runningService.pathPoints.observe(this){
-            if(it.isNotEmpty()){
+        runningService.pathPoints.observe(this) {
+            if (it.isNotEmpty()) {
 
                 val lat = it.last().latitude
                 val lng = it.last().longitude
@@ -141,12 +148,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
                 latLngBoundsBuilder.include(latlng)
 
-                if(it.size >= 2){
+                if (it.size >= 2) {
                     drawPolyline()
                 }
 
                 // 경로 최적화
-                if(it.size >= 4){
+                if (it.size >= 4) {
                     optimizationPolyLine()
                 }
 
@@ -154,38 +161,40 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
 
         // 시간(타이머) 경과 observe
-        runningService.timeRunInMillis.observe(this){
+        runningService.timeRunInMillis.observe(this) {
             currentTimeInMillis = it
             val formattedTime = TrackingUtility.getFormattedStopWatchTimeSummery(it)
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if(it > 0 && type == GOAL_TYPE_TIME) {
-                binding.progressBarGoal.progress = if ((it / (goal / 100)).toInt() >= 100) 100 else (it / (goal / 100)).toInt()
+            if (it > 0 && type == GOAL_TYPE_TIME) {
+                binding.progressBarGoal.progress =
+                    if ((it / (goal / 100)).toInt() >= 100) 100 else (it / (goal / 100)).toInt()
             }
         }
 
         // 거리 observe
-        runningService.sumDistance.observe(this){
+        runningService.sumDistance.observe(this) {
             sumDistance = it
             changeDistanceText(sumDistance)
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if(sumDistance > 0 && type == GOAL_TYPE_DISTANCE) {
-                binding.progressBarGoal.progress = if ((sumDistance / (goal / 100)).toInt() >= 100) 100 else (sumDistance / (goal / 100)).toInt()
+            if (sumDistance > 0 && type == GOAL_TYPE_DISTANCE) {
+                binding.progressBarGoal.progress =
+                    if ((sumDistance / (goal / 100)).toInt() >= 100) 100 else (sumDistance / (goal / 100)).toInt()
             }
         }
 
         // 러닝 뛰고 있는 지 observe
-        runningService.isRunning.observe(this){
-            if(it){ // 러닝을 뛰고 있는 경우
+        runningService.isRunning.observe(this) {
+            if (it) { // 러닝을 뛰고 있는 경우
                 binding.apply {
                     ibStart.visibility = View.GONE
                     ibStop.visibility = View.GONE
                     ibPause.visibility = View.VISIBLE
                 }
-            }else{ // 일시 정지 된 경우
+            } else { // 일시 정지 된 경우
                 binding.apply {
                     ibStart.visibility = View.VISIBLE
                     ibStop.visibility = View.VISIBLE
@@ -216,13 +225,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val lastDistance = result[0]
 
         // 10미터 미만으로 너무 가까운 점이면 삭제
-        if(lastDistance < 10){
+        if (lastDistance < 10) {
             naverLatLng.removeAt(naverLatLng.size - 3)
             return
         }
 
         // 100미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
-        if(lastDistance >= 100) return
+        if (lastDistance >= 100) return
 
         // 적당한 거리라면 각도 비교
         val v1: Vector = getVector(first, second) // 기존 벡터
@@ -231,13 +240,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val cosine = getVectorDotProduct(v1, v2) / (getVectorDistance(v1) * getVectorDistance(v2))
 
         // 거리가 가까울 땐 +- 5도 (거의 직선인 경우 삭제)
-        if(lastDistance < 50){
-            if(cosine > Math.cos(deg2rad(20.0))){
+        if (lastDistance < 50) {
+            if (cosine > Math.cos(deg2rad(20.0))) {
                 naverLatLng.removeAt(naverLatLng.size - 3)
                 return
             }
-        }else{ // 거리가 멀어지면 여유범위 줄이기
-            if(cosine > Math.cos(deg2rad(10.0))){
+        } else { // 거리가 멀어지면 여유범위 줄이기
+            if (cosine > Math.cos(deg2rad(10.0))) {
                 naverLatLng.removeAt(naverLatLng.size - 3)
                 return
             }
@@ -277,8 +286,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         grantResults: IntArray
     ) {
 
-        if (locationSource.onRequestPermissionsResult(requestCode, permissions,
-                grantResults)) {
+        if (locationSource.onRequestPermissionsResult(
+                requestCode, permissions,
+                grantResults
+            )
+        ) {
             if (!locationSource.isActivated) { // 권한 거부됨
                 naverMap.locationTrackingMode = LocationTrackingMode.None
             }
@@ -289,24 +301,42 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun firstStart() {
-//        if(RunningService.isFirstRun){
-        if(firstRun){
-            lifecycleScope.launch(Dispatchers.Main) {
-                sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
-                delay(3000L)
-                sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
-                // bindService
-                Intent(this@RunningActivity, RunningService::class.java).also { intent ->
-                    bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-                }
-                delay(1000L)
 
-            }
+        val runningLoadingDialog = RunningLoadingDialog(this)
+        runningLoadingDialog.show()
+
+//        lifecycleScope.launch(Dispatchers.Main) {
+//            sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
+//            delay(3000L)
+//            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+//            // bindService
+//            Intent(this@RunningActivity, RunningService::class.java).also { intent ->
+//                bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+//            }
+//            delay(1000L)
+//            runningLoadingDialog.dismiss()
+//        }
+
+        lifecycleScope.launch {
+            startRun()
+            runningLoadingDialog.dismiss()
         }
+
+    }
+
+    private suspend fun startRun() {
+        sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
+        delay(3000L)
+        sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+        // bindService
+        Intent(this@RunningActivity, RunningService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+        delay(1000L)
     }
 
     // 달리기 종료
-    private fun stopRun(){
+    private fun stopRun() {
         unbindService(serviceConnection)
         sendCommandToService(ACTION_STOP_SERVICE)
     }
@@ -318,34 +348,34 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         polyline.map = naverMap
     }
 
-    private fun changeTimeText(time: String){
+    private fun changeTimeText(time: String) {
         binding.apply {
             tvTime.text = time
 
-            if(type == GOAL_TYPE_TIME){
+            if (type == GOAL_TYPE_TIME) {
                 /** goal amount 변경 **/
             }
         }
     }
 
-    private fun changeDistanceText(sumDistance : Float){
+    private fun changeDistanceText(sumDistance: Float) {
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if(type == GOAL_TYPE_DISTANCE){
+            if (type == GOAL_TYPE_DISTANCE) {
                 /** goal amount 변경 **/
             }
         }
     }
 
-    private fun changeCalorie(sumDistance: Float){
+    private fun changeCalorie(sumDistance: Float) {
         caloriesBurned = round((sumDistance / 1000f) * weight).toInt()
         binding.tvCalorie.text = "$caloriesBurned"
     }
 
 
     // 서비스에게 명령을 전달함
-    private fun sendCommandToService(action : String) {
+    private fun sendCommandToService(action: String) {
         Intent(this, RunningService::class.java).also {
             it.action = action
             this.startService(it)
