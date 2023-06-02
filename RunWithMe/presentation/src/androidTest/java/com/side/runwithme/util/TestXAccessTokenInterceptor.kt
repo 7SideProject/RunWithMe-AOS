@@ -3,18 +3,16 @@ package com.side.runwithme.util
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.side.runwithme.util.preferencesKeys.JWT
-import dagger.hilt.android.AndroidEntryPoint
 import decrypt
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
+import javax.inject.Named
 
-private const val TAG = "XAccessTokenInterceptor"
-
-class XAccessTokenInterceptor @Inject constructor(
+class TestXAccessTokenInterceptor @Inject constructor(
+    @field:Named("testdatastore")
     private val dataStore: DataStore<Preferences>
 ) : Interceptor {
 
@@ -22,7 +20,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
         var token = ""
         runBlocking {
-            token = dataStore.getDecryptStringValue(JWT).first().toString()
+            token = dataStore.getDecryptStringValue(preferencesKeys.JWT).first().toString()
         }
 
         val request = chain.request()
@@ -79,7 +77,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
     private suspend fun saveToken(jwt: String, refreshToken: String) {
         if(jwt != "") {
-            dataStore.saveEncryptStringValue(JWT, jwt)
+            dataStore.saveEncryptStringValue(preferencesKeys.JWT, jwt)
         }
 
         if(refreshToken != "") {
