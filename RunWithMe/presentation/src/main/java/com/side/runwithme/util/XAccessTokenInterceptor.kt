@@ -21,7 +21,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
         var token = ""
         runBlocking {
-            dataStore.getDecryptStringValue(JWT)
+            token = dataStore.getDecryptStringValue(JWT).first().toString()
         }
 
         val request = chain.request()
