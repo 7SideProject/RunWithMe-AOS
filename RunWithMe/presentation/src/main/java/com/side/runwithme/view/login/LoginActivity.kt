@@ -27,6 +27,7 @@ import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
 
 import dagger.hilt.android.AndroidEntryPoint
+import initKeyStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -69,6 +70,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             }
 
             btnLogin.setOnClickListener {
+                initKeyStore(Calendar.getInstance().timeInMillis.toString())
                 loginViewModel.loginWithEmail()
             }
         }
