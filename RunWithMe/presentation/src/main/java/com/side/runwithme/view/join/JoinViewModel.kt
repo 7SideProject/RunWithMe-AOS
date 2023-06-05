@@ -57,24 +57,14 @@ class JoinViewModel @Inject constructor(
     fun join() {
         val user = User(
             seq = 0L,
-            email = "abcdef@naver.com",
-            password = "12341234",
-            nickname = "닉네임1",
-            height = 100,
-            weight = 100,
+            email = email.value,
+            password = password.value,
+            nickname = nickname.value,
+            height = height.value,
+            weight = weight.value,
             point = 0,
             profileImgSeq = 0L
         )
-//        val user = User(
-//            seq = 0L,
-//            email = email.value,
-//            password = password.value,
-//            nickname = nickname.value,
-//            height = height.value,
-//            weight = weight.value,
-//            point = 0,
-//            profileImgSeq = 0L
-//        )
 
         viewModelScope.launch(Dispatchers.IO) {
             joinUseCase(user).collectLatest {
