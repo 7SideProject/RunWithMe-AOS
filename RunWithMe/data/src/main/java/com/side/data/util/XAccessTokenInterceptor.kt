@@ -1,17 +1,14 @@
-package com.side.runwithme.util
+package com.side.data.util
 
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.side.runwithme.util.preferencesKeys.JWT
-import decrypt
+import com.side.data.util.preferencesKeys.JWT
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
-
-private const val TAG = "XAccessTokenInterceptor"
 
 class XAccessTokenInterceptor @Inject constructor(
     private val dataStore: DataStore<Preferences>
@@ -81,7 +78,7 @@ class XAccessTokenInterceptor @Inject constructor(
             dataStore.saveEncryptStringValue(JWT, jwt)
         }
 
-        if(refreshToken != "") {
+        if(refreshToken != "") { // 여기에 토큰 만료 exception throw 하면 되지 않을까 ..?
             dataStore.saveEncryptStringValue(preferencesKeys.REFRESH_TOKEN, refreshToken)
         }
     }

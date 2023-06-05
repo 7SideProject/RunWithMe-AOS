@@ -4,8 +4,8 @@ package com.side.runwithme.module
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
+import com.side.data.util.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
-import com.side.runwithme.util.XAccessTokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

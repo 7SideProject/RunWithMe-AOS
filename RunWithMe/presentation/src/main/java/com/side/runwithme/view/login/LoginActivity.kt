@@ -12,22 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import com.side.domain.model.User
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityLoginBinding
 import com.side.runwithme.util.*
-import com.side.runwithme.util.preferencesKeys.EMAIL
-import com.side.runwithme.util.preferencesKeys.JWT
-import com.side.runwithme.util.preferencesKeys.REFRESH_TOKEN
-import com.side.runwithme.util.preferencesKeys.SEQ
-import com.side.runwithme.util.preferencesKeys.WEIGHT
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.join.JoinActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
-
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,11 +29,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
 
-    @Inject
-    lateinit var dataStore: DataStore<Preferences>
 
     private val loginViewModel by viewModels<LoginViewModel>()
-
 
 
     override fun init() {
@@ -111,16 +100,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun handleEvent(event: Event) {
         when (event) {
             is Event.Success -> {
-//                val token = event.data.token
-                val user = event.data
-
-                lifecycleScope.launch(Dispatchers.IO) {
-                    saveUser(user)
-                }
 
                 lifecycleScope.launch {
-                    // 로딩 0.5초간 정지
-                    // user하고 token 저장하기 위함
+                    // 로딩 0.4초간 정지
+                    // dataStore에 저장하는 과정 기다리기
                     loading()
 
                     showToast("로그인 성공")
@@ -136,19 +119,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         }
     }
 
-    private suspend fun saveUser(user: User){
-        dataStore.saveEncryptStringValue(EMAIL, user.email)
-        dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
-        dataStore.saveValue(WEIGHT, user.weight)
-    }
 
-    private fun loading(){
+    private fun loading() {
         val loadingDialog = LoadingDialog(this)
         loadingDialog.show()
         // 로딩이 진행되지 않았을 경우
         lifecycleScope.launch {
-            delay(500)
-            if(loadingDialog.isShowing){
+            delay(400)
+            if (loadingDialog.isShowing) {
                 loadingDialog.dismiss()
             }
         }
