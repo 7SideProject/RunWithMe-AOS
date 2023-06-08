@@ -4,10 +4,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
@@ -17,24 +19,43 @@ import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import com.side.domain.model.AllRunRecord
+import com.side.domain.model.Coordinate
+import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
 import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.util.*
 import com.side.runwithme.util.preferencesKeys.WEIGHT
+import com.side.runwithme.view.MainActivity
+import com.side.runwithme.view.loading.LoadingDialog
+import com.side.runwithme.view.login.LoginViewModel
+import com.side.runwithme.view.running_result.RunningResultActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.lang.Math.round
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_running),
     OnMapReadyCallback {
 
     @Inject
     lateinit var dataStore: DataStore<Preferences>
+
+    private val runningViewModel: RunningViewModel by viewModels<RunningViewModel>()
 
     private lateinit var polyline: PathOverlay
 
@@ -56,11 +77,20 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private var sumDistance: Float = 0f
     private var currentTimeInMillis = 0L
 
+    private lateinit var startTime: String
+    private var challengeSeq: Int = 0
+    private lateinit var imgFile: MultipartBody.Part
+    private val coordinates : MutableList<Coordinate> = mutableListOf()
+    private lateinit var runRecord: RunRecord
+    private var isStopError = false
+
+    private lateinit var loadingDialog: LoadingDialog
+
     override fun init() {
         initLatLngBounds()
+        val intent = Intent()
+        challengeSeq = intent.getIntExtra("challengeSeq", 0)
 
-//        weight = sharedPref.getInt(USER_WEIGHT, 70)
-//        type = sharedPref.getString(RUN_GOAL_TYPE, GOAL_TYPE_TIME)!!
         lifecycleScope.launch {
             weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
         }
@@ -73,6 +103,34 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         firstStart()
 
         initDrawLine()
+
+        initViewModelCallback()
+    }
+
+    private fun initViewModelCallback(){
+        repeatOnStarted {
+            runningViewModel.postRunRecordEventFlow.collectLatest {event ->
+                handleEvent(event)
+            }
+        }
+    }
+
+    private fun handleEvent(event: RunningViewModel.Event) {
+        when (event) {
+            is RunningViewModel.Event.Success -> {
+                loadingDialog.dismiss()
+                val intent = Intent(this, RunningResultActivity::class.java)
+                intent.putExtra("allRunRecord", AllRunRecord(runRecord = runRecord, coordinates = coordinates, imgFile = imgFile))
+                startActivity(Intent(this, RunningResultActivity::class.java))
+                finish()
+            }
+            is RunningViewModel.Event.Fail -> {
+                showToast("다시 한 번 시도해주세요.")
+            }
+            is RunningViewModel.Event.ServerError -> {
+                showToast("서버가 불안정합니다. 다시 한 번 시도해주세요.")
+            }
+        }
     }
 
     private fun initLatLngBounds() {
@@ -98,9 +156,53 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
 
             ibStop.setOnClickListener {
-                stopRun()
-                takeSnapShot()
+                if(!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
+                    stopRun()
+                    endToSaveData()
+                    isStopError = true
+                }
+
+                runningViewModel.postRunRecord(
+                    challengeSeq = challengeSeq,
+                    allRunRecord = AllRunRecord(runRecord = runRecord, coordinates = coordinates, imgFile = imgFile)
+                )
+
+                lifecycleScope.launch {
+                    loading(3000L)
+                }
             }
+        }
+    }
+
+    private fun endToSaveData(){
+        takeSnapShot()
+        changeCoordinates()
+        saveRunRecord()
+    }
+
+    private fun saveRunRecord(){
+        runRecord = RunRecord(
+            runRecordSeq = 0,
+            runImageSeq = 0,
+            runningStartTime = startTime,
+            runningEndTime = timeFormatter(System.currentTimeMillis()),
+            runningTime = (currentTimeInMillis/ 1000).toInt(),
+            runningDistance = sumDistance.toInt(),
+            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
+            runningCalorieBurned = caloriesBurned,
+            runningStartingLat = coordinates.first().latitude,
+            runningStartingLng = coordinates.first().longitude,
+            completed = "",
+            userName = "",
+            userSeq = 0,
+            challengeName = "",
+            challengeSeq = 0
+        )
+    }
+
+    private fun changeCoordinates(){
+        for(latlng in naverLatLng){
+            coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
         }
     }
 
@@ -108,9 +210,31 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         moveLatLngBounds()
 
         naverMap.takeSnapshot {
-            // image 넘기기
-//            binding.img.setImageBitmap(it)
+            // image 생성
+            imgFile = createMultiPart(it)
+
         }
+    }
+
+    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
+        var imageFile: File? = null
+        try {
+            imageFile = createFileFromBitmap(bitmap)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
+        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
+    }
+
+    @Throws(IOException::class)
+    private fun createFileFromBitmap(bitmap: Bitmap): File? {
+        val newFile = File(this.filesDir, "profile_${System.currentTimeMillis()}")
+        val fileOutputStream = FileOutputStream(newFile)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
+        fileOutputStream.close()
+        return newFile
     }
 
     // 이동한 전체 polyLine 담기
@@ -327,7 +451,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private suspend fun startRun() {
         sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
         delay(3000L)
+
+        startTime = timeFormatter(System.currentTimeMillis())
+
         sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+
         // bindService
         Intent(this@RunningActivity, RunningService::class.java).also { intent ->
             bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -404,5 +532,17 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // 현위치 버튼 활성화
         naverMap.uiSettings.isLocationButtonEnabled = true
 
+    }
+
+    private fun loading(timeinMillis: Long){
+        loadingDialog = LoadingDialog(this)
+        loadingDialog.show()
+        // 로딩이 진행되지 않았을 경우
+        lifecycleScope.launch {
+            delay(timeinMillis)
+            if(loadingDialog.isShowing){
+                loadingDialog.dismiss()
+            }
+        }
     }
 }
