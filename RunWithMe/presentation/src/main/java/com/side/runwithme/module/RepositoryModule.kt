@@ -1,6 +1,8 @@
 package com.side.runwithme.module
 
+import com.side.data.repository.RunningRepositoryImpl
 import com.side.data.repository.UserRepositoryImpl
+import com.side.domain.repository.RunningRepository
 import com.side.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -18,5 +20,10 @@ abstract class RepositoryModule {
         impl: UserRepositoryImpl
     ): UserRepository
 
+    @Binds
+    @Singleton
+    abstract fun provideRunningRepository(
+        impl: RunningRepositoryImpl
+    ): RunningRepository
 
 }
