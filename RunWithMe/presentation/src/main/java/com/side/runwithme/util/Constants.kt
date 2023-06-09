@@ -25,6 +25,11 @@ const val ACTION_PAUSE_SERVICE = "action_pause_service"
 const val ACTION_SHOW_RUNNING_ACTIVITY = "ACTION_SHOW_RUNNING_ACTIVITY"
 
 /**
+ * 타이머 갱신 주기
+ */
+const val TIMER_UPDATE_INTERVAL = 50L
+
+/**
  * 목표 타입
  */
 const val GOAL_TYPE_TIME = "time"

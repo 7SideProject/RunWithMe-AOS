@@ -31,15 +31,17 @@ import javax.inject.Inject
 
 typealias PolyLine = MutableList<LatLng>
 
-
 @AndroidEntryPoint
 class RunningService : LifecycleService() {
 
     // Binder
     private val binder = LocalBinder()
 
-    // 서비스 종료 여부
-    private var serviceKilled = false
+    companion object {
+        // 서비스 종료 여부
+        var serviceKilled = true
+        var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
+    }
 
     // NotificationCompat.Builder 주입
     @Inject
@@ -61,7 +63,7 @@ class RunningService : LifecycleService() {
     private var lastSecondTimestamp = 0L // 1초 단위 체크를 위함
 
     // 러닝을 시작하거나 다시 시작한 시간
-    private var startTime = 0L
+    var startTime = 0L
 
     private var pauseLast = false
 
@@ -71,7 +73,6 @@ class RunningService : LifecycleService() {
     val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
     val pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
     val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
-    var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
     val sumDistance = MutableLiveData<Float>(0f)
 
     inner class LocalBinder : Binder() {
@@ -86,6 +87,7 @@ class RunningService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
         currentNotificationBuilder = baseNotificationBuilder
+        serviceKilled = false
         postInitialValues()
 
         initObserve()
@@ -105,7 +107,6 @@ class RunningService : LifecycleService() {
         isRunning.postValue(false)
         pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
-        timeRunInMillis.postValue(0L)
         timeRunInMillis.postValue(0L)
     }
 
@@ -139,6 +140,9 @@ class RunningService : LifecycleService() {
 
     }
 
+
+
+
     private fun startTimerJob() {
         lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
@@ -152,7 +156,7 @@ class RunningService : LifecycleService() {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimestamp += 1000L
                 }
-                delay(50L)
+                delay(TIMER_UPDATE_INTERVAL)
             }
 
             // 위치 추적이 종료(정지) 되었을 때 총시간 저장
@@ -220,8 +224,90 @@ class RunningService : LifecycleService() {
                 add(pos)
                 pathPoints.postValue(this)
                 distancePolyline()
+
+                // 경로 최적화
+                if (pathPoints.value!!.size >= 4) {
+                    optimizationPolyLine()
+                }
             }
         }
+    }
+
+    // 경로 최적화 알고리즘
+    // 좌표 4개 이상일 때 이전 3개의 좌표를 비교하여
+    // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
+    private fun optimizationPolyLine() {
+        /** polyline이 변경되었을 때 pathPoints.value 변경되었을듯 싶은데 확인해보기 **/
+        val polyLine = pathPoints.value
+        val first = polyLine!!.get(polyLine.size - 4)
+        val second = polyLine!!.get(polyLine.size - 3)
+        val third = polyLine!!.get(polyLine.size - 2)
+
+        val result = FloatArray(1)
+        Location.distanceBetween(
+            second.latitude,
+            second.longitude,
+            third.latitude,
+            third.longitude,
+            result
+        )
+
+        val lastDistance = result[0]
+
+        // 10미터 미만으로 너무 가까운 점이면 삭제
+        if (lastDistance < 10) {
+            polyLine.removeAt(polyLine.size - 3)
+            return
+        }
+
+        // 100미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
+        if (lastDistance >= 100) return
+
+        // 적당한 거리라면 각도 비교
+        val v1: Vector = getVector(first, second) // 기존 벡터
+        val v2: Vector = getVector(second, third) // 비교할 벡터
+
+        val cosine = getVectorDotProduct(v1, v2) / (getVectorDistance(v1) * getVectorDistance(v2))
+
+        // 거리가 가까울 땐 +- 5도 (거의 직선인 경우 삭제)
+        if (lastDistance < 50) {
+            if (cosine > Math.cos(deg2rad(20.0))) {
+                polyLine.removeAt(polyLine.size - 3)
+                return
+            }
+        } else { // 거리가 멀어지면 여유범위 줄이기
+            if (cosine > Math.cos(deg2rad(10.0))) {
+                polyLine.removeAt(polyLine.size - 3)
+                return
+            }
+
+        }
+
+    }
+
+    // This function converts decimal degrees to radians
+    private fun deg2rad(deg: Double): Double {
+        return deg * Math.PI / 180.0
+    }
+
+    private class Vector(var x: Double, var y: Double)
+
+    // 두 좌표를 위도에 따른 경도의 거리를 적용해서 최대한 오차없는 평면벡터화 한 것
+    private fun getVector(point1: LatLng, point2: LatLng): Vector {
+        return Vector(
+            (point2.latitude - point1.latitude) / Math.cos(deg2rad(point2.latitude)),
+            point2.longitude - point1.longitude
+        )
+    }
+
+    // 벡터의 크기
+    private fun getVectorDistance(v: Vector): Double {
+        return Math.sqrt(v.x * v.x + v.y * v.y)
+    }
+
+    // 벡터의 내적
+    private fun getVectorDotProduct(v1: Vector, v2: Vector): Double {
+        return v1.x * v2.x + v1.y * v2.y
     }
 
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
@@ -271,6 +357,7 @@ class RunningService : LifecycleService() {
                 // 시작, 재개 되었을 때
                 ACTION_START_OR_RESUME_SERVICE -> {
                     if (isFirstRun) {
+                        startTimer()
                         startForegroundService()
                         isFirstRun = false
                     } else {
@@ -316,7 +403,6 @@ class RunningService : LifecycleService() {
 
     // Notification 등록, 서비스 시작
     private fun startForegroundService() {
-        startTimer()
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -390,5 +476,12 @@ class RunningService : LifecycleService() {
 
     private fun showToast(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // onCreate에서 serviceKilled가 false로 변하고 난 뒤에 바로 service가 꺼지면
+        // MainActivity에서 serviceKilled가 false로 보고 계속 러닝액티비티로 넘기게 됨
+        serviceKilled = true
     }
 }

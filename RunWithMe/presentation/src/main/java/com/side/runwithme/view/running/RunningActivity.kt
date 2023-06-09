@@ -60,11 +60,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private lateinit var polyline: PathOverlay
 
     private lateinit var locationSource: FusedLocationSource
-    private lateinit var naverMap: NaverMap
+    private var naverMap: NaverMap? = null
 
     private var naverLatLng = mutableListOf<LatLng>()
-
-    private lateinit var latLngBoundsBuilder: LatLngBounds.Builder
 
     private lateinit var runningService: RunningService
 
@@ -76,18 +74,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private var caloriesBurned: Int = 0
     private var sumDistance: Float = 0f
     private var currentTimeInMillis = 0L
-
-    private lateinit var startTime: String
     private var challengeSeq: Int = 0
     private lateinit var imgFile: MultipartBody.Part
-    private val coordinates : MutableList<Coordinate> = mutableListOf()
+    private val coordinates: MutableList<Coordinate> = mutableListOf()
     private lateinit var runRecord: RunRecord
     private var isStopError = false
 
     private lateinit var loadingDialog: LoadingDialog
 
     override fun init() {
-        initLatLngBounds()
         val intent = Intent()
         challengeSeq = intent.getIntExtra("challengeSeq", 0)
 
@@ -95,23 +90,35 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
         }
 
+        Log.d("test123", "init: ")
 
         initMapView()
 
         initClickListener()
 
-        firstStart()
+        if (RunningService.isFirstRun) {
+            firstStart()
+        } else { // app killed 된 후 activity 재시작
+            bindService()
+        }
 
         initDrawLine()
 
         initViewModelCallback()
     }
 
-    private fun initViewModelCallback(){
+    private fun initViewModelCallback() {
         repeatOnStarted {
-            runningViewModel.postRunRecordEventFlow.collectLatest {event ->
+            runningViewModel.postRunRecordEventFlow.collectLatest { event ->
                 handleEvent(event)
             }
+        }
+    }
+
+    private fun bindService() {
+        // bindService
+        Intent(this@RunningActivity, RunningService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -120,7 +127,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             is RunningViewModel.Event.Success -> {
                 loadingDialog.dismiss()
                 val intent = Intent(this, RunningResultActivity::class.java)
-                intent.putExtra("allRunRecord", AllRunRecord(runRecord = runRecord, coordinates = coordinates, imgFile = imgFile))
+                intent.putExtra(
+                    "allRunRecord",
+                    AllRunRecord(
+                        runRecord = runRecord,
+                        coordinates = coordinates,
+                        imgFile = imgFile
+                    )
+                )
                 startActivity(Intent(this, RunningResultActivity::class.java))
                 finish()
             }
@@ -131,10 +145,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 showToast("서버가 불안정합니다. 다시 한 번 시도해주세요.")
             }
         }
-    }
-
-    private fun initLatLngBounds() {
-        latLngBoundsBuilder = LatLngBounds.Builder()
     }
 
     private fun initClickListener() {
@@ -156,7 +166,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
 
             ibStop.setOnClickListener {
-                if(!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
+                if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
                     stopRun()
                     endToSaveData()
                     isStopError = true
@@ -164,7 +174,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
                 runningViewModel.postRunRecord(
                     challengeSeq = challengeSeq,
-                    allRunRecord = AllRunRecord(runRecord = runRecord, coordinates = coordinates, imgFile = imgFile)
+                    allRunRecord = AllRunRecord(
+                        runRecord = runRecord,
+                        coordinates = coordinates,
+                        imgFile = imgFile
+                    )
                 )
 
                 lifecycleScope.launch {
@@ -174,19 +188,19 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    private fun endToSaveData(){
+    private fun endToSaveData() {
         takeSnapShot()
         changeCoordinates()
         saveRunRecord()
     }
 
-    private fun saveRunRecord(){
+    private fun saveRunRecord() {
         runRecord = RunRecord(
             runRecordSeq = 0,
             runImageSeq = 0,
-            runningStartTime = startTime,
+            runningStartTime = timeFormatter(runningService.startTime),
             runningEndTime = timeFormatter(System.currentTimeMillis()),
-            runningTime = (currentTimeInMillis/ 1000).toInt(),
+            runningTime = (currentTimeInMillis / 1000).toInt(),
             runningDistance = sumDistance.toInt(),
             runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
             runningCalorieBurned = caloriesBurned,
@@ -200,8 +214,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         )
     }
 
-    private fun changeCoordinates(){
-        for(latlng in naverLatLng){
+    private fun changeCoordinates() {
+        for (latlng in naverLatLng) {
             coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
         }
     }
@@ -209,7 +223,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun takeSnapShot() {
         moveLatLngBounds()
 
-        naverMap.takeSnapshot {
+        naverMap?.takeSnapshot {
             // image 생성
             imgFile = createMultiPart(it)
 
@@ -239,8 +253,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 이동한 전체 polyLine 담기
     private fun moveLatLngBounds() {
+        val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
         val bounds = latLngBoundsBuilder.build()
-        naverMap.moveCamera(CameraUpdate.fitBounds(bounds, 300))
+        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 300))
     }
 
     private fun initMapView() {
@@ -263,24 +278,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // 좌표 observe
         runningService.pathPoints.observe(this) {
             if (it.isNotEmpty()) {
-
-                val lat = it.last().latitude
-                val lng = it.last().longitude
-                val latlng = LatLng(lat, lng)
-
-                naverLatLng.add(latlng)
-
-                latLngBoundsBuilder.include(latlng)
-
-                if (it.size >= 2) {
+                naverLatLng = it
+                Log.d("test123", "initObserve: ")
+                if (it.size >= 2 && naverMap != null) {
                     drawPolyline()
                 }
-
-                // 경로 최적화
-                if (it.size >= 4) {
-                    optimizationPolyLine()
-                }
-
             }
         }
 
@@ -327,82 +329,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
         }
 
-    }
-
-    // 경로 최적화 알고리즘
-    // 좌표 4개 이상일 때 이전 3개의 좌표를 비교하여
-    // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
-    private fun optimizationPolyLine() {
-        val first = naverLatLng.get(naverLatLng.size - 4)
-        val second = naverLatLng.get(naverLatLng.size - 3)
-        val third = naverLatLng.get(naverLatLng.size - 2)
-
-        val result = FloatArray(1)
-        Location.distanceBetween(
-            second.latitude,
-            second.longitude,
-            third.latitude,
-            third.longitude,
-            result
-        )
-
-        val lastDistance = result[0]
-
-        // 10미터 미만으로 너무 가까운 점이면 삭제
-        if (lastDistance < 10) {
-            naverLatLng.removeAt(naverLatLng.size - 3)
-            return
-        }
-
-        // 100미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
-        if (lastDistance >= 100) return
-
-        // 적당한 거리라면 각도 비교
-        val v1: Vector = getVector(first, second) // 기존 벡터
-        val v2: Vector = getVector(second, third) // 비교할 벡터
-
-        val cosine = getVectorDotProduct(v1, v2) / (getVectorDistance(v1) * getVectorDistance(v2))
-
-        // 거리가 가까울 땐 +- 5도 (거의 직선인 경우 삭제)
-        if (lastDistance < 50) {
-            if (cosine > Math.cos(deg2rad(20.0))) {
-                naverLatLng.removeAt(naverLatLng.size - 3)
-                return
-            }
-        } else { // 거리가 멀어지면 여유범위 줄이기
-            if (cosine > Math.cos(deg2rad(10.0))) {
-                naverLatLng.removeAt(naverLatLng.size - 3)
-                return
-            }
-
-        }
 
     }
 
-    // This function converts decimal degrees to radians
-    private fun deg2rad(deg: Double): Double {
-        return deg * Math.PI / 180.0
-    }
-
-    private class Vector(var x: Double, var y: Double)
-
-    // 두 좌표를 위도에 따른 경도의 거리를 적용해서 최대한 오차없는 평면벡터화 한 것
-    private fun getVector(point1: LatLng, point2: LatLng): Vector {
-        return Vector(
-            (point2.latitude - point1.latitude) / Math.cos(deg2rad(point2.latitude)),
-            point2.longitude - point1.longitude
-        )
-    }
-
-    // 벡터의 크기
-    private fun getVectorDistance(v: Vector): Double {
-        return Math.sqrt(v.x * v.x + v.y * v.y)
-    }
-
-    // 벡터의 내적
-    private fun getVectorDotProduct(v1: Vector, v2: Vector): Double {
-        return v1.x * v2.x + v1.y * v2.y
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -416,7 +345,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             )
         ) {
             if (!locationSource.isActivated) { // 권한 거부됨
-                naverMap.locationTrackingMode = LocationTrackingMode.None
+                naverMap?.locationTrackingMode = LocationTrackingMode.None
             }
             return
         }
@@ -429,18 +358,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val runningLoadingDialog = RunningLoadingDialog(this)
         runningLoadingDialog.show()
 
-//        lifecycleScope.launch(Dispatchers.Main) {
-//            sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
-//            delay(3000L)
-//            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
-//            // bindService
-//            Intent(this@RunningActivity, RunningService::class.java).also { intent ->
-//                bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-//            }
-//            delay(1000L)
-//            runningLoadingDialog.dismiss()
-//        }
-
         lifecycleScope.launch {
             startRun()
             runningLoadingDialog.dismiss()
@@ -452,14 +369,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
         delay(3000L)
 
-        startTime = timeFormatter(System.currentTimeMillis())
-
         sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
 
-        // bindService
-        Intent(this@RunningActivity, RunningService::class.java).also { intent ->
-            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
+        bindService()
+
         delay(1000L)
     }
 
@@ -471,6 +384,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
 
     private fun drawPolyline() {
+        Log.d("test123", "drawPolyline: ")
         polyline.coords = naverLatLng
         polyline.color = getColor(R.color.mainColor)
         polyline.map = naverMap
@@ -518,12 +432,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            TODO("Not yet implemented")
+
         }
     }
 
     override fun onMapReady(naverMap: NaverMap) {
         // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
+        Log.d("test123", "onMapReady: ")
         this.naverMap = naverMap
         naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
         naverMap.locationSource = locationSource
@@ -534,13 +449,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     }
 
-    private fun loading(timeinMillis: Long){
+    private fun loading(timeinMillis: Long) {
         loadingDialog = LoadingDialog(this)
         loadingDialog.show()
         // 로딩이 진행되지 않았을 경우
         lifecycleScope.launch {
             delay(timeinMillis)
-            if(loadingDialog.isShowing){
+            if (loadingDialog.isShowing) {
                 loadingDialog.dismiss()
             }
         }
