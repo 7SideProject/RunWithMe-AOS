@@ -27,4 +27,8 @@
     <dimen name="fontsize_h2">36sp</dimen>
     <dimen name="fontsize_h1">42sp</dimen>
 
+
+    <dimen name="my_challenge_list_height">135dp</dimen>
+    <dimen name="my_challenge_img_size">120dp</dimen>
+
 </resources>

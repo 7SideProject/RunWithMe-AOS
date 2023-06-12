@@ -1,5 +1,6 @@
 package com.side.runwithme.view.running_list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
@@ -9,6 +10,8 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningListBinding
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
+import com.side.runwithme.view.running.RunningActivity
+import com.side.runwithme.view.running_list.bottomsheet.RunningListBottomSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,6 +45,24 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
 
         initMapView()
 
+        initClickListener()
+    }
+
+    private fun initClickListener(){
+        binding.apply {
+            lottieStartBtn.setOnClickListener {
+                val bottomSheet = RunningListBottomSheet(intentToRunningActivityClickListener)
+                bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+            }
+        }
+    }
+
+    private val intentToRunningActivityClickListener = object : IntentToRunningActivityClickListener {
+        override fun onClick(challengeSeq: Int) {
+            val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
+            intent.putExtra("challengeSeq", challengeSeq)
+            startActivity(intent)
+        }
     }
 
     private fun initMapView(){
