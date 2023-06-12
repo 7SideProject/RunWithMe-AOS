@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="runningVM"
-            type="com.ssafy.runwithme.view.running.RunningViewModel" />
+            name="runningListVM"
+            type="com.side.runwithme.view.running_list.RunningListViewModel" />
     </data>
 
     <LinearLayout
@@ -32,14 +32,15 @@
                 android:orientation="vertical" >
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_running_list"
+                    android:id="@+id/rcv_my_challenge_running_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    submitList2="@{runningListVM.myChallengeList}"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/item_my_current_challenge_list" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layout_cv"
+                    android:id="@+id/layout_practice"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center">

@@ -3,6 +3,8 @@ package com.side.runwithme.view.running_list
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.naver.maps.map.*
@@ -12,13 +14,17 @@ import com.side.runwithme.databinding.ActivityRunningListBinding
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
 import com.side.runwithme.view.running.RunningActivity
 import com.side.runwithme.view.running_list.bottomsheet.RunningListBottomSheet
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.activity_running_list), OnMapReadyCallback {
 
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
+
+    private val runningListViewModel: RunningListViewModel by viewModels<RunningListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +52,11 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
         initMapView()
 
         initClickListener()
+
+        runningListViewModel.apply {
+            getMyChallenges()
+            getMyScrap()
+        }
     }
 
     private fun initClickListener(){
@@ -58,7 +69,8 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     }
 
     private val intentToRunningActivityClickListener = object : IntentToRunningActivityClickListener {
-        override fun onClick(challengeSeq: Int) {
+        override fun onItemClick(challengeSeq: Long) {
+            /** 러닝 가능한 지 확인 **/
             val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
             intent.putExtra("challengeSeq", challengeSeq)
             startActivity(intent)
@@ -79,12 +91,13 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     override fun onMapReady(naverMap: NaverMap) {
         // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
         this.naverMap = naverMap
-        naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
-        naverMap.locationSource = locationSource
-        naverMap.locationTrackingMode = LocationTrackingMode.Follow
-        naverMap.isLiteModeEnabled = true
-        // 현위치 버튼 활성화
-        naverMap.uiSettings.isLocationButtonEnabled = true
-
+        naverMap.apply {
+            moveCamera(CameraUpdate.zoomTo(16.0))
+            locationSource = locationSource
+            locationTrackingMode = LocationTrackingMode.Follow
+            isLiteModeEnabled = true
+            // 현위치 버튼 활성화
+            uiSettings.isLocationButtonEnabled = true
+        }
     }
 }

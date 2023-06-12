@@ -6,16 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.DialogRunningListBottomSheetBinding
 import com.side.runwithme.view.running_list.IntentToRunningActivityClickListener
+import com.side.runwithme.view.running_list.RunningListAdapter
+import com.side.runwithme.view.running_list.RunningListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class RunningListBottomSheet(intentToRunningActivityClickListener: IntentToRunningActivityClickListener): BottomSheetDialogFragment() {
+@AndroidEntryPoint
+class RunningListBottomSheet(private val intentToRunningActivityClickListener: IntentToRunningActivityClickListener): BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogRunningListBottomSheetBinding
-
+    private val runningListViewModel: RunningListViewModel by activityViewModels<RunningListViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
@@ -37,7 +43,29 @@ class RunningListBottomSheet(intentToRunningActivityClickListener: IntentToRunni
     }
 
     private fun init(){
+        binding.apply {
+            runningListVM = runningListViewModel
+            rcvMyChallengeRunningList.adapter = RunningListAdapter(intentToRunningActivityClickListener)
+        }
+
+        initClickListener()
+
+        initViewModelCallback()
+    }
+
+    private fun initClickListener(){
+        binding.apply {
+            layoutPractice.setOnClickListener {
+                /** Practice Dilaog **/
+            }
+        }
+    }
+
+    private fun initViewModelCallback(){
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
 }

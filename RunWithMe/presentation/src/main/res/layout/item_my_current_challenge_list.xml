@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="challenge"
+            type="com.side.domain.model.Challenge" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

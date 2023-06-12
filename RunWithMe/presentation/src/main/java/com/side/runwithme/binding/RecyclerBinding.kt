@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.domain.utils.ResultType
 import com.side.runwithme.view.challenge.ChallengeListAdapter
+import com.side.runwithme.view.running_list.RunningListAdapter
+import kotlinx.coroutines.flow.MutableStateFlow
 
 object RecyclerBinding {
 
@@ -21,5 +23,16 @@ object RecyclerBinding {
                 }
             }
         }
+    }
+
+    @BindingAdapter("submitList2")
+    @JvmStatic
+    fun bindSubmitList(view : RecyclerView, result : List<*>?){
+        when(view.adapter){
+            is RunningListAdapter -> {
+                (view.adapter as ListAdapter<Any,*>).submitList(result!! as List<Challenge>)
+            }
+        }
+
     }
 }
