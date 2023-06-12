@@ -74,6 +74,7 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
             val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
             intent.putExtra("challengeSeq", challengeSeq)
             startActivity(intent)
+            finish()
         }
     }
 

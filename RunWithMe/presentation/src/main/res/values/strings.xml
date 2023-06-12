@@ -53,4 +53,6 @@
     <string name="join">회원가입</string>
 
     <string name="practice_running">연습 러닝</string>
+
+    <string name="calorie">%d kcal</string>
 </resources>
