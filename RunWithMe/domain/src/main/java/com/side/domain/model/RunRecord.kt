@@ -3,6 +3,7 @@ package com.side.domain.model
 data class RunRecord(
     val runRecordSeq: Int,
     val runImageSeq: Int,
+    val runningDay: String,
     val runningStartTime: String,
     val runningEndTime: String,
     val runningTime: Int,

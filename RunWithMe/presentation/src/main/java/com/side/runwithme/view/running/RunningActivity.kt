@@ -6,10 +6,12 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +48,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Math.round
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -82,6 +85,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var loadingDialog: LoadingDialog
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
         val intent = Intent()
         challengeSeq = intent.getIntExtra("challengeSeq", 0)
@@ -96,6 +100,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         initClickListener()
 
+        runningViewModel.initToday(LocalDate.now().toString())
+
         if (RunningService.isFirstRun) {
             firstStart()
         } else { // app killed 된 후 activity 재시작
@@ -106,6 +112,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         initViewModelCallback()
     }
+
 
     private fun initViewModelCallback() {
         repeatOnStarted {
@@ -131,7 +138,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                     "allRunRecord",
                     AllRunRecord(
                         runRecord = runRecord,
-                        coordinates = coordinates,
+                        coordinates = emptyList(),
                         imgFile = imgFile
                     )
                 )
@@ -198,6 +205,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         runRecord = RunRecord(
             runRecordSeq = 0,
             runImageSeq = 0,
+            runningDay = runningViewModel.today,
             runningStartTime = timeFormatter(runningService.startTime),
             runningEndTime = timeFormatter(System.currentTimeMillis()),
             runningTime = (currentTimeInMillis / 1000).toInt(),
