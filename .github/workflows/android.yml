@@ -22,13 +22,6 @@ jobs:
           cache: gradle
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
-      - name: Start Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          arch: x86_64
-          profile: pixel
-          timeout: 600000
       - name: Access kakaoApiKey
         run: echo kakaoApiKey=\"$kakaoApiKey\" > ./RunWithMe/local.properties
         env:
@@ -43,13 +36,18 @@ jobs:
           baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: Build and run tests
-        run: |
-          cd RunWithMe
-          ./gradlew clean build test
-          ./gradlew connectedAndroidTest
-          if [ $? -eq 0 ]; then
-            echo "All tests passed successfully."
-          else
-            echo "Some tests failed. Please check the test results."
-          fi
+      - name: Start Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          profile: pixel
+          script: |
+            cd RunWithMe
+            ./gradlew clean build test
+            ./gradlew connectedAndroidTest
+            if [ $? -eq 0 ]; then
+              echo "All tests passed successfully."
+            else
+              echo "Some tests failed. Please check the test results."
+            fi
