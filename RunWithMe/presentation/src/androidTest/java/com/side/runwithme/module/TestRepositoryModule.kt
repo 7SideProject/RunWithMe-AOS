@@ -4,19 +4,21 @@ import com.side.data.repository.UserRepositoryImpl
 import com.side.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface RepositoryModule {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [RepositoryModule::class]
+)
+interface TestRepositoryModule {
 
     @Binds
     @Singleton
-    fun provideUserRepository(
-        impl: UserRepositoryImpl
-    ): UserRepository
+    fun provideTestUserRepository(impl: UserRepositoryImpl): UserRepository
+
 
 
 }

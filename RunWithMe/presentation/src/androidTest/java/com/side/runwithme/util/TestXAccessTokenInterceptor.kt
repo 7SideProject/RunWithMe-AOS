@@ -3,17 +3,19 @@ package com.side.runwithme.util
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.side.runwithme.util.preferencesKeys.JWT
+import com.side.data.util.getDecryptStringValue
+import com.side.data.util.preferencesKeys
+import com.side.data.util.saveEncryptStringValue
 import decrypt
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
+import javax.inject.Named
 
-private const val TAG = "XAccessTokenInterceptor"
-
-class XAccessTokenInterceptor @Inject constructor(
+class TestXAccessTokenInterceptor @Inject constructor(
+    @field:Named("testDatastore")
     private val dataStore: DataStore<Preferences>
 ) : Interceptor {
 
@@ -21,12 +23,12 @@ class XAccessTokenInterceptor @Inject constructor(
 
         var token = ""
         runBlocking {
-            dataStore.getDecryptStringValue(JWT)
+            token = dataStore.getDecryptStringValue(preferencesKeys.JWT).first().toString()
         }
 
         val request = chain.request()
             .newBuilder()
-            .addHeader("JWT", "${decrypt(token)}")
+            .addHeader("JWT", decrypt(token))
             .build()
         val response = chain.proceed(request)
 
@@ -78,7 +80,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
     private suspend fun saveToken(jwt: String, refreshToken: String) {
         if(jwt != "") {
-            dataStore.saveEncryptStringValue(JWT, jwt)
+            dataStore.saveEncryptStringValue(preferencesKeys.JWT, jwt)
         }
 
         if(refreshToken != "") {

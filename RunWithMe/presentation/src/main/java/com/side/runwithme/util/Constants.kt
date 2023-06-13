@@ -14,10 +14,6 @@ const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
 
-const val KEY_INT = 0
-const val KEY_STRING = 1
-const val KEY_BOOLEAN = 2
-
 const val ACTION_START_OR_RESUME_SERVICE = "action_start_or_resume_service"
 const val ACTION_STOP_SERVICE = "action_stop_service"
 const val ACTION_PAUSE_SERVICE = "action_pause_service"
