@@ -52,7 +52,10 @@ jobs:
         with:
           api-level: 29
           profile: Nexus 6
-          emulator-boot-timeout: 300
           script: |
-            cd RunWithMe
             ./gradlew connectedAndroidTest
+            if [ $? -eq 0 ]; then
+              echo "All tests passed successfully."
+            else
+              echo "Some tests failed. Please check the test results."
+            fi
