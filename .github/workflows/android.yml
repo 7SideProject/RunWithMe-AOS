@@ -26,7 +26,6 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          target: 33
           arch: x86_64
           profile: pixel
           timeout: 600000
