@@ -26,6 +26,11 @@ android {
         buildConfigField "String", "baseURL", "\"${properties.getProperty("baseURL")}\""
         buildConfigField "String", "kakaoApiKey", "\"${properties.getProperty("kakaoApiKey")}\""
         buildConfigField "String", "naverApiKey", "\"${properties.getProperty("naverApiKey")}\""
+
+        manifestPlaceholders['kakaoApiKey'] = "\"${properties.getProperty("kakaoApiKey")}\""
+        manifestPlaceholders['naverApiKey'] = "\"${properties.getProperty("naverApiKey")}\""
+//        manifestPlaceholders = [kakaoApiKey: kakaoApiKey]
+//        manifestPlaceholders = [naverApiKey: naverApiKey]
     }
 
     buildTypes {
