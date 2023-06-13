@@ -38,6 +38,7 @@ jobs:
         run: |
           cd RunWithMe
           ./gradlew clean build test
+          ./gradlew connetedAndroidTest
           if [ $? -eq 0 ]; then
             echo "All tests passed successfully."
           else
