@@ -21,9 +21,9 @@ jobs:
           distribution: 'zulu'
           cache: gradle
       - name: Access kakaoApiKey
-        run: echo kakaoApiKey=\"$kakaoApiKey\" > .local.properties
+        run: echo kakaoApiKey=\"$kakaoApiKey\" > local.properties
       - name: Access naverApiKey
-        run: echo naverApiKey=\"$naverApiKey\" > .local.properties
+        run: echo naverApiKey=\"$naverApiKey\" > local.properties
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
       - name: Build and run tests
