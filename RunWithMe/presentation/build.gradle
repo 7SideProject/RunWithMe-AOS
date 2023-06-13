@@ -7,6 +7,9 @@ plugins {
     id 'kotlin-kapt'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.side.runwithme'
     compileSdk 33
@@ -20,6 +23,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        testInstrumentationRunner "com.side.runwithme.di.HiltTestRunner"
 
+        buildConfigField "String", "baseURL", "\"${properties.getProperty("baseURL")}\""
+        buildConfigField "String", "kakaoApiKey", "\"${properties.getProperty("kakaoApiKey")}\""
+        buildConfigField "String", "naverApiKey", "\"${properties.getProperty("naverApiKey")}\""
     }
 
     buildTypes {
