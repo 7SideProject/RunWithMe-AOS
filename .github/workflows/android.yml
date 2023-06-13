@@ -22,15 +22,12 @@ jobs:
           cache: gradle
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
-        with:
-          sdk-platform: 'platforms;android-29'
-      - name: Create Android emulator
-        run: avdmanager create avd -n test-emulator -k "system-images;android-29;google_apis;x86" --device "pixel"
       - name: Start Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          arch: x86
+          target: 33
+          arch: x86_64
           profile: pixel
           timeout: 600000
       - name: Access kakaoApiKey
