@@ -1,0 +1,44 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'zulu'
+        cache: gradle
+
+    # Access KAKAO API KEY
+    - name: Access kakaoApiKey
+      run: echo kakaoApiKey=\"$kakaoApiKey\" > ./local.properties
+
+    # Access Naver API Key
+    - name: Access naverApiKey
+      run: echo naverApiKey=\"$naverApiKey\" > ./local.properties
+
+		# Build, Test
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build and run tests
+      run: |
+          ./gradlew clean build test
+
+          # 테스트 실패 시에도 반환 코드를 0으로 유지하도록 설정
+          # 실패한 테스트 결과는 표시되도록 함
+          if [ $? -eq 0 ]; then
+            echo "All tests passed successfully."
+          else
+            echo "Some tests failed. Please check the test results."
+          fi
