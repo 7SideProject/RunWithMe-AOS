@@ -20,6 +20,19 @@ jobs:
           java-version: '11'
           distribution: 'zulu'
           cache: gradle
+      - name: Set up Android SDK
+        uses: actions/setup-android@v3
+        with:
+          sdk-platform: 'platforms;android-29'
+      - name: Create Android emulator
+        run: avdmanager create avd -n test-emulator -k "system-images;android-29;google_apis;x86" --device "pixel"
+      - name: Start Android emulator
+        uses: reactivecircus/android-emulator-runner@v3
+        with:
+          api-level: 29
+          arch: x86
+          profile: pixel
+          timeout: 600000
       - name: Access kakaoApiKey
         run: echo kakaoApiKey=\"$kakaoApiKey\" > ./RunWithMe/local.properties
         env:
@@ -34,19 +47,6 @@ jobs:
           baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: Set up Android SDK
-        uses: actions/setup-android@v2
-        with:
-          sdk-platform: 'platforms;android-29'
-      - name: Create Android emulator
-        run: avdmanager create avd -n test-emulator -k "system-images;android-29;google_apis;x86" --device "pixel"
-      - name: Start Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          arch: x86
-          profile: pixel
-          timeout: 600000
       - name: Build and run tests
         run: |
           cd RunWithMe
