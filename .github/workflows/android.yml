@@ -28,6 +28,10 @@ jobs:
         run: echo naverApiKey=\"$naverApiKey\" > ./RunWithMe/local.properties
         env:
           naverApiKey: ${{ secrets.NAVERAPIKEY }}
+      - name: Access baseURL
+        run: echo baseURL=\"$baseURL\" > ./RunWithMe/local.properties
+        env:
+          baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
       - name: Build and run tests
