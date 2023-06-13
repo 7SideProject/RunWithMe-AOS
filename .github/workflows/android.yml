@@ -25,9 +25,10 @@ jobs:
       - name: Access naverApiKey
         run: echo naverApiKey=\"$naverApiKey\" > .local.properties
       - name: Grant execute permissions for gradlew
-        run: chmod +x gradlew
+        run: chmod +x RunWithMe/gradlew
       - name: Build and run tests
         run: |
+          cd RunWithMe
           ./gradlew clean build test
           if [ $? -eq 0 ]; then
             echo "All tests passed successfully."
