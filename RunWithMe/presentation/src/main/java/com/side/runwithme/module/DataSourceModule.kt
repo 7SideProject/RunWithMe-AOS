@@ -1,7 +1,7 @@
 package com.side.runwithme.module
 
-import com.side.data.repository.UserRepositoryImpl
-import com.side.domain.repository.UserRepository
+import com.side.data.datasource.user.UserRemoteDataSource
+import com.side.data.datasource.user.UserRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -10,13 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface RepositoryModule {
+interface DataSourceModule {
 
     @Binds
     @Singleton
-    fun provideUserRepository(
-        impl: UserRepositoryImpl
-    ): UserRepository
-
-
+    fun provideUserDataSource(
+        impl: UserRemoteDataSourceImpl
+    ): UserRemoteDataSource
 }

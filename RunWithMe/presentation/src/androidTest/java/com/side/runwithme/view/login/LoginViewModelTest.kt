@@ -19,8 +19,7 @@ import javax.inject.Named
 class LoginViewModelTest {
 
     @Inject
-    @Named("testUserRepo")
-    lateinit var userRepository: UserRepository
+    lateinit var loginWithEmailUseCase: LoginWithEmailUseCase
 
     private lateinit var loginViewModel: LoginViewModel
 
@@ -33,7 +32,6 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         hiltRule.inject()
-        val loginWithEmailUseCase = LoginWithEmailUseCase(userRepository)
         loginViewModel = LoginViewModel(loginWithEmailUseCase)
     }
 
@@ -55,6 +53,7 @@ class LoginViewModelTest {
     }
 
     @Test
+    @ExperimentalCoroutinesApi
     fun NotJoinUser_EmailLogin_returns_Fail() = runTest {
         // Given
         loginViewModel.apply {
@@ -71,6 +70,7 @@ class LoginViewModelTest {
     }
 
     @Test
+    @ExperimentalCoroutinesApi
     fun FaultPasswordUser_EmailLogin_returns_Fail() = runTest {
         // Given
         loginViewModel.apply {

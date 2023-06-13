@@ -1,27 +1,47 @@
 package com.side.runwithme.module
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
+import com.side.data.util.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
 import com.side.runwithme.util.TestXAccessTokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [RemoteDataModule::class]
+)
 object TestRemoteDataModule {
+
+    // HttpLoggingInterceptor DI
+    @Provides
+    @Singleton
+    fun provideInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
+
+    // Gson DI
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder().setLenient().create()
+    }
 
     //OkHttpClient DI
     @Provides
     @Singleton
-    @Named("testClient")
     fun provideOkHttpClient(
         testxAccessTokenInterceptor: TestXAccessTokenInterceptor
     ): OkHttpClient {
@@ -33,8 +53,7 @@ object TestRemoteDataModule {
     //Retrofit DI
     @Provides
     @Singleton
-    @Named("testRetrofit")
-    fun provideRetrofitInstance(gson: Gson, @Named("testClient") client: OkHttpClient): Retrofit {
+    fun provideRetrofitInstance(gson: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -45,8 +64,7 @@ object TestRemoteDataModule {
 
     @Provides
     @Singleton
-    @Named("testUserApi")
-    fun provideUserApi(@Named("testRetrofit") retrofit: Retrofit): UserApi {
+    fun provideUserApi(retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
 }

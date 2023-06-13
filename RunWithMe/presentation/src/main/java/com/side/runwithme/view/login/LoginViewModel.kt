@@ -38,12 +38,13 @@ class LoginViewModel @Inject constructor(
                         _loginEventFlow.emit(Event.Success())
                     }
                     is ResultType.Fail -> {
+                        Log.d("test123", "loginWithEmail: fail")
                         _loginEventFlow.emit(Event.Fail(it.data.message))
                     }
 
                     is ResultType.Error -> {
-                        Log.d("joinError", "${it.exception.message} ")
-                        Log.d("joinError", "${it.exception.cause} ")
+                        Log.d("test123", "${it.exception.message} ")
+                        Log.d("test123", "${it.exception.cause} ")
                     }
                     else -> {}
                 }

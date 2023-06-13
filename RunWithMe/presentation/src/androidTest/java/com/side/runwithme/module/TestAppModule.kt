@@ -15,21 +15,28 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.MainScope
+import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [AppModule::class]
+)
 class TestAppModule {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Singleton
     @Provides
-    @Named("testDatastore")
     fun provideDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
-            scope = TestScope(),
+            scope = TestScope(UnconfinedTestDispatcher() + Job()),
             produceFile = { appContext.preferencesDataStoreFile(TEST_DATASTORE_NAME) })
 
 }
