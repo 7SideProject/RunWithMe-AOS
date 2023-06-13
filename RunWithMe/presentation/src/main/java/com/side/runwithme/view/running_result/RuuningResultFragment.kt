@@ -14,9 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class RuuningResultFragment : BaseFragment<FragmentRuuningResultBinding>(R.layout.fragment_ruuning_result),
-//    OnMapReadyCallback
-{
+class RuuningResultFragment : BaseFragment<FragmentRuuningResultBinding>(R.layout.fragment_ruuning_result){
+//    OnMapReadyCallback {
 
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
