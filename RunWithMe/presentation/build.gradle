@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -33,17 +34,22 @@ android {
 //        manifestPlaceholders = [naverApiKey: naverApiKey]
     }
 
-    task runTests(type: Test) {
-        group 'verification'
-        description 'Runs both unit tests and connected Android tests'
-        testClassesDirs = files("${project.buildDir}/intermediates/javac/test/debug",
-                "${project.buildDir}/intermediates/javac/androidTest/debug")
-        classpath = files("${project.android.bootClasspath}",
-                "${project.buildDir}/intermediates/javac/test/debug",
-                "${project.buildDir}/intermediates/javac/androidTest/debug")
+    android {
+        testOptions {
+            managedDevices {
+                devices {
+                    pixel2api30(com.android.build.api.dsl.ManagedVirtualDevice) {
+                        // Use device profiles you typically see in Android Studio.
+                        device = "Pixel 4"
+                        // Use only API levels 27 and higher.
+                        apiLevel = 30
+                        // To include Google services, use "google".
+                        systemImageSource = "aosp"
+                    }
+                }
+            }
+        }
     }
-
-    check.dependsOn runTests
 
     buildTypes {
         release {
