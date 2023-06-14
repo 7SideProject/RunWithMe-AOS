@@ -8,8 +8,7 @@ plugins {
     id 'kotlin-kapt'
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 
 android {
     namespace 'com.side.runwithme'
@@ -24,12 +23,15 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner "com.side.runwithme.di.HiltTestRunner"
 
-        buildConfigField "String", "baseURL", "\"${properties.getProperty("baseURL")}\""
-        buildConfigField "String", "kakaoApiKey", "\"${properties.getProperty("kakaoApiKey")}\""
-        buildConfigField "String", "naverApiKey", "\"${properties.getProperty("naverApiKey")}\""
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-        manifestPlaceholders['kakaoApiKey'] = "\"${properties.getProperty("kakaoApiKey")}\""
-        manifestPlaceholders['naverApiKey'] = "\"${properties.getProperty("naverApiKey")}\""
+        buildConfigField "String", "BASEURL", "\"${properties.getProperty("BASEURL")}\""
+        buildConfigField "String", "KAKAOAPIKEY", "\"${properties.getProperty("KAKAOAPIKEY")}\""
+        buildConfigField "String", "NAVERAPIKEY", "\"${properties.getProperty("NAVERAPIKEY")}\""
+
+        manifestPlaceholders['KAKAOAPIKEY'] = "\"${properties.getProperty("KAKAOAPIKEY")}\""
+        manifestPlaceholders['NAVERAPIKEY'] = "\"${properties.getProperty("NAVERAPIKEY")}\""
 //        manifestPlaceholders = [kakaoApiKey: kakaoApiKey]
 //        manifestPlaceholders = [naverApiKey: naverApiKey]
     }
