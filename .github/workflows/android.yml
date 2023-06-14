@@ -53,6 +53,7 @@ jobs:
           api-level: 29
           profile: Nexus 6
           script: |
+            cd RunWithMe
             ./gradlew connectedAndroidTest
             if [ $? -eq 0 ]; then
               echo "All tests passed successfully."
