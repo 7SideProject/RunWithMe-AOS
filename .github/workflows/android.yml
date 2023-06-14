@@ -25,15 +25,13 @@ jobs:
       - name: Access KAKAOAPIKEY
         run: echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
         env:
-          kakaoApiKey: ${{ secrets.KAKAOAPIKEY }}
+          KAKAOAPIKEY: ${{ secrets.KAKAOAPIKEY }}
       - name: Access NAVERAPIKEY
         run: echo NAVERAPIKEY=\"$NAVERAPIKEY\" > ./RunWithMe/local.properties
         env:
-          naverApiKey: ${{ secrets.NAVERAPIKEY }}
+          NAVERAPIKEY: ${{ secrets.NAVERAPIKEY }}
       - name: Access BASEURL
-        run: echo BASEURL=\"$BASEURL\" > ./RunWithMe/local.properties
-        env:
-          baseURL: ${{ secrets.BASEURL }}
+        run: echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
       - name: Build and run tests
