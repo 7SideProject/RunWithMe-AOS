@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Check out Repository
@@ -20,10 +20,6 @@ jobs:
           java-version: '11'
           distribution: 'zulu'
           cache: gradle
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-        with:
-          sdk-platform: 'platforms;android-29'
       - name: Access kakaoApiKey
         run: echo kakaoApiKey=\"$kakaoApiKey\" > ./RunWithMe/local.properties
         env:
@@ -38,22 +34,15 @@ jobs:
           baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: Build and run tests
-        run: |
-          cd RunWithMe
-          ./gradlew clean build test
-          if [ $? -eq 0 ]; then
-            echo "All tests passed successfully."
-          else
-            echo "Some tests failed. Please check the test results."
-          fi
+      - name: Grant execute permissions for gradlew
+        run: chmod +x /Users/runner/work/RunWithMe-AOS/RunWithMe-AOS/RunWithMe/gradlew
       - name: Android Emulator Runner
-        uses: ReactiveCircus/android-emulator-runner@v2.28.0
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          profile: Nexus 6
           script: |
-            cd RunWithMe
+            cd /Users/runner/work/RunWithMe-AOS/RunWithMe-AOS/RunWithMe
+            ls -la
             ./gradlew connectedAndroidTest
             if [ $? -eq 0 ]; then
               echo "All tests passed successfully."
