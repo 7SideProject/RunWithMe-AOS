@@ -34,6 +34,15 @@ jobs:
           baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
+      - name: Build and run tests
+        run: |
+          cd RunWithMe
+          ./gradlew clean build test
+          if [ $? -eq 0 ]; then
+            echo "All tests passed successfully."
+          else
+            echo "Some tests failed. Please check the test results."
+          fi
       - name: Android Emulator Runner
         uses: reactivecircus/android-emulator-runner@v2
         with:
