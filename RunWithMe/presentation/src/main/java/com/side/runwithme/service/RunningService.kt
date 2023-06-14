@@ -39,7 +39,7 @@ class RunningService : LifecycleService() {
 
     companion object {
         // 서비스 종료 여부
-        var serviceKilled = true
+        var serviceKilled = true // 시작할 때 false 변경, 서비스 종료 시 true 변경, 초기값이 true인 이유는 MainActivity에서 재시작 동작 때문
         var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
     }
 
@@ -478,10 +478,4 @@ class RunningService : LifecycleService() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // onCreate에서 serviceKilled가 false로 변하고 난 뒤에 바로 service가 꺼지면
-        // MainActivity에서 serviceKilled가 false로 보고 계속 러닝액티비티로 넘기게 됨
-        serviceKilled = true
-    }
 }
