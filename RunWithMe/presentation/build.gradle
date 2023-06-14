@@ -8,6 +8,8 @@ plugins {
     id 'kotlin-kapt'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 
 android {
@@ -22,9 +24,6 @@ android {
         versionName "1.0"
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner "com.side.runwithme.di.HiltTestRunner"
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
         buildConfigField "String", "BASEURL", "\"${properties.getProperty("BASEURL")}\""
         buildConfigField "String", "KAKAOAPIKEY", "\"${properties.getProperty("KAKAOAPIKEY")}\""
