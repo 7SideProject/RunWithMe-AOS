@@ -40,7 +40,7 @@ jobs:
         run: |
           cd RunWithMe
           ./gradlew clean build test
-          ./gradlew pixel4api30aospatDebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+          ./gradlew pixel2api30aospatDebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           if [ $? -eq 0 ]; then
             echo "All tests passed successfully."
           else
