@@ -39,7 +39,7 @@ jobs:
         with:
           api-level: 29
           script: |
-            cd /home/runner/work/RunWithMe-AOS/RunWithMe-AOS/RunWithMe
+            cd /Users/runner/work/RunWithMe-AOS/RunWithMe-AOS/RunWithMe
             ./gradlew connectedAndroidTest
             if [ $? -eq 0 ]; then
               echo "All tests passed successfully."
