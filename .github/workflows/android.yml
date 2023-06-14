@@ -20,6 +20,8 @@ jobs:
           java-version: '11'
           distribution: 'zulu'
           cache: gradle
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
       - name: Access kakaoApiKey
         run: echo kakaoApiKey=\"$kakaoApiKey\" > ./RunWithMe/local.properties
         env:
@@ -34,6 +36,16 @@ jobs:
           baseURL: ${{ secrets.BASEURL }}
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
+      - name: Build and run tests
+        run: |
+          cd RunWithMe
+          ./gradlew clean build test
+          ./gradelw pixel4api30aospatDebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+          if [ $? -eq 0 ]; then
+            echo "All tests passed successfully."
+          else
+            echo "Some tests failed. Please check the test results."
+          fi
       - name: Grant execute permissions for gradlew
         run: chmod +x /Users/runner/work/RunWithMe-AOS/RunWithMe-AOS/RunWithMe/gradlew
       - name: Android Emulator Runner
