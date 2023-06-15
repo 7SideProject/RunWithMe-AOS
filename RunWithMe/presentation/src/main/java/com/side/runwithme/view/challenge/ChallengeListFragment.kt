@@ -1,25 +1,44 @@
 package com.side.runwithme.view.challenge
 
+import android.util.Log
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.map
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeListBinding
+import com.side.runwithme.util.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChallengeListFragment : BaseFragment<FragmentChallengeListBinding>(R.layout.fragment_challenge_list) {
+class ChallengeListFragment :
+    BaseFragment<FragmentChallengeListBinding>(R.layout.fragment_challenge_list) {
 
     private val challengeViewModel: ChallengeViewModel by viewModels()
 
     private lateinit var challengeListAdapter: ChallengeListAdapter
 
     override fun init() {
-        binding.lifecycleOwner = this
+
         binding.challengeVM = challengeViewModel
         initToolbarClickListener()
         initChallengeList()
+        initViewModelCallback()
 
+    }
+
+    private fun initViewModelCallback() {
+        repeatOnStarted {
+            challengeViewModel.challengeList.collectLatest { challengeList ->
+
+                challengeListAdapter.submitData(challengeList)
+
+            }
+        }
     }
 
     private fun initToolbarClickListener() {
@@ -35,8 +54,9 @@ class ChallengeListFragment : BaseFragment<FragmentChallengeListBinding>(R.layou
     }
 
     private fun initChallengeList() {
-//        challengeViewModel.getChallenges()
         challengeListAdapter = ChallengeListAdapter()
         binding.rvChallengeList.adapter = challengeListAdapter
+        challengeViewModel.getChallengesPaging(10)
+
     }
 }

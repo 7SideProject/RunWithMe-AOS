@@ -52,4 +52,9 @@
     <string name="btn_register">등록하기</string>
     <string name="join">회원가입</string>
 
+    <string name="challenge_period">%d ~ %d</string>
+    <string name="challenge_cycle">주 %d회</string>
+    <string name="challenge_distance">주 %d회</string>
+
+
 </resources>

@@ -9,8 +9,7 @@ class GetChallengeListUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ) {
     operator fun invoke(
-        page: Int,
         size: Int,
-        sort: Array<String>
-    ) = challengeRepository.getChallengeList(page, size, sort)
+
+    ) = challengeRepository.getChallengeList(size)
 }
