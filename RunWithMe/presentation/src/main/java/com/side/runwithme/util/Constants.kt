@@ -2,12 +2,12 @@ package com.side.runwithme.util
 
 import com.side.runwithme.BuildConfig
 
-const val API_KEY = BuildConfig.kakaoApiKey
-
-
-const val KAKAO_REST_API_KEY = BuildConfig.kakaoRestApiKey
-
-const val REDIRECT_URL = BuildConfig.redirectURL
+//const val API_KEY = BuildConfig.kakaoApiKey
+//
+//
+//const val KAKAO_REST_API_KEY = BuildConfig.kakaoRestApiKey
+//
+//const val REDIRECT_URL = BuildConfig.redirectURL
 
 const val BASE_URL = BuildConfig.baseURL
 
@@ -20,6 +20,8 @@ const val KEY_STRING = 1
 const val KEY_BOOLEAN = 2
 
 const val ACTION_START_OR_RESUME_SERVICE = "action_start_or_resume_service"
+const val ACTION_RESUME_SERVICE = "action_resume_service"
+const val ACTION_START_SERVICE = "action_start_service"
 const val ACTION_STOP_SERVICE = "action_stop_service"
 const val ACTION_PAUSE_SERVICE = "action_pause_service"
 const val ACTION_SHOW_RUNNING_ACTIVITY = "ACTION_SHOW_RUNNING_ACTIVITY"

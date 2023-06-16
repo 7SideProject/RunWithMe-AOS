@@ -27,9 +27,12 @@ import com.side.runwithme.R
 import com.side.runwithme.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import java.time.LocalDate
 import javax.inject.Inject
 
 typealias PolyLine = MutableList<LatLng>
+const val SERVICE_NOTSTART = 0
+const val SERVICE_ISRUNNING = 1
 
 @AndroidEntryPoint
 class RunningService : LifecycleService() {
@@ -39,8 +42,7 @@ class RunningService : LifecycleService() {
 
     companion object {
         // 서비스 종료 여부
-        var serviceKilled = true // 시작할 때 false 변경, 서비스 종료 시 true 변경, 초기값이 true인 이유는 MainActivity에서 재시작 동작 때문
-        var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
+        var serviceState = SERVICE_NOTSTART // 앱 강제 종료 후 재시작시, SERVICE_ISRUNNING 상태이면 재시작
     }
 
     // NotificationCompat.Builder 주입
@@ -65,6 +67,9 @@ class RunningService : LifecycleService() {
     // 러닝을 시작하거나 다시 시작한 시간
     var startTime = 0L
 
+    var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
+    var startDay = ""
+
     private var pauseLast = false
 
     private var pauseLatLng = LatLng(0.0, 0.0)
@@ -87,7 +92,7 @@ class RunningService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
         currentNotificationBuilder = baseNotificationBuilder
-        serviceKilled = false
+        serviceState = SERVICE_ISRUNNING
         postInitialValues()
 
         initObserve()
@@ -243,6 +248,7 @@ class RunningService : LifecycleService() {
         val second = polyLine!!.get(polyLine.size - 3)
         val third = polyLine!!.get(polyLine.size - 2)
 
+
         val result = FloatArray(1)
         Location.distanceBetween(
             second.latitude,
@@ -331,8 +337,8 @@ class RunningService : LifecycleService() {
 
             sumDistance.postValue(sumDistance.value!!.plus(result[0]))
 
-            // 5초 이상 이동했는데 이동거리가 2.3m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 4초)
-            val isNotMoving = result[0] < 2.3f && (System.currentTimeMillis() - startTime) > 4000L
+            // 5초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 4초)
+            val isNotMoving = result[0] < 2.5f && (System.currentTimeMillis() - startTime) > 4000L
             if (isNotMoving) {
                 showToast("이동이 없어 러닝이 일시 중지되었습니다.")
                 pauseLatLng = lastLatLng
@@ -350,19 +356,26 @@ class RunningService : LifecycleService() {
     }
 
     // 서비스가 호출 되었을 때
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // service 재시작시
+        if(intent == null){
+            return START_STICKY
+        }
 
-        intent?.let {
+        intent.let {
             when (it.action) {
-                // 시작, 재개 되었을 때
-                ACTION_START_OR_RESUME_SERVICE -> {
-                    if (isFirstRun) {
-                        startTimer()
-                        startForegroundService()
-                        isFirstRun = false
-                    } else {
-                        startTimer()
-                    }
+                // 시작 되었을 때
+                ACTION_START_SERVICE -> {
+                    startTimer()
+                    startForegroundService()
+                    isFirstRun = false
+                    startTime = System.currentTimeMillis()
+                    startDay = LocalDate.now().toString()
+                }
+                // 재개 되었을 때
+                ACTION_RESUME_SERVICE -> {
+                    startTimer()
                     startTime = System.currentTimeMillis()
                 }
                 // 일시정지 되었을 때
@@ -391,13 +404,15 @@ class RunningService : LifecycleService() {
     // 서비스가 종료되었을 때
     private fun killService() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        serviceKilled = true
         pauseService()
+        serviceState = SERVICE_NOTSTART
         startTime = 0L
         pauseLast = false
+        isFirstRun = true
 
         postInitialValues()
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        /** stopForeground 빼고 해보기 **/
+//        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
@@ -416,7 +431,7 @@ class RunningService : LifecycleService() {
         // 초가 흐를 때마다 알림창의 시간 갱신
         timeRunInSeconds.observe(this) {
             // 서비스 종료 상태가 아닐 때
-            if (!serviceKilled) {
+            if (serviceState == SERVICE_ISRUNNING) {
                 val notification = currentNotificationBuilder.setContentText(
                     TrackingUtility.getFormattedStopWatchTime(it * 1000L)
                 )
@@ -463,7 +478,7 @@ class RunningService : LifecycleService() {
         }
 
         // 서비스 종료상태가 아닐 때
-        if (!serviceKilled) {
+        if (serviceState == SERVICE_ISRUNNING) {
             currentNotificationBuilder = baseNotificationBuilder
                 .addAction(
                     R.drawable.ic_launcher_foreground,

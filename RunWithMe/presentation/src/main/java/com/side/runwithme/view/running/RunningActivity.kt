@@ -28,6 +28,7 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
 import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
+import com.side.runwithme.service.SERVICE_NOTSTART
 import com.side.runwithme.util.*
 import com.side.runwithme.util.preferencesKeys.WEIGHT
 import com.side.runwithme.view.MainActivity
@@ -94,15 +95,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
         }
 
-        Log.d("test123", "init: ")
-
         initMapView()
 
         initClickListener()
 
-        runningViewModel.initToday(LocalDate.now().toString())
-
-        if (RunningService.isFirstRun) {
+        if (RunningService.serviceState == SERVICE_NOTSTART) {
             firstStart()
         } else { // app killed 된 후 activity 재시작
             bindService()
@@ -161,7 +158,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 ibStop.visibility = View.GONE
                 ibPause.visibility = View.VISIBLE
 
-                sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+                sendCommandToService(ACTION_RESUME_SERVICE)
             }
 
             ibPause.setOnClickListener {
@@ -205,7 +202,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         runRecord = RunRecord(
             runRecordSeq = 0,
             runImageSeq = 0,
-            runningDay = runningViewModel.today,
+            runningDay = runningService.startDay,
             runningStartTime = timeFormatter(runningService.startTime),
             runningEndTime = timeFormatter(System.currentTimeMillis()),
             runningTime = (currentTimeInMillis / 1000).toInt(),
@@ -287,8 +284,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         runningService.pathPoints.observe(this) {
             if (it.isNotEmpty()) {
                 naverLatLng = it
-                Log.d("test123", "initObserve: ")
-                if (it.size >= 2 && naverMap != null) {
+
+                val isOkToDrawPolyline = it.size >= 2
+                if (isOkToDrawPolyline && naverMap != null) {
                     drawPolyline()
                 }
             }
@@ -377,7 +375,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
         delay(3000L)
 
-        sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+        sendCommandToService(ACTION_START_SERVICE)
 
         bindService()
 
@@ -392,7 +390,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
 
     private fun drawPolyline() {
-        Log.d("test123", "drawPolyline: ")
         polyline.coords = naverLatLng
         polyline.color = getColor(R.color.mainColor)
         polyline.map = naverMap
@@ -446,16 +443,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     override fun onMapReady(naverMap: NaverMap) {
         // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
-        Log.d("test123", "onMapReady: ")
         this.naverMap = naverMap
-        naverMap.apply {
-            moveCamera(CameraUpdate.zoomTo(16.0))
-            locationSource = locationSource
-            locationTrackingMode = LocationTrackingMode.Follow
-            isLiteModeEnabled = true
+
+        /** apply 적용 시 내 위치로 이동하지 않는 현상 **/
+        naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+        naverMap.isLiteModeEnabled = true
             // 현위치 버튼 활성화
-            uiSettings.isLocationButtonEnabled = true
-        }
+        naverMap.uiSettings.isLocationButtonEnabled = true
     }
 
     private fun loading(timeinMillis: Long) {
