@@ -1,5 +1,7 @@
 package com.side.runwithme.module
 
+import com.side.data.datasource.datastore.DataStoreDataSource
+import com.side.data.datasource.datastore.DataStoreDataSourceImpl
 import com.side.data.datasource.user.UserRemoteDataSource
 import com.side.data.datasource.user.UserRemoteDataSourceImpl
 import dagger.Binds
@@ -17,4 +19,11 @@ interface DataSourceModule {
     fun provideUserDataSource(
         impl: UserRemoteDataSourceImpl
     ): UserRemoteDataSource
+
+    @Binds
+    @Singleton
+    fun provideDataStoreDataSource(
+        impl: DataStoreDataSourceImpl
+    ): DataStoreDataSource
+
 }

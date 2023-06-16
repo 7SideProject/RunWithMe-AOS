@@ -3,6 +3,7 @@ package com.side.data.repository
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.user.UserRemoteDataSource
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
@@ -31,7 +32,8 @@ import javax.inject.Singleton
 @Singleton // 알아보기
 class UserRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    private val userRemoteDataSource: UserRemoteDataSource
+    private val userRemoteDataSource: UserRemoteDataSource,
+    private val dataStoreDataSource: DataStoreDataSource
 ) : UserRepository {
 
     override fun login(code: String, state: String): Flow<UserResponse> = flow {
@@ -99,6 +101,8 @@ class UserRepositoryImpl @Inject constructor(
     override fun loginWithEmail(user: User): Flow<UserResponse> = flow {
         emit(ResultType.Loading)
         userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).collect {
+            Log.d("test123", "loginWithEmail: ${it.data}")
+
             when (it.code) {
                 "U001" -> {
                     val userResponse = (it.data as EmailLoginResponse).mapperToUser()
@@ -143,9 +147,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     suspend fun saveUserInfo(user: User) {
-        dataStore.saveEncryptStringValue(EMAIL, user.email)
-        dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
-        dataStore.saveValue(WEIGHT, user.weight)
+        dataStoreDataSource.saveUser(user)
     }
 
 }

@@ -16,9 +16,9 @@ object preferencesKeys {
     val WEIGHT = intPreferencesKey("weight")
 }
 
-const val KEY_INT = 0
-const val KEY_STRING = 1
-const val KEY_BOOLEAN = 2
+const val DATASTORE_KEY_TYPE_INT = 0
+const val DATASTORE_KEY_TYPE_STRING = 1
+const val DATASTORE_KEY_TYPE_BOOLEAN = 2
 
 suspend fun <T> DataStore<Preferences>.saveValue(key: Preferences.Key<T>, value: T) {
     edit { prefs -> prefs[key] = value }
@@ -41,13 +41,13 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: I
         }
         .map { prefs ->
             prefs[key] ?: when (type) {
-                KEY_INT -> {
+                DATASTORE_KEY_TYPE_INT -> {
                     0
                 }
-                KEY_BOOLEAN -> {
+                DATASTORE_KEY_TYPE_BOOLEAN -> {
                     false
                 }
-                KEY_STRING -> {
+                DATASTORE_KEY_TYPE_STRING -> {
                     ""
                 }
                 else -> {}
