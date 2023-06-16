@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
@@ -42,7 +43,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     lateinit var dataStore: DataStore<Preferences>
 
     private val loginViewModel by viewModels<LoginViewModel>()
-
 
 
     override fun init() {
@@ -87,11 +87,50 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
 
     private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkPermissionUpTo33()
+        } else {
+            checkPermissionUnder33()
+        }
+    }
+
+    private fun checkPermissionUnder33() {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 @RequiresApi(Build.VERSION_CODES.Q)
                 override fun onPermissionGranted() {
+
+                }
+
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("파일 읽기 권한을 허가해주세요.")
+                    } else if (checkSelfPermission(Manifest.permission.INTERNET)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("인터넷 권한을 허가해주세요.")
+                    } else {
+                        showToast("파일 읽기, 인터넷 권한을 허가해주세요.")
+                    }
+                }
+            })
+            .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
+            .setPermissions(
+                Manifest.permission.INTERNET,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            .check()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkPermissionUpTo33() {
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+                @RequiresApi(Build.VERSION_CODES.Q)
+                override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
                         == PackageManager.PERMISSION_DENIED
                     ) {
 
@@ -99,13 +138,23 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
-                    showToast("권한을 허가해주세요.")
+                    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("이미지 읽기 권한을 허가해주세요.")
+                    }
+                    if (checkSelfPermission(Manifest.permission.INTERNET)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("인터넷 권한을 허가해주세요.")
+                    }
+                    showToast("파일 읽기, 인터넷 권한을 허가해주세요.")
                 }
             })
             .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
             .setPermissions(
                 Manifest.permission.INTERNET,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_MEDIA_IMAGES
             )
             .check()
     }
@@ -138,19 +187,19 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         }
     }
 
-    private suspend fun saveUser(user: User){
+    private suspend fun saveUser(user: User) {
         dataStore.saveEncryptStringValue(EMAIL, user.email)
         dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
         dataStore.saveValue(WEIGHT, user.weight)
     }
 
-    private fun loading(){
+    private fun loading() {
         val loadingDialog = LoadingDialog(this)
         loadingDialog.show()
         // 로딩이 진행되지 않았을 경우
         lifecycleScope.launch {
             delay(500)
-            if(loadingDialog.isShowing){
+            if (loadingDialog.isShowing) {
                 loadingDialog.dismiss()
             }
         }
