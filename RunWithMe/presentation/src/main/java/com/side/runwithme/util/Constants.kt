@@ -5,6 +5,7 @@ import com.side.runwithme.BuildConfig
 
 const val BASE_URL = BuildConfig.BASEURL
 
+
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"

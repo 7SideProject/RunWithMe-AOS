@@ -3,27 +3,30 @@ package com.side.data.util
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.util.preferencesKeys.JWT
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
 class XAccessTokenInterceptor @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStoreDataSource: DataStoreDataSource
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        var token = ""
-        runBlocking {
-            token = dataStore.getDecryptStringValue(JWT).first().toString()
+        val token = runBlocking {
+            dataStoreDataSource.getJWT().first()
         }
 
         val request = chain.request()
             .newBuilder()
-            .addHeader("JWT", "${decrypt(token)}")
+            .addHeader("JWT", token)
             .build()
         val response = chain.proceed(request)
 
@@ -68,18 +71,12 @@ class XAccessTokenInterceptor @Inject constructor(
         Log.d("test123", "intercept: jwt : ${jwt}")
         Log.d("test123", "intercept: refreshtoken : ${refreshToken}")
 
-        runBlocking {
+        CoroutineScope(Dispatchers.IO).launch {
             saveToken(jwt, refreshToken ?: "")
         }
     }
 
     private suspend fun saveToken(jwt: String, refreshToken: String) {
-        if(jwt != "") {
-            dataStore.saveEncryptStringValue(JWT, jwt)
-        }
-
-        if(refreshToken != "") { // 여기에 토큰 만료 exception throw 하면 되지 않을까 ..?
-            dataStore.saveEncryptStringValue(preferencesKeys.REFRESH_TOKEN, refreshToken)
-        }
+        dataStoreDataSource.saveToken(jwt, refreshToken)
     }
 }
