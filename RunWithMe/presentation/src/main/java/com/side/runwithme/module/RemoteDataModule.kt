@@ -3,6 +3,7 @@ package com.side.runwithme.module
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.side.data.api.ChallengeApi
 import com.side.data.api.UserApi
 import com.side.data.util.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
@@ -57,10 +58,15 @@ object RemoteDataModule {
             .build()
     }
 
-
     @Provides
     @Singleton
     fun provideUserApi(@Named("mainRetrofit") retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChallengeApi(@Named("mainRetrofit") retrofit: Retrofit): ChallengeApi {
+        return retrofit.create(ChallengeApi::class.java)
     }
 }

@@ -1,8 +1,8 @@
-package com.side.domain.model
+package com.side.data.model.response
 
-import java.util.Date
+import java.util.*
 
-data class Challenge(
+data class ChallengeResponse(
     val seq : Long,
     val managerSeq: Long,
     val name: String,

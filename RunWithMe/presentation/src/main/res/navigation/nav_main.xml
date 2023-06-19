@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
-    app:startDestination="@id/HomeFragment"
-    xmlns:tools="http://schemas.android.com/tools">
+    app:startDestination="@id/HomeFragment">
 
     <fragment
         android:id="@+id/HomeFragment"
@@ -14,13 +14,17 @@
             android:id="@+id/action_homeFragment_to_recommendFragment"
             app:destination="@id/recommendFragment" />
         <action
+            android:id="@+id/action_homeFragment_to_challengeListFragment"
+            app:destination="@id/challengeListFragment" />
+        <action
             android:id="@+id/action_homeFragment_to_myPageFragment"
             app:destination="@id/myPageFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/challengeListFragment"
         android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
-        android:label="ChallengeListFragment" >
+        android:label="ChallengeListFragment">
         <action
             android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
             app:destination="@id/challengeSearchFragment" />
@@ -32,7 +36,7 @@
     <fragment
         android:id="@+id/recommendFragment"
         android:name="com.side.runwithme.view.recomend.RecommendFragment"
-        android:label="RecommendFragment" >
+        android:label="RecommendFragment">
         <action
             android:id="@+id/action_recommendFragment_to_recommendDetailFragment"
             app:destination="@id/recommendDetailFragment" />
@@ -40,7 +44,7 @@
     <fragment
         android:id="@+id/recommendDetailFragment"
         android:name="com.side.runwithme.view.recommend_detail.RecommendDetailFragment"
-        android:label="RecommendDetailFragment" >
+        android:label="RecommendDetailFragment">
         <action
             android:id="@+id/action_recommendDetailFragment_to_routeDetailFragment"
             app:destination="@id/routeDetailFragment" />
