@@ -97,7 +97,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun checkPermissionUnder33() {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
-                @RequiresApi(Build.VERSION_CODES.Q)
+
                 override fun onPermissionGranted() {
 
                 }

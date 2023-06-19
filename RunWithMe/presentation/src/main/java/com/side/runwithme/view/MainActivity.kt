@@ -83,6 +83,37 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
     }
 
     private fun requestPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionUpTo33()
+        }else {
+            requestPermissionUnder33()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestPermissionUpTo33(){
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+
+                override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        == PackageManager.PERMISSION_DENIED) {
+                        permissionDialog()
+                    }
+                }
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    showToast("권한을 허가해주세요.")
+                }
+            })
+            .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
+            .setPermissions(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            .check()
+    }
+    private fun requestPermissionUnder33(){
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 @RequiresApi(Build.VERSION_CODES.Q)
