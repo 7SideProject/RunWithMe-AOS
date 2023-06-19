@@ -28,22 +28,23 @@ class LoginViewModel @Inject constructor(
 
 
     fun loginWithEmail() {
-        val user = User("abcdef@naver.com", "12341234")
-//        val user = User(email.value, password.value)
+//        val user = User("abcdef@naver.com", "12341234")
+        val user = User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {
             loginWithEmailUseCase(user).collectLatest {
                 when (it) {
                     is ResultType.Success -> {
-                        _loginEventFlow.emit(Event.Success(it.data.data))
+                        _loginEventFlow.emit(Event.Success())
                     }
                     is ResultType.Fail -> {
+                        Log.d("test123", "loginWithEmail: fail")
                         _loginEventFlow.emit(Event.Fail(it.data.message))
                     }
 
                     is ResultType.Error -> {
-                        Log.d("joinError", "${it.exception.message} ")
-                        Log.d("joinError", "${it.exception.cause} ")
+                        Log.d("test123", "${it.exception.message} ")
+                        Log.d("test123", "${it.exception.cause} ")
                     }
                     else -> {}
                 }
@@ -52,7 +53,7 @@ class LoginViewModel @Inject constructor(
     }
 
     sealed class Event {
-        data class Success(val data: User) : Event()
+        class Success() : Event()
         data class Fail(val message: String) : Event()
 
     }

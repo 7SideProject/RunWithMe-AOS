@@ -1,5 +1,7 @@
 package com.side.data.mapper
 
+
+import com.side.data.model.response.ChallengeResponse
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.RunRecordRequest
@@ -8,7 +10,15 @@ import com.side.data.model.response.JoinResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.model.AllRunRecord
 import com.side.domain.model.RunRecord
+import com.side.domain.model.Challenge
 import com.side.domain.model.User
+
+fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
+    Challenge(
+        seq,
+        managerSeq, name, imgSeq, goalDays, goalType, goalAmount, timeStart, timeEnd
+    )
+}
 
 fun JoinResponse.mapperToUser(): User = this.run {
     User(seq, email, nickname, height, weight, point, profileImgSeq)
@@ -30,4 +40,5 @@ fun AllRunRecord.mapperToRunRecordRequest(): RunRecordRequest = this.run {
     RunRecordRequest(
         runRecord = runRecord, coordinates = coordinates, imgFile = imgFile
     )
+
 }

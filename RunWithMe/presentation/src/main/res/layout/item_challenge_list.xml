@@ -15,39 +15,47 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
-        <TextView
-            android:id="@+id/tv_challenge_duration"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_challenge_list_header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{challenge.duration}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@{challenge.duration}" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_challenge_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{challenge.name}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_challenge_duration"
-            tools:text="대전 1반" />
+            <TextView
+                android:id="@+id/tv_challenge_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/challenge_period(challenge.timeStart, challenge.timeEnd)}"
+                android:textSize="@dimen/fontsize_caption"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2022-01-01 ~ 2023-01-01" />
 
-        <TextView
-            android:id="@+id/tv_challenge_founder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{challenge.founder}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/tv_challenge_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_challenge_name"
-            tools:text="슈퍼쏘니" />
+            <TextView
+                android:id="@+id/tv_challenge_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@{challenge.name}"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontsize_h3"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_challenge_duration"
+                tools:text="대전 1반" />
+
+            <TextView
+                android:id="@+id/tv_challenge_founder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{challenge.name}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tv_challenge_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_challenge_name"
+                tools:text="슈퍼쏘니" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/ll_challenge_goal"
@@ -56,8 +64,8 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="@id/tv_challenge_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_challenge_name">
+            app:layout_constraintStart_toStartOf="@id/cl_challenge_list_header"
+            app:layout_constraintTop_toBottomOf="@id/cl_challenge_list_header">
 
             <TextView
                 android:id="@+id/tv_challenge_method"
@@ -65,8 +73,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/tv_round"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="10dp"
-                android:text="@{challenge.method}"
+                android:text="@{challenge.goalType}"
                 tools:text="거리" />
 
             <TextView
@@ -75,8 +84,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/tv_round"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="10dp"
-                android:text="@{challenge.often}"
+                android:text="@{@string/challenge_cycle(challenge.goalDays)}"
                 tools:text="주 1회" />
 
             <TextView
@@ -84,8 +94,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tv_round"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="10dp"
-                android:text="@{challenge.distance}"
+                android:text="@{@string/challenge_distance(challenge.goalAmount)}"
                 tools:text="12km" />
 
         </LinearLayout>
@@ -110,8 +121,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="start"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:text="멤버 수" />
+                    android:includeFontPadding="false"
+                    android:text="멤버 수"
+                    android:textSize="@dimen/fontsize_h5" />
 
                 <TextView
                     android:id="@+id/tv_challenge_member"
@@ -119,7 +131,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/fontsize_h5"
                     android:textStyle="bold"
                     tools:text="3 / 15" />
             </LinearLayout>
@@ -137,8 +150,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="start"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:text="참가비" />
+                    android:includeFontPadding="false"
+                    android:text="참가비"
+                    android:textSize="@dimen/fontsize_h5" />
 
                 <TextView
                     android:id="@+id/tv_challenge_cost"
@@ -146,7 +160,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/fontsize_h5"
                     android:textStyle="bold"
                     tools:text="0 P" />
             </LinearLayout>

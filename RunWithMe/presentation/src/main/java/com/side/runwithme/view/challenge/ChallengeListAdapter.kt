@@ -1,22 +1,23 @@
 package com.side.runwithme.view.challenge
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.runwithme.databinding.ItemChallengeListBinding
 
-class ChallengeListAdapter() : ListAdapter<Challenge, ChallengeListAdapter.ChallengeListViewHolder>(diffUtil) {
+class ChallengeListAdapter() : PagingDataAdapter<Challenge, ChallengeListAdapter.ChallengeListViewHolder>(diffUtil) {
 
     inner class ChallengeListViewHolder(val binding: ItemChallengeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(challenge: Challenge) {
+            Log.d("test123", "bind: $challenge")
             binding.apply {
                 this.challenge = challenge
-                tvChallengeMember.text = "${challenge.memberCount} / ${challenge.totalMemberCount}"
-                tvChallengeCost.text = "${challenge.cost} P"
                 executePendingBindings()
             }
 
@@ -40,7 +41,7 @@ class ChallengeListAdapter() : ListAdapter<Challenge, ChallengeListAdapter.Chall
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Challenge>() {
             override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge) =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem == newItem
 
             override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge) =
                 oldItem.seq == newItem.seq
