@@ -71,6 +71,7 @@ class RunningService : LifecycleService() {
     var startDay = ""
 
     private var pauseLast = false
+    var stopRunningBeforeRegister = false // 정지 버튼을 누르고 서버에 기록 등록하기 전 상태 (오류 시 다시 등록하기 위함)
 
     private var pauseLatLng = LatLng(0.0, 0.0)
     private var stopLastLatLng = LatLng(0.0, 0.0)
@@ -116,6 +117,10 @@ class RunningService : LifecycleService() {
     }
 
     private fun resumeRunning() {
+        if(stopRunningBeforeRegister){
+            return
+        }
+
         val result = FloatArray(1)
         Location.distanceBetween(
             pauseLatLng.latitude,
@@ -172,6 +177,10 @@ class RunningService : LifecycleService() {
     //위치 정보 요청
     @SuppressLint("MissingPermission", "VisibleForTests")
     private fun updateLocation(isTracking: Boolean) {
+        if(stopRunningBeforeRegister){
+            return
+        }
+
         if (isTracking and TrackingUtility.hasLocationPermissions(this)) {
             val request = LocationRequest.create().apply {
                 interval = LOCATION_UPDATE_INTERVAL

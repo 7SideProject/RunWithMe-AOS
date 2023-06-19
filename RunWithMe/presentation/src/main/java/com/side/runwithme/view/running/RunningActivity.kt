@@ -1,5 +1,6 @@
 package com.side.runwithme.view.running
 
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -130,6 +131,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         when (event) {
             is RunningViewModel.Event.Success -> {
                 loadingDialog.dismiss()
+                // 서버에 등록이 완료된 후 service를 종료 시킴
+                // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
+                stopService()
                 val intent = Intent(this, RunningResultActivity::class.java)
                 intent.putExtra(
                     "allRunRecord",
@@ -154,41 +158,38 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun initClickListener() {
         binding.apply {
             ibStart.setOnClickListener {
-                ibStart.visibility = View.GONE
-                ibStop.visibility = View.GONE
-                ibPause.visibility = View.VISIBLE
+                runningBtnUI()
 
                 sendCommandToService(ACTION_RESUME_SERVICE)
             }
 
             ibPause.setOnClickListener {
-                ibStart.visibility = View.VISIBLE
-                ibStop.visibility = View.VISIBLE
-                ibPause.visibility = View.GONE
+                pauseBtnUI()
 
                 sendCommandToService(ACTION_PAUSE_SERVICE)
             }
 
             ibStop.setOnClickListener {
-                if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
-                    stopRun()
-                    endToSaveData()
-                    isStopError = true
-                }
-
-                runningViewModel.postRunRecord(
-                    challengeSeq = challengeSeq,
-                    allRunRecord = AllRunRecord(
-                        runRecord = runRecord,
-                        coordinates = coordinates,
-                        imgFile = imgFile
-                    )
-                )
-
-                lifecycleScope.launch {
-                    loading(3000L)
-                }
+                ibStart.visibility = View.GONE
+                ibPause.visibility = View.GONE
+                stopRun()
             }
+        }
+    }
+
+    private fun runningBtnUI() {
+        binding.apply {
+            ibStart.visibility = View.GONE
+            ibStop.visibility = View.GONE
+            ibPause.visibility = View.VISIBLE
+        }
+    }
+
+    private fun pauseBtnUI() {
+        binding.apply {
+            ibStart.visibility = View.VISIBLE
+            ibStop.visibility = View.VISIBLE
+            ibPause.visibility = View.GONE
         }
     }
 
@@ -321,17 +322,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // 러닝 뛰고 있는 지 observe
         runningService.isRunning.observe(this) {
             if (it) { // 러닝을 뛰고 있는 경우
-                binding.apply {
-                    ibStart.visibility = View.GONE
-                    ibStop.visibility = View.GONE
-                    ibPause.visibility = View.VISIBLE
-                }
+                runningBtnUI()
             } else { // 일시 정지 된 경우
-                binding.apply {
-                    ibStart.visibility = View.VISIBLE
-                    ibStop.visibility = View.VISIBLE
-                    ibPause.visibility = View.GONE
-                }
+                pauseBtnUI()
             }
         }
 
@@ -384,6 +377,29 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
+        runningService.stopRunningBeforeRegister = true
+
+        if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
+            endToSaveData()
+            isStopError = true
+        }
+
+        runningViewModel.postRunRecord(
+            challengeSeq = challengeSeq,
+            allRunRecord = AllRunRecord(
+                runRecord = runRecord,
+                coordinates = coordinates,
+                imgFile = imgFile
+            )
+        )
+
+        lifecycleScope.launch {
+            loading(5000L)
+        }
+
+    }
+
+    private fun stopService(){
         unbindService(serviceConnection)
         sendCommandToService(ACTION_STOP_SERVICE)
     }
@@ -465,4 +481,18 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
         }
     }
+
+    // 뒤로가기 버튼 눌렀을 때
+    override fun onBackPressed() {
+        var builder = AlertDialog.Builder(this)
+        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+            .setPositiveButton("네"){ _,_ ->
+                stopRun()
+            }
+            .setNegativeButton("아니오"){_,_ ->
+                // 다시 시작
+            }.create()
+        builder.show()
+    }
+
 }

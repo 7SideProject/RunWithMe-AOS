@@ -24,15 +24,6 @@ class RunningViewModel @Inject constructor(
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
     val postRunRecordEventFlow get() = _postRunRecordEventFlow.asEventFlow()
 
-    private var _today = ""
-    val today get() = _today
-
-    fun initToday(today: String){
-        if(today.isEmpty()){
-            this._today = today
-        }
-    }
-
     fun postRunRecord(challengeSeq: Int, allRunRecord: AllRunRecord){
         viewModelScope.launch {
             postRunRecordUseCase(challengeSeq, allRunRecord).collect {
