@@ -5,7 +5,7 @@ import com.side.domain.model.User
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 
-typealias UserResponse = ResultType<BaseResponse<User>>
+typealias UserResponse = ResultType<BaseResponse<User?>>
 
 interface UserRepository {
     fun login(code: String, state: String): Flow<UserResponse>

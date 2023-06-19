@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -6,6 +7,10 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 
 android {
     namespace 'com.side.runwithme'
@@ -17,9 +22,34 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        testInstrumentationRunner "com.side.runwithme.di.HiltTestRunner"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.side.runwithme.di.HiltTestRunner"
 
+        buildConfigField "String", "BASEURL", "\"${properties.getProperty("BASEURL")}\""
+        buildConfigField "String", "KAKAOAPIKEY", "\"${properties.getProperty("KAKAOAPIKEY")}\""
+        buildConfigField "String", "NAVERAPIKEY", "\"${properties.getProperty("NAVERAPIKEY")}\""
+
+        manifestPlaceholders['KAKAOAPIKEY'] = "\"${properties.getProperty("KAKAOAPIKEY")}\""
+        manifestPlaceholders['NAVERAPIKEY'] = "\"${properties.getProperty("NAVERAPIKEY")}\""
+//        manifestPlaceholders = [kakaoApiKey: kakaoApiKey]
+//        manifestPlaceholders = [naverApiKey: naverApiKey]
+    }
+
+    android {
+        testOptions {
+            managedDevices {
+                devices {
+                    pixel2api30(com.android.build.api.dsl.ManagedVirtualDevice) {
+                        // Use device profiles you typically see in Android Studio.
+                        device = "Pixel 4"
+                        // Use only API levels 27 and higher.
+                        apiLevel = 30
+                        // To include Google services, use "google".
+                        systemImageSource = "aosp"
+                    }
+                }
+            }
+        }
     }
 
     buildTypes {
@@ -60,9 +90,19 @@ dependencies {
     testImplementation "io.mockk:mockk-android:1.13.5"
     testImplementation "io.mockk:mockk-agent:1.13.5"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    kaptTest 'com.google.dagger:hilt-android-compiler:2.44'
 
+    testImplementation "org.slf4j:slf4j-simple:2.0.6"
+
+    androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.ext:truth:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
 
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:2.44"
@@ -94,7 +134,7 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.13.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+    kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     // Kakao
     implementation "com.kakao.sdk:v2-user:2.12.0"

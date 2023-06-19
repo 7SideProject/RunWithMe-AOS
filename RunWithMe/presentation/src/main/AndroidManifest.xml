@@ -59,10 +59,10 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="${kakaoApiKey}" />
+            android:value="${KAKAOAPIKEY}" />
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="${naverApiKey}" />
+            android:value="${NAVERAPIKEY}" />
     </application>
 
 </manifest>

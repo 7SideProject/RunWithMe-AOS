@@ -2,22 +2,13 @@ package com.side.runwithme.util
 
 import com.side.runwithme.BuildConfig
 
-const val API_KEY = BuildConfig.kakaoApiKey
 
+const val BASE_URL = BuildConfig.BASEURL
 
-const val KAKAO_REST_API_KEY = BuildConfig.kakaoRestApiKey
-
-const val REDIRECT_URL = BuildConfig.redirectURL
-
-const val BASE_URL = BuildConfig.baseURL
 
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
-
-const val KEY_INT = 0
-const val KEY_STRING = 1
-const val KEY_BOOLEAN = 2
 
 const val ACTION_START_OR_RESUME_SERVICE = "action_start_or_resume_service"
 const val ACTION_STOP_SERVICE = "action_stop_service"

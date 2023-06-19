@@ -2,17 +2,13 @@ package com.side.data.api
 
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
-import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.JoinResponse
-import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
@@ -26,6 +22,6 @@ interface UserApi {
     suspend fun join(@Body request: JoinRequest): BaseResponse<JoinResponse>
 
     @POST("users/login")
-    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse>
+    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse?>
 
 }
