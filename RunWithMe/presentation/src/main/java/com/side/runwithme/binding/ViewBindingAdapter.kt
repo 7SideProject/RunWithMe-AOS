@@ -29,7 +29,8 @@ object ViewBindingAdapter {
         val month = date.get(1).toInt()
         val day = date.get(2).toInt()
 
-        this.text = "${year}년 ${month}월 ${day}일 러닝"
+//        this.text = "${year}년 ${month}월 ${day}일 러닝"
+        this.text = resources.getString(R.string.running_result_day, year, month, day)
     }
 
     @BindingAdapter("runningDistance")
