@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
@@ -31,7 +32,6 @@ import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
 import com.side.runwithme.util.*
-import com.side.runwithme.util.preferencesKeys.WEIGHT
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel
@@ -73,7 +73,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private var type: String = GOAL_TYPE_TIME
     private var goal = 60 * 1000L
-    private var weight = 70
 
     // 라이브 데이터 받아온 값들
     private var caloriesBurned: Int = 0
@@ -92,15 +91,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val intent = Intent()
         challengeSeq = intent.getIntExtra("challengeSeq", 0)
 
-        lifecycleScope.launch {
-            weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
-        }
+        /** goalType, goal 받아와야함 **/
 
         initMapView()
 
         initClickListener()
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
+            runningViewModel.saveChallengeSeqInViewModel(challengeSeq)
+            runningViewModel.getMyWeight()
             firstStart()
         } else { // app killed 된 후 activity 재시작
             bindService()
@@ -385,8 +384,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
 
         runningViewModel.postRunRecord(
-            challengeSeq = challengeSeq,
-            allRunRecord = AllRunRecord(
+            AllRunRecord(
                 runRecord = runRecord,
                 coordinates = coordinates,
                 imgFile = imgFile
@@ -432,7 +430,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun changeCalorie(sumDistance: Float) {
-        caloriesBurned = round((sumDistance / 1000f) * weight).toInt()
+        caloriesBurned = round((sumDistance / 1000f) * runningViewModel.weight.value).toInt()
         binding.tvCalorie.text = "$caloriesBurned"
     }
 
@@ -484,7 +482,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 뒤로가기 버튼 눌렀을 때
     override fun onBackPressed() {
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
             .setPositiveButton("네"){ _,_ ->
                 stopRun()
