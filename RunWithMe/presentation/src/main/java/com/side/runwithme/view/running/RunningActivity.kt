@@ -97,6 +97,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         initClickListener()
 
+        // onBackPressed deprecated되고 아래처럼 사용해야함
+        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         if (RunningService.serviceState == SERVICE_NOTSTART) {
             runningViewModel.saveChallengeSeqInViewModel(challengeSeq)
             runningViewModel.getMyWeight()
@@ -480,17 +483,32 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    // 뒤로가기 버튼 눌렀을 때
-    override fun onBackPressed() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
-            .setPositiveButton("네"){ _,_ ->
-                stopRun()
-            }
-            .setNegativeButton("아니오"){_,_ ->
-                // 다시 시작
-            }.create()
-        builder.show()
+//    // 뒤로가기 버튼 눌렀을 때
+//    @Deprecated("Deprecated in Java")
+//    override fun onBackPressed() {
+//        val builder = AlertDialog.Builder(this)
+//        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+//            .setPositiveButton("네"){ _,_ ->
+//                stopRun()
+//            }
+//            .setNegativeButton("아니오"){_,_ ->
+//                // 다시 시작
+//            }.create()
+//        builder.show()
+//    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val builder = AlertDialog.Builder(this@RunningActivity)
+            builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+                .setPositiveButton("네"){ _,_ ->
+                    stopRun()
+                }
+                .setNegativeButton("아니오"){_,_ ->
+                    // 다시 시작
+                }.create()
+            builder.show()
+        }
     }
 
 }

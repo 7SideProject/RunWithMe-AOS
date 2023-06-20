@@ -17,8 +17,8 @@
             android:id="@+id/action_homeFragment_to_challengeListFragment"
             app:destination="@id/challengeListFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_myPageFragment"
-            app:destination="@id/myPageFragment" />
+            android:id="@+id/action_homeFragment_to_MyPageFragment"
+            app:destination="@id/MyPageFragment" />
 
     </fragment>
     <fragment
@@ -61,7 +61,7 @@
         android:name="com.side.runwithme.view.recommend_detail.favorite.FavoriteDialog"
         android:label="FavoriteDialog" />
     <fragment
-        android:id="@+id/myPageFragment"
+        android:id="@+id/MyPageFragment"
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
         android:label="MyPageFragment" />
 </navigation>
