@@ -4,7 +4,7 @@ buildscript {
     dependencies {
         classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}")
-        classpath("com.android.tools.build:gradle:7.4.0")
+        classpath("com.android.tools.build:gradle:${Versions.AGP}")
     }
     repositories {
         google()
