@@ -27,4 +27,10 @@
     <dimen name="fontsize_h2">36sp</dimen>
     <dimen name="fontsize_h1">42sp</dimen>
 
+
+    <dimen name="my_challenge_list_height">135dp</dimen>
+    <dimen name="my_challenge_img_size">120dp</dimen>
+    <dimen name="complete_stamp_width">180dp</dimen>
+    <dimen name="complete_stamp_height">100dp</dimen>
+    <dimen name="runrecord_img_height">400dp</dimen>
 </resources>

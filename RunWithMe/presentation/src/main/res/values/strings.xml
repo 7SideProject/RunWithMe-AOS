@@ -52,6 +52,11 @@
     <string name="btn_register">등록하기</string>
     <string name="join">회원가입</string>
 
+    <string name="practice_running">연습 러닝</string>
+
+    <string name="calorie">%d kcal</string>
+    <string name="running_result_day">%s 년 %d 월 %d 일 러닝</string>
+
     <string name="challenge_period">%d ~ %d</string>
     <string name="challenge_cycle">주 %d회</string>
     <string name="challenge_distance">주 %d회</string>

@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="runningResultVM"
+            type="com.side.runwithme.view.running_result.RunningResultViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +35,8 @@
                     android:layout_marginTop="@dimen/parent_vertical_margin"
                     android:layout_marginStart="@dimen/parent_horizontal_margin"
                     android:textStyle="bold"
-                    android:text="2022년 1월 1일 러닝"
+                    tools:text="2023년 6월 6일 러닝"
+                    runningResultDay="@{runningResultVM.runRecord.runningStartTime}"
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h5" />
 
@@ -43,6 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginStart="@dimen/parent_horizontal_margin"
+                    android:text="@{runningResultVM.runRecord.userName}"
                     android:textStyle="bold"
                     android:textColor="@color/main_blue"
                     android:textSize="@dimen/fontsize_h5"
@@ -68,7 +72,8 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/fontsize_h1"
                         android:textStyle="bold"
-                        android:text="0.3km"
+                        tools:text="0.3 km"
+                        android:text="@{runningResultVM.runRecord.runningDistance}"
                         android:layout_marginStart="@dimen/parent_horizontal_margin"
                         android:layout_marginTop="@dimen/parent_vertical_margin"
                         app:layout_constraintStart_toStartOf="parent"
@@ -76,9 +81,10 @@
 
                     <ImageView
                         android:id="@+id/iv_complete"
-                        android:layout_width="180dp"
-                        android:layout_height="100dp"
+                        android:layout_width="@dimen/complete_stamp_width"
+                        android:layout_height="@dimen/complete_stamp_height"
                         tools:src="@drawable/success_stamp"
+                        runningResultCompleted="@{runningResultVM.runRecord.completed}"
                         android:paddingStart="@dimen/padding_large"
                         android:layout_marginTop="@dimen/parent_vertical_margin"
                         app:layout_constraintBottom_toBottomOf="@id/tv_distance"
@@ -145,7 +151,8 @@
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:text="07 : 27"
+                                runningTime="@{runningResultVM.runRecord.runningDistance}"
+                                tools:text="07 : 27"
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
@@ -171,7 +178,8 @@
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:text="8.3km/h"
+                                tools:text="8.3km/h"
+                                runningAvgSpeed="@{runningResultVM.runRecord.runningAvgSpeed}"
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
@@ -193,12 +201,13 @@
                 <ImageView
                     android:id="@+id/iv_run_record"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
+                    android:layout_height="@dimen/runrecord_img_height"
                     android:layout_marginHorizontal="@dimen/parent_horizontal_margin"
                     android:layout_marginTop="@dimen/margin_regular"
                     android:background="@drawable/image_round"
                     android:clipToOutline="true"
                     android:scaleType="fitXY"
+                    runRecordImgFile="@{runningResultVM.imgFile}"
                     tools:src="@color/black"/>
 
                 <LinearLayout
@@ -215,7 +224,7 @@
                         android:drawableStart="@drawable/timer_24"
                         android:drawablePadding="4dp"
                         android:gravity="center"
-                        android:text="06:05 - 06:25"
+                        tools:text="06:05 - 06:25"
                         android:textColor="@color/main_grey"
                         android:textSize="@dimen/fontsize_caption" />
 
@@ -227,7 +236,8 @@
                         android:drawablePadding="4dp"
                         android:gravity="right"
                         android:layout_gravity="center"
-                        android:text="손 크루"
+                        tools:text="손 크루"
+                        android:text="@{runningResultVM.runRecord.challengeName}"
                         android:textColor="@color/main_grey" />
 
                 </LinearLayout>
@@ -268,11 +278,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/margin_regular"
                         android:layout_marginBottom="@dimen/parent_vertical_margin"
-                        android:background="@drawable/btn_round_main_color"
+                        android:background="@drawable/btn_round_lightgrey"
                         android:layout_weight="1"
                         android:text="@string/recommend"
                         android:textStyle="bold"
-                        android:textColor="@color/white"
                         android:textSize="@dimen/fontsize_h4" />
                 </LinearLayout>
             </LinearLayout>

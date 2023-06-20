@@ -179,4 +179,7 @@ dependencies {
 
     // datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Desugaring 자바 8 호환을 위함
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }

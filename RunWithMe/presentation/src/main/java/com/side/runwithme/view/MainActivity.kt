@@ -18,6 +18,9 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityMainBinding
+import com.side.runwithme.service.RunningService
+import com.side.runwithme.service.SERVICE_ISRUNNING
+import com.side.runwithme.view.running.RunningActivity
 import com.side.runwithme.view.running_list.RunningListActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,15 +32,27 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
     override fun init() {
         requestPermission()
 
+        runningCheck()
+
         initNavigation()
 
         initClickListener()
+    }
+
+    private fun runningCheck(){
+        // 트래킹이 종료되지 않았을 때, 백그라운드에서 제거 후 실행해도 바로 트래킹 화면이 뜨게함
+        if(RunningService.serviceState == SERVICE_ISRUNNING){
+            startActivity(Intent(this, RunningActivity::class.java))
+        }
     }
 
     private fun initClickListener(){
         binding.apply {
             floatingActionButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
+            }
+            btn2.setOnClickListener {
+                startActivity(Intent(this@MainActivity, RunningActivity::class.java))
             }
         }
     }
@@ -68,6 +83,37 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
     }
 
     private fun requestPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionUpTo33()
+        }else {
+            requestPermissionUnder33()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestPermissionUpTo33(){
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+
+                override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        == PackageManager.PERMISSION_DENIED) {
+                        permissionDialog()
+                    }
+                }
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    showToast("권한을 허가해주세요.")
+                }
+            })
+            .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
+            .setPermissions(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            .check()
+    }
+    private fun requestPermissionUnder33(){
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 @RequiresApi(Build.VERSION_CODES.Q)
