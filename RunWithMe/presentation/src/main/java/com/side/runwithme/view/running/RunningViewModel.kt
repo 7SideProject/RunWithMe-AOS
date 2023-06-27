@@ -10,6 +10,9 @@ import com.side.domain.model.RunRecord
 import com.side.domain.model.User
 import com.side.domain.usecase.running.PostRunRecordUseCase
 import com.side.domain.utils.ResultType
+import com.side.domain.utils.onError
+import com.side.domain.utils.onFailure
+import com.side.domain.utils.onSuccess
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import com.side.runwithme.util.getMutableStateFlow
@@ -55,24 +58,19 @@ class RunningViewModel @Inject constructor(
     fun postRunRecord(allRunRecord: AllRunRecord){
         viewModelScope.launch {
             postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
-                when(it){
-                    is ResultType.Success -> {
-                        _postRunRecordEventFlow.emit(Event.Success())
-                    }
-                    is ResultType.Fail -> {
-                        _postRunRecordEventFlow.emit(Event.Fail())
-                    }
-                    is ResultType.Error -> {
-                        // 서버 에러 분류해줄 수 있으면 좋을듯
-                        _postRunRecordEventFlow.emit(Event.ServerError())
-                    }
-                    else -> {
-
-                    }
+                it.onSuccess {
+                    _postRunRecordEventFlow.emit(Event.Success())
+                }.onFailure {
+                    _postRunRecordEventFlow.emit(Event.Fail())
+                }.onError {
+                    // 서버 에러 분류해줄 수 있으면 좋을듯
+                    _postRunRecordEventFlow.emit(Event.ServerError())
                 }
+
             }
         }
     }
+
 
     sealed class Event {
         class Success : Event()

@@ -1,4 +1,4 @@
-package com.side.data.datasource
+package com.side.data.datasource.running
 
 import com.side.data.api.RunningApi
 import com.side.data.model.request.RunRecordRequest
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class RunningRemoteDataSourceImpl @Inject constructor(
     private val runningApi: RunningApi
-): RunningRemoteDataSource{
+): RunningRemoteDataSource {
 
     override fun postRunRecord(challengeSeq: Int, runRecordRequest: RunRecordRequest): Flow<BaseResponse<String>> = flow {
         emit(runningApi.postRunRecord(challengeSeq, runRecordRequest))

@@ -1,7 +1,8 @@
 package com.side.data.repository
 
-import com.side.data.datasource.RunningRemoteDataSourceImpl
+import com.side.data.datasource.running.RunningRemoteDataSourceImpl
 import com.side.data.mapper.mapperToRunRecordRequest
+import com.side.data.util.emitResultTypeError
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.AllRunRecord
 import com.side.domain.repository.RunningRepository
@@ -25,7 +26,7 @@ class RunningRepositoryImpl @Inject constructor(
             emit(ResultType.Success(it))
         }
     }.catch {
-        emit(ResultType.Error(it))
+        emitResultTypeError(it)
     }
 
 }

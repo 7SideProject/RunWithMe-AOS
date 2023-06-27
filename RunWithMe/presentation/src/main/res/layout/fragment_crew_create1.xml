@@ -148,15 +148,11 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_next"
+            style="@style/StrongButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="다음"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:background="@drawable/btn_blue"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="16dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

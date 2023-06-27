@@ -1,7 +1,7 @@
 package com.side.runwithme.module
 
-import com.side.data.datasource.RunningRemoteDataSource
-import com.side.data.datasource.RunningRemoteDataSourceImpl
+import com.side.data.datasource.running.RunningRemoteDataSource
+import com.side.data.datasource.running.RunningRemoteDataSourceImpl
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.datastore.DataStoreDataSourceImpl
 import com.side.data.datasource.user.UserRemoteDataSource

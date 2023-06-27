@@ -183,27 +183,22 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_route"
+                    style="@style/WeakButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="@dimen/parent_vertical_margin"
                     android:text="@string/route_detail"
-                    android:textSize="@dimen/fontsize_h4"
-                    android:fontFamily="@font/noto_sans_bold"
-                    android:background="@drawable/btn_stroke_lightgrey"
                     app:layout_constraintStart_toStartOf="@id/tv_recommend_content"
                     app:layout_constraintEnd_toEndOf="@id/tv_recommend_content"
                     app:layout_constraintTop_toBottomOf="@id/tv_recommend_content"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_ok"
+                    style="@style/StrongButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/parent_vertical_margin"
-                    android:background="@drawable/btn_round_main_color"
-                    android:fontFamily="@font/noto_sans_bold"
                     android:text="@string/ok"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/fontsize_h4"
                     app:layout_constraintStart_toStartOf="@id/btn_route"
                     app:layout_constraintEnd_toEndOf="@id/btn_route"
                     app:layout_constraintTop_toBottomOf="@id/btn_route"/>

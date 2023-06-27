@@ -263,7 +263,6 @@ class RunningService : LifecycleService() {
     // 좌표 4개 이상일 때 이전 3개의 좌표를 비교하여
     // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
     private fun optimizationPolyLine() {
-        /** polyline이 변경되었을 때 pathPoints.value 변경되었을듯 싶은데 확인해보기 **/
         val polyLine = pathPoints.value
         val first = polyLine!!.get(polyLine.size - 4)
         val second = polyLine!!.get(polyLine.size - 3)

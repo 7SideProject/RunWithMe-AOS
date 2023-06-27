@@ -226,16 +226,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_join"
+            style="@style/StrongButton"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_round_main_color"
             android:includeFontPadding="false"
             android:text="@string/add"
-            android:textColor="@color/white"
-            android:textSize="@dimen/fontsize_h5"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

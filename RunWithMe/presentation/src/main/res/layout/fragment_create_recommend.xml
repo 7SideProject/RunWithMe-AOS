@@ -147,38 +147,22 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancel"
-            style="@style/header_text"
-            android:layout_width="140dp"
+            style="@style/WeakButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="@dimen/parent_vertical_margin"
-            android:layout_marginHorizontal="16dp"
-            android:background="@drawable/btn_round_lightgrey"
             android:text="@string/cancel"
-            android:textColor="@color/white"
-            android:textSize="@dimen/fontsize_h4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_recommend"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_recommend"
-            style="@style/header_text"
-            android:layout_width="140dp"
+            style="@style/StrongButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="@dimen/parent_vertical_margin"
-            android:layout_marginHorizontal="16dp"
-            android:background="@drawable/btn_round_main_color"
             android:text="@string/recommend"
-            android:textColor="@color/white"
-            android:textSize="@dimen/fontsize_h4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btn_cancel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

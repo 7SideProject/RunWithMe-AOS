@@ -54,16 +54,15 @@
             app:layout_constraintTop_toBottomOf="@id/et_email"/>
 
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_login"
-            android:layout_width="340dp"
-            android:layout_height="60dp"
+            style="@style/StrongButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:text="로그인"
-            android:textStyle="bold"
-            android:backgroundTint="@color/main_blue"
             android:layout_marginTop="@dimen/margin_large"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/et_password"
+            app:layout_constraintStart_toStartOf="@id/et_password"
             app:layout_constraintTop_toBottomOf="@id/et_password" />
 
         <TextView

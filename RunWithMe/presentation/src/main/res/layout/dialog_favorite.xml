@@ -38,7 +38,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_dialog_header"
-            app:layout_constraintBottom_toTopOf="@id/btn_cancel"/>
+            app:layout_constraintBottom_toTopOf="@id/tv_scrap_delete"/>
 
         <TextView
             android:id="@+id/tv_scrap_delete"
@@ -46,39 +46,33 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/parent_margin"
             android:padding="8dp"
-            android:text="해당 즐겨찾기를 삭제하시겠습니까?"
+            android:text="해당 즐겨찾기를 등록하시겠습니까?"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_dialog_header"
+            app:layout_constraintTop_toBottomOf="@id/et_favorite_title"
             app:layout_constraintBottom_toTopOf="@id/btn_cancel"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancel"
-            style="@style/header_text"
+            style="@style/WeakButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/parent_margin"
-            android:background="@drawable/btn_round_white_grey_border"
             android:text="@string/cancel"
-            android:textColor="@color/light_grey"
-            android:textSize="@dimen/fontsize_h3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_ok"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_ok"
-            style="@style/header_text"
+            style="@style/StrongButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/parent_margin"
-            android:background="@drawable/btn_round_main_color"
             android:text="@string/ok"
-            android:textColor="@color/white"
-            android:textSize="@dimen/fontsize_h3"
             app:layout_constraintBottom_toBottomOf="@id/btn_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_cancel"
