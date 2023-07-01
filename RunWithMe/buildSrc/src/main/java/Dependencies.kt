@@ -54,4 +54,8 @@ object Dependencies {
     const val DESUGARING = "com.android.tools:desugar_jdk_libs:${Versions.DESUGARING}"
     const val PAGING = "androidx.paging:paging-runtime-ktx:${Versions.PAGING}"
     const val PAGING_COMMON = "androidx.paging:paging-common-ktx:${Versions.PAGING}"
+    const val ROOM_RUNTIME = "androidx.room:room-runtime:${Versions.ROOM}"
+    const val ROOM_COMMON = "androidx.room:room-common::${Versions.ROOM}"
+    const val ROOM_KAPT = "androidx.room:room-compiler:${Versions.ROOM}"
+    const val ROOM_COROUTINE = "androidx.room:room-ktx:${Versions.ROOM}"
 }

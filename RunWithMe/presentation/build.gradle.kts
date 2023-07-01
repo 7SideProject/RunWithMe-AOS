@@ -187,4 +187,10 @@ dependencies {
     implementation(Dependencies.PAGING)
 
     implementation("androidx.annotation:annotation:1.6.0")
+
+    // Room
+    implementation(Dependencies.ROOM_RUNTIME)
+    annotationProcessor(Dependencies.ROOM_KAPT)
+    kapt(Dependencies.ROOM_KAPT)
+    implementation(Dependencies.ROOM_COROUTINE)
 }

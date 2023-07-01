@@ -62,4 +62,10 @@ dependencies {
 
     // datastore
     implementation(Dependencies.DATASTORE_PREFERENCES)
+
+    // Room
+    implementation(Dependencies.ROOM_RUNTIME)
+    annotationProcessor(Dependencies.ROOM_KAPT)
+    kapt(Dependencies.ROOM_KAPT)
+    implementation(Dependencies.ROOM_COROUTINE)
 }
