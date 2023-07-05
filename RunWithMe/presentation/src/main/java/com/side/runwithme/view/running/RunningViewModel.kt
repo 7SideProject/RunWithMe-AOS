@@ -4,10 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.data.datasource.datastore.DataStoreDataSource
+import com.side.domain.modedl.PracticeRunRecord
 import com.side.domain.model.AllRunRecord
 import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.domain.model.User
+import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
 import com.side.domain.utils.ResultType
 import com.side.domain.utils.onError
@@ -28,7 +30,8 @@ import javax.inject.Inject
 class RunningViewModel @Inject constructor(
     private val stateHandler: SavedStateHandle,
     private val postRunRecordUseCase: PostRunRecordUseCase,
-    private val dataStoreDataSource: DataStoreDataSource
+    private val dataStoreDataSource: DataStoreDataSource,
+    private val insertPracticeRunRecordUseCase: InsertPracticeRunRecordUseCase
 ): ViewModel(){
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
@@ -80,6 +83,25 @@ class RunningViewModel @Inject constructor(
 
     private fun postPracticeRunRecord(allRunRecord: AllRunRecord){
         viewModelScope.launch {
+            val runRecord = allRunRecord.runRecord
+            insertPracticeRunRecordUseCase(PracticeRunRecord(
+                seq = 0,
+                image = allRunRecord.imgFile,
+                startTime = runRecord.runningStartTime,
+                endTime = runRecord.runningEndTime,
+                runningTime = runRecord.runningTime,
+                runningDistance = runRecord.runningDistance,
+                avgSpeed = runRecord.runningAvgSpeed,
+                calorie = runRecord.runningCalorieBurned
+            )).collect {
+                it.onSuccess {
+                    _postRunRecordEventFlow.emit(Event.Success())
+                }.onFailure {
+                    _postRunRecordEventFlow.emit(Event.Fail())
+                }.onError {
+                    _postRunRecordEventFlow.emit(Event.Error())
+                }
+            }
 
         }
     }
@@ -105,6 +127,7 @@ class RunningViewModel @Inject constructor(
         class Success : Event()
         class Fail : Event()
         class ServerError : Event()
+        class Error: Event()
     }
 
 }

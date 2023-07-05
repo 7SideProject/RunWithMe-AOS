@@ -143,7 +143,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                     "allRunRecord",
                     AllRunRecord(
                         runRecord = runRecord,
-                        coordinates = emptyList(),
+                        coordinates = coordinates,
                         imgFile = imgFile
                     )
                 )
@@ -155,6 +155,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
             is RunningViewModel.Event.ServerError -> {
                 showToast("서버가 불안정합니다. 다시 한 번 시도해주세요.")
+            }
+            is RunningViewModel.Event.Error -> {
+
             }
         }
     }
@@ -254,7 +257,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     @Throws(IOException::class)
     private fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val newFile = File(this.filesDir, "profile_${System.currentTimeMillis()}")
+        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
         val fileOutputStream = FileOutputStream(newFile)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
         fileOutputStream.close()

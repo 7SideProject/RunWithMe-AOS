@@ -14,8 +14,10 @@ import com.side.domain.model.AllRunRecord
 import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningListBinding
+import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MultipartBody
 
+@AndroidEntryPoint
 class RunningResultActivity : BaseActivity<ActivityRunningListBinding>(R.layout.activity_running_result) {
 
     private lateinit var navController : NavController
@@ -31,16 +33,26 @@ class RunningResultActivity : BaseActivity<ActivityRunningListBinding>(R.layout.
 
     private fun initIntentExtra(){
         val intent = Intent()
-        var allRunRecord : AllRunRecord? = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val allRunRecord : AllRunRecord? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra("allRunRecord", AllRunRecord::class.java)
         }else {
             intent.getSerializableExtra("allRunRecord") as AllRunRecord
         }
 
+        if(allRunRecord == null){
+            return
+        }
+
         runningResultViewModel.apply {
-            setRunRecord(allRunRecord?.runRecord)
-            setImgFile(allRunRecord?.imgFile)
+            if(allRunRecord.runRecord != null) {
+                runRecord = allRunRecord.runRecord
+            }
+            if(allRunRecord.imgFile != null) {
+                imgFile = allRunRecord.imgFile
+            }
+            if(!allRunRecord.coordinates.isNullOrEmpty()) {
+                coordinates = allRunRecord.coordinates
+            }
         }
 
     }
