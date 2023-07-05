@@ -10,7 +10,7 @@ interface DataStoreDataSource {
 
     fun getUserEmail(): Flow<String>
 
-    fun getUserSeq(): Flow<Long>
+    fun getUserSeq(): Flow<String>
 
     fun getUserWeight(): Flow<Int>
 

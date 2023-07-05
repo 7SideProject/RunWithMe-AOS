@@ -28,8 +28,8 @@ class DataStoreDataSourceImpl @Inject constructor(
         emit(dataStore.getDecryptStringValue(EMAIL).first().toString())
     }
 
-    override fun getUserSeq(): Flow<Long> = flow {
-        emit(dataStore.getDecryptStringValue(SEQ).first().toString().toLong())
+    override fun getUserSeq(): Flow<String> = flow {
+        emit(dataStore.getDecryptStringValue(SEQ).first().toString())
     }
 
     override fun getUserWeight(): Flow<Int> = flow {

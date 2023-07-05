@@ -1,5 +1,6 @@
 package com.side.runwithme.view.running
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.side.domain.model.AllRunRecord
 import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.domain.model.User
+import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
 import com.side.domain.utils.ResultType
@@ -30,14 +32,14 @@ import javax.inject.Inject
 class RunningViewModel @Inject constructor(
     private val stateHandler: SavedStateHandle,
     private val postRunRecordUseCase: PostRunRecordUseCase,
-    private val dataStoreDataSource: DataStoreDataSource,
+    private val getUserWeightDataStoreUseCase: GetUserWeightDataStoreUseCase,
     private val insertPracticeRunRecordUseCase: InsertPracticeRunRecordUseCase
 ): ViewModel(){
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
     val postRunRecordEventFlow get() = _postRunRecordEventFlow.asEventFlow()
 
-    private val _weight = stateHandler.getMutableStateFlow("weight", 70)
+    private val _weight = stateHandler.getMutableStateFlow("weight", 65)
     val weight: StateFlow<Int>
         get() = _weight.asStateFlow()
 
@@ -57,8 +59,14 @@ class RunningViewModel @Inject constructor(
 
     fun getMyWeight() {
         viewModelScope.launch {
-            dataStoreDataSource.getUserWeight().collect {
-                _weight.value = it
+            getUserWeightDataStoreUseCase().collect {
+                it.onSuccess {
+                    _weight.value = it
+                }.onFailure {
+                    _weight.value = 65
+                }.onError {
+                    Log.d("test123", "getMyWeight: $it")
+                }
             }
         }
     }
