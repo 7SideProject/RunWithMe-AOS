@@ -13,6 +13,7 @@ import com.side.domain.utils.ResultType
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
 import com.side.domain.utils.onSuccess
+import com.side.runwithme.util.GOAL_TYPE_TIME
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import com.side.runwithme.util.getMutableStateFlow
@@ -41,6 +42,16 @@ class RunningViewModel @Inject constructor(
     val challengeSeq: StateFlow<Int>
         get() = _challengeSeq.asStateFlow()
 
+    private var _goalAmount = stateHandler.get<Long>("goalAmount")
+    val goalAmount: Long
+        get() = _goalAmount ?: 60000L
+
+    private var _goalType = stateHandler.get<String>("goalType")
+    val goalType: String
+        get() = _goalType ?: GOAL_TYPE_TIME
+
+
+
     fun getMyWeight() {
         viewModelScope.launch {
             dataStoreDataSource.getUserWeight().collect {
@@ -49,13 +60,31 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun saveChallengeSeqInViewModel(challengeSeq: Int) {
-        if(challengeSeq == 0) return
+    fun saveChallengeInfoInViewModel(challengeSeq: Int, goalType: String, goalAmount: Long) {
+        if(challengeSeq == 0){
+            return
+        }
 
         _challengeSeq.value = challengeSeq
+        _goalAmount = goalAmount
+        _goalType = goalType
     }
 
     fun postRunRecord(allRunRecord: AllRunRecord){
+        if(challengeSeq.value == -1){
+            postPracticeRunRecord(allRunRecord)
+        }else{
+            postChallengeRunRecord(allRunRecord)
+        }
+    }
+
+    private fun postPracticeRunRecord(allRunRecord: AllRunRecord){
+        viewModelScope.launch {
+
+        }
+    }
+
+    private fun postChallengeRunRecord(allRunRecord: AllRunRecord){
         viewModelScope.launch {
             postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
                 it.onSuccess {

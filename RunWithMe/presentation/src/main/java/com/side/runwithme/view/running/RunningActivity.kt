@@ -71,14 +71,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var runningService: RunningService
 
-    private var type: String = GOAL_TYPE_TIME
-    private var goal = 60 * 1000L
 
     // 라이브 데이터 받아온 값들
     private var caloriesBurned: Int = 0
     private var sumDistance: Float = 0f
     private var currentTimeInMillis = 0L
-    private var challengeSeq: Int = 0
+
     private lateinit var imgFile: MultipartBody.Part
     private val coordinates: MutableList<Coordinate> = mutableListOf()
     private lateinit var runRecord: RunRecord
@@ -89,9 +87,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
         val intent = Intent()
-        challengeSeq = intent.getIntExtra("challengeSeq", 0)
-
-        /** goalType, goal 받아와야함 **/
+        val challengeSeq = intent.getIntExtra("challengeSeq", 0)
+        val type = intent.getStringExtra("goalType") ?: GOAL_TYPE_TIME
+        val goal = intent.getIntExtra("goalAmount", 60) * 1000L
 
         initMapView()
 
@@ -101,8 +99,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
-            runningViewModel.saveChallengeSeqInViewModel(challengeSeq)
+            runningViewModel.saveChallengeInfoInViewModel(challengeSeq, type, goal)
             runningViewModel.getMyWeight()
+
+            // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
+            require(runningViewModel.challengeSeq.value != 0)
+
             firstStart()
         } else { // app killed 된 후 activity 재시작
             bindService()
@@ -302,9 +304,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if (it > 0 && type == GOAL_TYPE_TIME) {
+            if (it > 0 && runningViewModel.goalType == GOAL_TYPE_TIME) {
                 binding.progressBarGoal.progress =
-                    if ((it / (goal / 100)).toInt() >= 100) 100 else (it / (goal / 100)).toInt()
+                    if ((it / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount / 100)).toInt()
             }
         }
 
@@ -315,9 +317,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if (sumDistance > 0 && type == GOAL_TYPE_DISTANCE) {
+            if (sumDistance > 0 && runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
                 binding.progressBarGoal.progress =
-                    if ((sumDistance / (goal / 100)).toInt() >= 100) 100 else (sumDistance / (goal / 100)).toInt()
+                    if ((sumDistance / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount / 100)).toInt()
             }
         }
 
@@ -379,12 +381,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
-        runningService.stopRunningBeforeRegister = true
 
         if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
             endToSaveData()
             isStopError = true
         }
+
+        runningService.stopRunningBeforeRegister = true
+
 
         runningViewModel.postRunRecord(
             AllRunRecord(
@@ -416,7 +420,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvTime.text = time
 
-            if (type == GOAL_TYPE_TIME) {
+            if (runningViewModel.goalType == GOAL_TYPE_TIME) {
                 /** goal amount 변경 **/
             }
         }
@@ -426,7 +430,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if (type == GOAL_TYPE_DISTANCE) {
+            if (runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
                 /** goal amount 변경 **/
             }
         }

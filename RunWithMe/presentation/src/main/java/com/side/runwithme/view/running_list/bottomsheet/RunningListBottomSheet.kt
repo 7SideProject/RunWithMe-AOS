@@ -6,22 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.DialogRunningListBottomSheetBinding
 import com.side.runwithme.view.running_list.IntentToRunningActivityClickListener
 import com.side.runwithme.view.running_list.RunningListAdapter
-import com.side.runwithme.view.running_list.RunningListViewModel
+import com.side.runwithme.view.running_list.bottomsheet.practice.PracticeSettingClickListener
+import com.side.runwithme.view.running_list.bottomsheet.practice.PracticeSettingDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RunningListBottomSheet(private val intentToRunningActivityClickListener: IntentToRunningActivityClickListener): BottomSheetDialogFragment() {
+class RunningListBottomSheet(private val intentToRunningActivityClickListener: IntentToRunningActivityClickListener, private val practiceSettingClickListener: PracticeSettingClickListener): BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogRunningListBottomSheetBinding
-    private val runningListViewModel: RunningListViewModel by activityViewModels<RunningListViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
@@ -44,28 +42,21 @@ class RunningListBottomSheet(private val intentToRunningActivityClickListener: I
 
     private fun init(){
         binding.apply {
-            runningListVM = runningListViewModel
             rcvMyChallengeRunningList.adapter = RunningListAdapter(intentToRunningActivityClickListener)
         }
 
         initClickListener()
 
-        initViewModelCallback()
     }
 
     private fun initClickListener(){
         binding.apply {
             layoutPractice.setOnClickListener {
-                /** Practice Dilaog **/
+                PracticeSettingDialog(practiceSettingClickListener).show(parentFragmentManager, "dialog")
             }
         }
     }
 
-    private fun initViewModelCallback(){
 
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
 }
