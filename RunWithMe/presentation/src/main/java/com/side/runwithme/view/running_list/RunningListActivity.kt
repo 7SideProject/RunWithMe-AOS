@@ -14,6 +14,7 @@ import com.side.runwithme.databinding.ActivityRunningListBinding
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
 import com.side.runwithme.view.running.RunningActivity
 import com.side.runwithme.view.running_list.bottomsheet.RunningListBottomSheet
+import com.side.runwithme.view.running_list.bottomsheet.practice.PracticeSettingClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     private fun initClickListener(){
         binding.apply {
             lottieStartBtn.setOnClickListener {
-                val bottomSheet = RunningListBottomSheet(intentToRunningActivityClickListener)
+                val bottomSheet = RunningListBottomSheet(intentToRunningActivityClickListener, practiceSettingClickListener)
                 bottomSheet.show(supportFragmentManager, bottomSheet.tag)
             }
         }
@@ -73,6 +74,19 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
             /** 러닝 가능한 지 확인 **/
             val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
             intent.putExtra("challengeSeq", challengeSeq)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    private val practiceSettingClickListener = object : PracticeSettingClickListener {
+        override fun onItemClick(type: String, amount: Int) {
+            val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
+            intent.apply {
+                putExtra("challengeSeq", -1)
+                putExtra("goalType", type)
+                putExtra("goalAmount", amount)
+            }
             startActivity(intent)
             finish()
         }

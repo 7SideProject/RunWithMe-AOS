@@ -119,13 +119,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun checkPermissionUpTo33() {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
-                @RequiresApi(Build.VERSION_CODES.Q)
                 override fun onPermissionGranted() {
-                    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
-                        == PackageManager.PERMISSION_DENIED
-                    ) {
 
-                    }
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {

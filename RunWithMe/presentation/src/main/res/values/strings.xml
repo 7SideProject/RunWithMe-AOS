@@ -69,6 +69,9 @@
 
     <string name="challenge_member_ranking">챌린지원 랭킹</string>
     <string name="sort">정렬 기준</string>
+    <string name="practice_alert">연습 결과는 누적 기록에 포함되지 않습니다.</string>
+    <string name="minute">분</string>
+    <string name="start">시작</string>
 
 
 </resources>

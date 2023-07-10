@@ -12,7 +12,7 @@ import com.side.runwithme.databinding.FragmentMyPageBinding
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
     override fun init() {
-        TODO("Not yet implemented")
+
     }
 
 }

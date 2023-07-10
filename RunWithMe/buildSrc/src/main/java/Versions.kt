@@ -48,6 +48,7 @@ object Versions {
     const val DATASTORE_PREFERENCES = "1.0.0"
     const val DESUGARING = "1.1.5"
     const val PAGING = "3.1.1"
+    const val ROOM = "2.5.0"
 
 
 }

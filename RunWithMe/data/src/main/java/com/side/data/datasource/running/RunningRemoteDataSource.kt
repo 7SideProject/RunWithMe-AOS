@@ -1,4 +1,4 @@
-package com.side.data.datasource
+package com.side.data.datasource.running
 
 import com.side.data.model.request.RunRecordRequest
 import com.side.domain.base.BaseResponse

@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
@@ -31,7 +32,6 @@ import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
 import com.side.runwithme.util.*
-import com.side.runwithme.util.preferencesKeys.WEIGHT
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel
@@ -71,15 +71,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var runningService: RunningService
 
-    private var type: String = GOAL_TYPE_TIME
-    private var goal = 60 * 1000L
-    private var weight = 70
 
     // 라이브 데이터 받아온 값들
     private var caloriesBurned: Int = 0
     private var sumDistance: Float = 0f
     private var currentTimeInMillis = 0L
-    private var challengeSeq: Int = 0
+
     private lateinit var imgFile: MultipartBody.Part
     private val coordinates: MutableList<Coordinate> = mutableListOf()
     private lateinit var runRecord: RunRecord
@@ -90,17 +87,24 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
         val intent = Intent()
-        challengeSeq = intent.getIntExtra("challengeSeq", 0)
-
-        lifecycleScope.launch {
-            weight = dataStore.getValue(WEIGHT, KEY_INT).first() as Int
-        }
+        val challengeSeq = intent.getIntExtra("challengeSeq", 0)
+        val type = intent.getStringExtra("goalType") ?: GOAL_TYPE_TIME
+        val goal = intent.getIntExtra("goalAmount", 60) * 1000L
 
         initMapView()
 
         initClickListener()
 
+        // onBackPressed deprecated되고 아래처럼 사용해야함
+        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         if (RunningService.serviceState == SERVICE_NOTSTART) {
+            runningViewModel.saveChallengeInfoInViewModel(challengeSeq, type, goal)
+            runningViewModel.getMyWeight()
+
+            // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
+            require(runningViewModel.challengeSeq.value != 0)
+
             firstStart()
         } else { // app killed 된 후 activity 재시작
             bindService()
@@ -139,7 +143,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                     "allRunRecord",
                     AllRunRecord(
                         runRecord = runRecord,
-                        coordinates = emptyList(),
+                        coordinates = coordinates,
                         imgFile = imgFile
                     )
                 )
@@ -151,6 +155,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
             is RunningViewModel.Event.ServerError -> {
                 showToast("서버가 불안정합니다. 다시 한 번 시도해주세요.")
+            }
+            is RunningViewModel.Event.Error -> {
+
             }
         }
     }
@@ -250,7 +257,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     @Throws(IOException::class)
     private fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val newFile = File(this.filesDir, "profile_${System.currentTimeMillis()}")
+        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
         val fileOutputStream = FileOutputStream(newFile)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
         fileOutputStream.close()
@@ -300,9 +307,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if (it > 0 && type == GOAL_TYPE_TIME) {
+            if (it > 0 && runningViewModel.goalType == GOAL_TYPE_TIME) {
                 binding.progressBarGoal.progress =
-                    if ((it / (goal / 100)).toInt() >= 100) 100 else (it / (goal / 100)).toInt()
+                    if ((it / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount / 100)).toInt()
             }
         }
 
@@ -313,9 +320,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if (sumDistance > 0 && type == GOAL_TYPE_DISTANCE) {
+            if (sumDistance > 0 && runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
                 binding.progressBarGoal.progress =
-                    if ((sumDistance / (goal / 100)).toInt() >= 100) 100 else (sumDistance / (goal / 100)).toInt()
+                    if ((sumDistance / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount / 100)).toInt()
             }
         }
 
@@ -377,16 +384,17 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
-        runningService.stopRunningBeforeRegister = true
 
         if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
             endToSaveData()
             isStopError = true
         }
 
+        runningService.stopRunningBeforeRegister = true
+
+
         runningViewModel.postRunRecord(
-            challengeSeq = challengeSeq,
-            allRunRecord = AllRunRecord(
+            AllRunRecord(
                 runRecord = runRecord,
                 coordinates = coordinates,
                 imgFile = imgFile
@@ -415,7 +423,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvTime.text = time
 
-            if (type == GOAL_TYPE_TIME) {
+            if (runningViewModel.goalType == GOAL_TYPE_TIME) {
                 /** goal amount 변경 **/
             }
         }
@@ -425,14 +433,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if (type == GOAL_TYPE_DISTANCE) {
+            if (runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
                 /** goal amount 변경 **/
             }
         }
     }
 
     private fun changeCalorie(sumDistance: Float) {
-        caloriesBurned = round((sumDistance / 1000f) * weight).toInt()
+        caloriesBurned = round((sumDistance / 1000f) * runningViewModel.weight.value).toInt()
         binding.tvCalorie.text = "$caloriesBurned"
     }
 
@@ -482,17 +490,32 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    // 뒤로가기 버튼 눌렀을 때
-    override fun onBackPressed() {
-        var builder = AlertDialog.Builder(this)
-        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
-            .setPositiveButton("네"){ _,_ ->
-                stopRun()
-            }
-            .setNegativeButton("아니오"){_,_ ->
-                // 다시 시작
-            }.create()
-        builder.show()
+//    // 뒤로가기 버튼 눌렀을 때
+//    @Deprecated("Deprecated in Java")
+//    override fun onBackPressed() {
+//        val builder = AlertDialog.Builder(this)
+//        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+//            .setPositiveButton("네"){ _,_ ->
+//                stopRun()
+//            }
+//            .setNegativeButton("아니오"){_,_ ->
+//                // 다시 시작
+//            }.create()
+//        builder.show()
+//    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val builder = AlertDialog.Builder(this@RunningActivity)
+            builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+                .setPositiveButton("네"){ _,_ ->
+                    stopRun()
+                }
+                .setNegativeButton("아니오"){_,_ ->
+                    // 다시 시작
+                }.create()
+            builder.show()
+        }
     }
 
 }

@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -65,10 +66,14 @@ class RunningService : LifecycleService() {
     private var lastSecondTimestamp = 0L // 1초 단위 체크를 위함
 
     // 러닝을 시작하거나 다시 시작한 시간
-    var startTime = 0L
+    private var _startTime = 0L
+    val startTime get() = _startTime
 
-    var isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
-    var startDay = ""
+    private var _isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
+    val isFirstRun get() = _isFirstRun
+
+    private var _startDay = ""
+    val startDay get() = _startDay
 
     private var pauseLast = false
     var stopRunningBeforeRegister = false // 정지 버튼을 누르고 서버에 기록 등록하기 전 상태 (오류 시 다시 등록하기 위함)
@@ -76,10 +81,17 @@ class RunningService : LifecycleService() {
     private var pauseLatLng = LatLng(0.0, 0.0)
     private var stopLastLatLng = LatLng(0.0, 0.0)
 
-    val isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
-    val pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
-    val timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
-    val sumDistance = MutableLiveData<Float>(0f)
+    private val _isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
+    val isRunning : LiveData<Boolean> get() = _isRunning
+
+    private val _pathPoints = MutableLiveData<PolyLine>() // LatLng = 위도, 경도
+    val pathPoints: LiveData<PolyLine> get() = _pathPoints
+
+    private val _timeRunInMillis = MutableLiveData<Long>() // 뷰에 표시될 시간
+    val timeRunInMillis: LiveData<Long> get() = _timeRunInMillis
+
+    private val _sumDistance = MutableLiveData<Float>(0f)
+    val sumDistance: LiveData<Float> get() = _sumDistance
 
     inner class LocalBinder : Binder() {
         fun getService(): RunningService = this@RunningService
@@ -110,10 +122,10 @@ class RunningService : LifecycleService() {
 
     // 초기화
     private fun postInitialValues() {
-        isRunning.postValue(false)
-        pathPoints.postValue(mutableListOf())
+        _isRunning.postValue(false)
+        _pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
-        timeRunInMillis.postValue(0L)
+        _timeRunInMillis.postValue(0L)
     }
 
     private fun resumeRunning() {
@@ -131,20 +143,20 @@ class RunningService : LifecycleService() {
         )
 
         // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
-        val isMoving = result[0] > 8f && ((System.currentTimeMillis() - startTime) > 4000L)
+        val isMoving = result[0] > 8f && ((System.currentTimeMillis() - _startTime) > 4000L)
         val isResume = !isRunning.value!! and pauseLast
 
         if (isMoving && isResume) { // 재시작
             showToast("이동이 감지되어 러닝을 다시 시작합니다.")
             startTimer()
-            startTime = System.currentTimeMillis()
+            _startTime = System.currentTimeMillis()
             pauseLast = false
         }
     }
 
 
     private fun startTimer() {
-        isRunning.postValue(true)
+        _isRunning.postValue(true)
         timeStarted = System.currentTimeMillis()
         startTimerJob()
 
@@ -160,7 +172,7 @@ class RunningService : LifecycleService() {
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
-                timeRunInMillis.postValue(totalTime + lapTime)
+                _timeRunInMillis.postValue(totalTime + lapTime)
                 // 알림창에 표시될 시간 초 단위로 계산함
                 if (timeRunInMillis.value!! >= lastSecondTimestamp + 1000L) {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
@@ -236,7 +248,7 @@ class RunningService : LifecycleService() {
             val pos = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
                 add(pos)
-                pathPoints.postValue(this)
+                _pathPoints.postValue(this)
                 distancePolyline()
 
                 // 경로 최적화
@@ -251,7 +263,6 @@ class RunningService : LifecycleService() {
     // 좌표 4개 이상일 때 이전 3개의 좌표를 비교하여
     // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
     private fun optimizationPolyLine() {
-        /** polyline이 변경되었을 때 pathPoints.value 변경되었을듯 싶은데 확인해보기 **/
         val polyLine = pathPoints.value
         val first = polyLine!!.get(polyLine.size - 4)
         val second = polyLine!!.get(polyLine.size - 3)
@@ -344,7 +355,7 @@ class RunningService : LifecycleService() {
                 result
             )
 
-            sumDistance.postValue(sumDistance.value!!.plus(result[0]))
+            _sumDistance.postValue(sumDistance.value!!.plus(result[0]))
 
             // 5초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 4초)
             val isNotMoving = result[0] < 2.5f && (System.currentTimeMillis() - startTime) > 4000L
@@ -378,14 +389,14 @@ class RunningService : LifecycleService() {
                 ACTION_START_SERVICE -> {
                     startTimer()
                     startForegroundService()
-                    isFirstRun = false
-                    startTime = System.currentTimeMillis()
-                    startDay = LocalDate.now().toString()
+                    _isFirstRun = false
+                    _startTime = System.currentTimeMillis()
+                    _startDay = LocalDate.now().toString()
                 }
                 // 재개 되었을 때
                 ACTION_RESUME_SERVICE -> {
                     startTimer()
-                    startTime = System.currentTimeMillis()
+                    _startTime = System.currentTimeMillis()
                 }
                 // 일시정지 되었을 때
                 ACTION_PAUSE_SERVICE -> {
@@ -407,7 +418,7 @@ class RunningService : LifecycleService() {
 
     // 서비스 정지
     private fun pauseService() {
-        isRunning.postValue(false)
+        _isRunning.postValue(false)
     }
 
     // 서비스가 종료되었을 때
@@ -415,9 +426,9 @@ class RunningService : LifecycleService() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         pauseService()
         serviceState = SERVICE_NOTSTART
-        startTime = 0L
+        _startTime = 0L
         pauseLast = false
-        isFirstRun = true
+        _isFirstRun = true
 
         postInitialValues()
         /** stopForeground 빼고 해보기 **/
