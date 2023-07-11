@@ -142,8 +142,8 @@ class RunningService : LifecycleService() {
             result
         )
 
-        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
-        val isMoving = result[0] > 8f && ((System.currentTimeMillis() - _startTime) > 4000L)
+        // 이동이 없어 중지 상태일 때, 9m 이동하면 다시 시작 시킴
+        val isMoving = result[0] > 9f && ((System.currentTimeMillis() - _startTime) > 3000L)
         val isResume = !isRunning.value!! and pauseLast
 
         if (isMoving && isResume) { // 재시작
@@ -357,8 +357,8 @@ class RunningService : LifecycleService() {
 
             _sumDistance.postValue(sumDistance.value!!.plus(result[0]))
 
-            // 5초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 4초)
-            val isNotMoving = result[0] < 2.5f && (System.currentTimeMillis() - startTime) > 4000L
+            // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
+            val isNotMoving = result[0] < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
             if (isNotMoving) {
                 showToast("이동이 없어 러닝이 일시 중지되었습니다.")
                 pauseLatLng = lastLatLng
@@ -366,8 +366,8 @@ class RunningService : LifecycleService() {
                 pauseService()
             }
 
-            // 5초 이상 이동했는데 이동거리가 60m 이상인 경우 정지 (최소 오차 4초) -> 너무 빠른 경우
-            val isFastMoving = result[0] > 60f && (System.currentTimeMillis() - startTime) > 4000L
+            // 4초 이상 이동했는데 이동거리가 52m 이상인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
+            val isFastMoving = result[0] > 55f && (System.currentTimeMillis() - startTime) > 3000L
             if (isFastMoving) {
                 showToast("비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.")
                 pauseService()

@@ -32,8 +32,8 @@ const val GOAL_TYPE_DISTANCE = "distance"
 /**
  * Tracking 옵션
  */
-const val LOCATION_UPDATE_INTERVAL = 5000L
-const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
+const val LOCATION_UPDATE_INTERVAL = 4000L
+const val FASTEST_LOCATION_UPDATE_INTERVAL = 4000L
 
 const val NOTIFICATION_CHANNEL_ID = "notification_channel_id"
 const val NOTIFICATION_CHANNEL_NAME = "notification_channel_name"
