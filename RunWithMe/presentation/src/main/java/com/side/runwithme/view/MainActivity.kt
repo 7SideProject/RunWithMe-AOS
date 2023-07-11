@@ -6,13 +6,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.seobaseview.base.BaseActivity
@@ -54,9 +52,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
         binding.apply {
             floatingActionButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
-            }
-            btn2.setOnClickListener {
-                startActivity(Intent(this@MainActivity, RunningActivity::class.java))
             }
         }
     }

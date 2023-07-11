@@ -36,7 +36,7 @@
                     android:layout_marginStart="@dimen/parent_horizontal_margin"
                     android:textStyle="bold"
                     tools:text="2023년 6월 6일 러닝"
-                    runningResultDay="@{runningResultVM.runRecord.runningStartTime}"
+                    runningResultDay="@{runningResultVM.runRecord.runningDay}"
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h5" />
 
@@ -73,7 +73,7 @@
                         android:textSize="@dimen/fontsize_h1"
                         android:textStyle="bold"
                         tools:text="0.3 km"
-                        android:text="@{runningResultVM.runRecord.runningDistance}"
+                        runningDistance="@{runningResultVM.runRecord.runningDistance}"
                         android:layout_marginStart="@dimen/parent_horizontal_margin"
                         android:layout_marginTop="@dimen/parent_vertical_margin"
                         app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,8 @@
 
                             <TextView
                                 android:id="@+id/tv_calorie"
-                                android:text="14 kcal"
+                                tools:text="14 kcal"
+                                runningCalorie="@{runningResultVM.runRecord.runningCalorieBurned}"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
@@ -151,7 +152,7 @@
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                runningTime="@{runningResultVM.runRecord.runningDistance}"
+                                runningTime="@{runningResultVM.runRecord.runningTime}"
                                 tools:text="07 : 27"
                                 android:textSize="@dimen/fontsize_h5" />
 
@@ -207,7 +208,7 @@
                     android:background="@drawable/image_round"
                     android:clipToOutline="true"
                     android:scaleType="fitXY"
-                    runRecordImgFile="@{runningResultVM.imgFile}"
+                    runRecordImgByByteArray="@{runningResultVM.imgByteArray}"
                     tools:src="@color/black"/>
 
                 <LinearLayout
@@ -224,6 +225,8 @@
                         android:drawableStart="@drawable/timer_24"
                         android:drawablePadding="4dp"
                         android:gravity="center"
+                        runningStartTime="@{runningResultVM.runRecord.runningStartTime}"
+                        runningEndTime="@{runningResultVM.runRecord.runningEndTime}"
                         tools:text="06:05 - 06:25"
                         android:textColor="@color/main_grey"
                         android:textSize="@dimen/fontsize_caption" />
