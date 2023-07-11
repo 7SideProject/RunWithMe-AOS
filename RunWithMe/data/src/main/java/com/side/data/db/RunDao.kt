@@ -20,7 +20,7 @@ interface RunDao {
 
     // 기록 삭제
     @Delete
-    fun deleteRun(run: RunRecordEntity): Long
+    fun deleteRun(run: RunRecordEntity): Int
 
     // 시간 합계
     @Query("SELECT SUM(runningTime) FROM run_table")
