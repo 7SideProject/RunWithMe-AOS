@@ -28,6 +28,8 @@ import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
+import com.side.runwithme.mapper.mapperToCoordinates
+import com.side.runwithme.mapper.mapperToRunRecordParcelable
 import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
@@ -46,6 +48,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,6 +81,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private var currentTimeInMillis = 0L
 
     private lateinit var imgFile: MultipartBody.Part
+    private lateinit var imgByteArray: ByteArray
     private val coordinates: MutableList<Coordinate> = mutableListOf()
     private lateinit var runRecord: RunRecord
     private var isStopError = false
@@ -138,16 +142,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
-                val intent = Intent(this, RunningResultActivity::class.java)
-                intent.putExtra(
-                    "allRunRecord",
-                    AllRunRecord(
-                        runRecord = runRecord,
-                        coordinates = coordinates,
-                        imgFile = imgFile
-                    )
-                )
-                startActivity(Intent(this, RunningResultActivity::class.java))
+                val intent = Intent(this, RunningResultActivity::class.java).apply {
+                    putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
+                    putExtra("coordinates", ArrayList(coordinates.mapperToCoordinates()))
+                    putExtra("challengeSeq", runningViewModel.challengeSeq.value)
+                }
+                RunningResultActivity.imgByteArray = imgByteArray
+
+                startActivity(intent)
                 finish()
             }
             is RunningViewModel.Event.Fail -> {
@@ -200,76 +202,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    private fun endToSaveData() {
-        takeSnapShot()
-        changeCoordinates()
-        saveRunRecord()
-    }
 
-    private fun saveRunRecord() {
-        runRecord = RunRecord(
-            runRecordSeq = 0,
-            runImageSeq = 0,
-            runningDay = runningService.startDay,
-            runningStartTime = timeFormatter(runningService.startTime),
-            runningEndTime = timeFormatter(System.currentTimeMillis()),
-            runningTime = (currentTimeInMillis / 1000).toInt(),
-            runningDistance = sumDistance.toInt(),
-            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
-            runningCalorieBurned = caloriesBurned,
-            runningStartingLat = coordinates.first().latitude,
-            runningStartingLng = coordinates.first().longitude,
-            completed = "",
-            userName = "",
-            userSeq = 0,
-            challengeName = "",
-            challengeSeq = 0
-        )
-    }
-
-    private fun changeCoordinates() {
-        for (latlng in naverLatLng) {
-            coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
-        }
-    }
-
-    private fun takeSnapShot() {
-        moveLatLngBounds()
-
-        naverMap?.takeSnapshot {
-            // image 생성
-            imgFile = createMultiPart(it)
-
-        }
-    }
-
-    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
-        var imageFile: File? = null
-        try {
-            imageFile = createFileFromBitmap(bitmap)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
-        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
-    }
-
-    @Throws(IOException::class)
-    private fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
-        val fileOutputStream = FileOutputStream(newFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
-        fileOutputStream.close()
-        return newFile
-    }
-
-    // 이동한 전체 polyLine 담기
-    private fun moveLatLngBounds() {
-        val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
-        val bounds = latLngBoundsBuilder.build()
-        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 300))
-    }
 
     private fun initMapView() {
         val fm = supportFragmentManager
@@ -384,27 +317,122 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
+        lifecycleScope.launch{
+            if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
+                endToSaveData()
+                isStopError = true
+            }
 
-        if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
-            endToSaveData()
-            isStopError = true
+            runningService.stopRunningBeforeRegister = true
+
+            if(runningViewModel.challengeSeq.value == -1){
+                runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
+            }else {
+                runningViewModel.postChallengeRunRecord(
+                    AllRunRecord(
+                        runRecord = runRecord,
+                        coordinates = coordinates,
+                        imgFile = imgFile
+                    )
+                )
+            }
+
+            loading(2000L)
         }
 
-        runningService.stopRunningBeforeRegister = true
+    }
+
+    private suspend fun endToSaveData() {
+        takeSnapShot()
+        changeCoordinates()
+        saveRunRecord()
+        delay(500L)
+    }
+
+    private suspend fun saveRunRecord() {
+        var completed = "N"
+        /** goalAmount하고 sumDistance, runningTime의 단위 맞춰야함 **/
+        if(runningViewModel.goalType.value == GOAL_TYPE_DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
+            completed = "Y"
+        }
+
+        val runningTime = (currentTimeInMillis / 1000).toInt()
+
+        if(runningViewModel.goalType.value == GOAL_TYPE_TIME && runningViewModel.goalAmount.value <= runningTime){
+            completed = "Y"
+        }
 
 
-        runningViewModel.postRunRecord(
-            AllRunRecord(
-                runRecord = runRecord,
-                coordinates = coordinates,
-                imgFile = imgFile
-            )
+        runRecord = RunRecord(
+            runRecordSeq = 0,
+            runImageSeq = 0,
+            runningDay = runningService.startDay,
+            runningStartTime = timeFormatter(runningService.startTime),
+            runningEndTime = timeFormatter(System.currentTimeMillis()),
+            runningTime = runningTime,
+            runningDistance = sumDistance.toInt(),
+            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
+            runningCalorieBurned = caloriesBurned,
+            runningStartingLat = coordinates.first().latitude,
+            runningStartingLng = coordinates.first().longitude,
+            completed = completed,
+            userName = "",
+            userSeq = 0,
+            challengeName = if(runningViewModel.challengeSeq.value == -1) "연습 러닝" else "",
+            challengeSeq = 0
         )
+    }
 
-        lifecycleScope.launch {
-            loading(5000L)
+    private fun changeCoordinates() {
+        for (latlng in naverLatLng) {
+            coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
+        }
+    }
+
+    private fun takeSnapShot() {
+        moveLatLngBounds()
+
+        naverMap?.takeSnapshot {
+            // image 생성
+            imgFile = createMultiPart(it)
+            imgByteArray = createByteArray(it)
+        }
+    }
+
+    private fun createByteArray(bitmap: Bitmap): ByteArray{
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 40, outputStream)
+        return outputStream.toByteArray()
+    }
+
+    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
+        var imageFile: File? = null
+        try {
+            imageFile = createFileFromBitmap(bitmap)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
 
+        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
+        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
+    }
+
+    @Throws(IOException::class)
+    private fun createFileFromBitmap(bitmap: Bitmap): File? {
+        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
+        val fileOutputStream = FileOutputStream(newFile)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
+        fileOutputStream.close()
+        return newFile
+    }
+
+    // 이동한 전체 polyLine 담기
+    private fun moveLatLngBounds() {
+        if(naverLatLng.isEmpty()) return
+
+        val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
+        val bounds = latLngBoundsBuilder.build()
+        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 300))
     }
 
     private fun stopService(){

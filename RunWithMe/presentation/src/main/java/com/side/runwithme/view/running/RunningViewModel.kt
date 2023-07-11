@@ -22,6 +22,7 @@ import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import com.side.runwithme.util.getMutableStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -57,7 +58,7 @@ class RunningViewModel @Inject constructor(
 
 
     fun getMyWeight() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getUserWeightDataStoreUseCase().collect {
                 it.onSuccess {
                     _weight.value = it
@@ -80,20 +81,13 @@ class RunningViewModel @Inject constructor(
         _goalType.value = goalType
     }
 
-    fun postRunRecord(allRunRecord: AllRunRecord){
-        if(challengeSeq.value == -1){
-            postPracticeRunRecord(allRunRecord)
-        }else{
-            postChallengeRunRecord(allRunRecord)
-        }
-    }
 
-    private fun postPracticeRunRecord(allRunRecord: AllRunRecord){
-        viewModelScope.launch {
-            val runRecord = allRunRecord.runRecord
+
+    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray){
+        viewModelScope.launch(Dispatchers.IO) {
             insertPracticeRunRecordUseCase(PracticeRunRecord(
                 seq = 0,
-                image = allRunRecord.imgFile,
+                image = imgByteArray,
                 startTime = runRecord.runningStartTime,
                 endTime = runRecord.runningEndTime,
                 runningTime = runRecord.runningTime,
@@ -104,8 +98,10 @@ class RunningViewModel @Inject constructor(
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
+                    Log.d("test123", "postPracticeRunRecord fail: $it")
                     _postRunRecordEventFlow.emit(Event.Fail())
                 }.onError {
+                    Log.d("test123", "postPracticeRunRecord err: $it")
                     _postRunRecordEventFlow.emit(Event.Error())
                 }
             }
@@ -113,8 +109,8 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    private fun postChallengeRunRecord(allRunRecord: AllRunRecord){
-        viewModelScope.launch {
+    fun postChallengeRunRecord(allRunRecord: AllRunRecord){
+        viewModelScope.launch(Dispatchers.IO) {
             postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())

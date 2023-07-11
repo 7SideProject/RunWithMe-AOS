@@ -1,5 +1,6 @@
 package com.side.runwithme.binding
 
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -9,17 +10,14 @@ import okhttp3.MultipartBody
 import java.lang.Math.round
 
 
-@BindingAdapter("runRecordImgFile")
-fun ImageView.setRunRecordImgFile(imgFile: MultipartBody.Part) {
-    Glide.with(this.context)
-        .load(imgFile)
-        .into(this)
-}
-
-
 
 @BindingAdapter("runningResultDay")
 fun TextView.setRunningResultDay(day: String) {
+    if(day.isNullOrBlank()){
+        this.text = ""
+        return
+    }
+
     val date = day.split("-")
     val year = date.get(0)
     val month = date.get(1).toInt()
@@ -30,7 +28,7 @@ fun TextView.setRunningResultDay(day: String) {
 
 @BindingAdapter("runningDistance")
 fun TextView.setRunnignDistance(distance: Int) {
-    this.text = "${distance / 1000} km"
+    this.text = "${round( (1F * distance / 1000) / 100 ) / 100} km"
 }
 
 @BindingAdapter("runningTime")
@@ -53,12 +51,25 @@ fun TextView.setRunningTime(time: Int) {
 
 @BindingAdapter("runningAvgSpeed")
 fun TextView.setRunningAvgSpeed(avgSpeed: Double) {
+    if(avgSpeed < 1){
+        this.text = "0.0 km/h"
+        return
+    }
     this.text = "${round(avgSpeed * 10.0) / 10.0} km/h"
 }
 
 @BindingAdapter("runningStartTime", "runningEndTime")
 fun TextView.setRunningStartToEndTime(startTime: String, endTime: String) {
-    this.text = "$startTime ~ $endTime"
+
+    this.text = "${getTime(startTime)} ~ ${getTime(endTime)}"
+}
+
+fun getTime(time: String): String{
+    if(time.isBlank()) return ""
+
+    val split = time.split(" ")
+    val time = split.get(1).split(":")
+    return "${time.get(0)}:${time.get(1)}"
 }
 
 @BindingAdapter("runningResultCompleted")
@@ -74,4 +85,9 @@ fun ImageView.setRunningResultCompleted(completed: String) {
             .override(R.dimen.complete_stamp_width * 2, R.dimen.complete_stamp_height)
             .into(this)
     }
+}
+
+@BindingAdapter("runningCalorie")
+fun TextView.setRunningCalorie(calorie: Int){
+    this.text = "$calorie kcal"
 }
