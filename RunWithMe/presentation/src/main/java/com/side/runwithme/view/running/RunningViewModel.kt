@@ -47,14 +47,13 @@ class RunningViewModel @Inject constructor(
     val challengeSeq: StateFlow<Int>
         get() = _challengeSeq.asStateFlow()
 
-    private var _goalAmount = stateHandler.get<Long>("goalAmount")
-    val goalAmount: Long
-        get() = _goalAmount ?: 60000L
+    private var _goalAmount = stateHandler.getMutableStateFlow<Long>("goalAmount", 60000L)
+    val goalAmount
+        get() = _goalAmount.asStateFlow()
 
-    private var _goalType = stateHandler.get<String>("goalType")
-    val goalType: String
-        get() = _goalType ?: GOAL_TYPE_TIME
-
+    private var _goalType = stateHandler.getMutableStateFlow<String>("goalType", GOAL_TYPE_TIME)
+    val goalType
+        get() = _goalType.asStateFlow()
 
 
     fun getMyWeight() {
@@ -77,8 +76,8 @@ class RunningViewModel @Inject constructor(
         }
 
         _challengeSeq.value = challengeSeq
-        _goalAmount = goalAmount
-        _goalType = goalType
+        _goalAmount.value = goalAmount
+        _goalType.value = goalType
     }
 
     fun postRunRecord(allRunRecord: AllRunRecord){

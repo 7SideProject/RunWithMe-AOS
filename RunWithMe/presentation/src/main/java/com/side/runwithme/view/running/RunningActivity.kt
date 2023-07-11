@@ -307,9 +307,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if (it > 0 && runningViewModel.goalType == GOAL_TYPE_TIME) {
+            if (it > 0 && runningViewModel.goalType.value == GOAL_TYPE_TIME) {
                 binding.progressBarGoal.progress =
-                    if ((it / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount / 100)).toInt()
+                    if ((it / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount.value / 100)).toInt()
             }
         }
 
@@ -320,9 +320,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if (sumDistance > 0 && runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
+            if (sumDistance > 0 && runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
                 binding.progressBarGoal.progress =
-                    if ((sumDistance / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount / 100)).toInt()
+                    if ((sumDistance / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount.value / 100)).toInt()
             }
         }
 
@@ -423,7 +423,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvTime.text = time
 
-            if (runningViewModel.goalType == GOAL_TYPE_TIME) {
+            if (runningViewModel.goalType.value == GOAL_TYPE_TIME) {
                 /** goal amount 변경 **/
             }
         }
@@ -433,7 +433,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if (runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
+            if (runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
                 /** goal amount 변경 **/
             }
         }
