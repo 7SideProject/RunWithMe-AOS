@@ -33,7 +33,7 @@ class DataStoreDataSourceImpl @Inject constructor(
     }
 
     override fun getUserWeight(): Flow<Int> = flow {
-        emit(dataStore.getValue(WEIGHT, DATASTORE_KEY_TYPE_STRING).first().toString().toInt())
+        emit(dataStore.getValue(WEIGHT, DATASTORE_KEY.TYPE_STRING).first().toString().toInt())
     }
 
     override suspend fun saveToken(jwt: String, refreshToken: String) {
