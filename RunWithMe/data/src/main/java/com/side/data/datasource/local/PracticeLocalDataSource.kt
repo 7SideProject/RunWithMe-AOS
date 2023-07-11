@@ -7,7 +7,7 @@ interface PracticeLocalDataSource {
 
     suspend fun insertRunRecord(run : RunRecordEntity): Long
 
-    suspend fun deleteRunRecord(run: RunRecordEntity): Long
+    suspend fun deleteRunRecord(run: RunRecordEntity): Int
 
     fun getAllRunRecord(): List<RunRecordEntity>
 
