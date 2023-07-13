@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="routeDetailVM"
+            type="com.side.runwithme.view.route_detail.RouteDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,11 +28,11 @@
             android:id="@+id/map_view"
             android:name="com.naver.maps.map.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/layout_distance"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <LinearLayout
             android:id="@+id/layout_distance"
@@ -41,9 +43,9 @@
             android:orientation="vertical"
             android:padding="@dimen/padding_large"
             android:layout_margin="@dimen/parent_margin"
+            app:layout_constraintTop_toBottomOf="@id/map_view"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/layout_time"
-            app:layout_constraintStart_toEndOf="@+id/layout_time"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
@@ -51,7 +53,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_bold"
-                android:text="0.3km"
+                runningDistance="@{routeDetailVM.runRecord.runningDistance}"
+                tools:text="0.3km"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fontsize_h4" />
 
@@ -83,7 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans_bold"
-                android:text="07 : 27"
+                tools:text="07 : 20"
+                runningTime="@{routeDetailVM.runRecord.runningTime}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fontsize_h4" />
 

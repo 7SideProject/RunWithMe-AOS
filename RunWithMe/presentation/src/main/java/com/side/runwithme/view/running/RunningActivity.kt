@@ -28,6 +28,7 @@ import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
+import com.side.runwithme.mapper.mapperToCoordinateList
 import com.side.runwithme.mapper.mapperToCoordinates
 import com.side.runwithme.mapper.mapperToRunRecordParcelable
 import com.side.runwithme.service.PolyLine
@@ -82,7 +83,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var imgFile: MultipartBody.Part
     private lateinit var imgByteArray: ByteArray
-    private val coordinates: MutableList<Coordinate> = mutableListOf()
+    private var coordinates: List<Coordinate> = listOf()
     private lateinit var runRecord: RunRecord
     private var isStopError = false
 
@@ -384,9 +385,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun changeCoordinates() {
-        for (latlng in naverLatLng) {
-            coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
-        }
+        coordinates = naverLatLng.mapperToCoordinateList()
     }
 
     private fun takeSnapShot() {
@@ -432,7 +431,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
         val bounds = latLngBoundsBuilder.build()
-        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 300))
+        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 200))
     }
 
     private fun stopService(){

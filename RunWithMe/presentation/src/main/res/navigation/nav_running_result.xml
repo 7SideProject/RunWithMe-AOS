@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_running_result"
-    app:startDestination="@id/ruuningResultFragment">
+    app:startDestination="@id/runningResultFragment">
 
     <fragment
-        android:id="@+id/ruuningResultFragment"
-        android:name="com.side.runwithme.view.running_result.RuuningResultFragment"
-        android:label="RuuningResultFragment">
+        android:id="@+id/runningResultFragment"
+        android:name="com.side.runwithme.view.running_result.RunningResultFragment"
+        android:label="RunningResultFragment">
 
         <action
             android:id="@+id/action_ruuningResultFragment_to_routeDetailFragment"
@@ -24,5 +24,14 @@
     <fragment
         android:id="@+id/routeDetailFragment"
         android:name="com.side.runwithme.view.route_detail.RouteDetailFragment"
-        android:label="RouteDetailFragment" />
+        android:label="RouteDetailFragment" >
+        <argument
+            android:name="runRecord"
+            app:argType="com.side.runwithme.model.RunRecordParcelable"
+            app:nullable="true" />
+        <argument
+            android:name="coordinates"
+            app:argType="com.side.runwithme.model.Coordinates[]"
+            app:nullable="true" />
+    </fragment>
 </navigation>
