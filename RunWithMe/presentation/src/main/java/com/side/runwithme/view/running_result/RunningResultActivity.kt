@@ -3,9 +3,14 @@ package com.side.runwithme.view.running_result
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI.setupWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.seobaseview.base.BaseActivity
 import com.side.domain.model.AllRunRecord
 import com.side.domain.model.Coordinate
@@ -16,6 +21,7 @@ import com.side.runwithme.mapper.mapperToCoordinate
 import com.side.runwithme.mapper.mapperToRunRecord
 import com.side.runwithme.model.Coordinates
 import com.side.runwithme.model.RunRecordParcelable
+import com.side.runwithme.view.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,6 +41,7 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
         initIntentExtra()
 
         runningResultViewModel.putImgByteArray(imgByteArray)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     private fun initIntentExtra(){
@@ -68,6 +75,17 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
         navController = navHostFragment.navController
     }
 
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if(navController.currentDestination?.id == R.id.runningResultFragment) {
+                startActivity(Intent(this@RunningResultActivity, MainActivity::class.java))
+                finish()
+            }else {
+                navController.popBackStack()
+            }
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

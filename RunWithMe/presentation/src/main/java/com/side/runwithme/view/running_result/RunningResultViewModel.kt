@@ -52,6 +52,6 @@ class RunningResultViewModel @Inject constructor(
     }
 
     fun putCoordinates(coordinates: List<Coordinate>){
-
+        _coordinates.value = coordinates
     }
 }
