@@ -503,6 +503,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap.isLiteModeEnabled = true
             // 현위치 버튼 활성화
         naverMap.uiSettings.isLocationButtonEnabled = true
+
+        // 액티비티 재시작 시 naverMap이 ready되지 않은 상태에서 observer되어
+        // 경로가 그려지지 않는 현상 발생
+        val isOkToDrawPolyline = naverLatLng.size >= 2
+        if (isOkToDrawPolyline) {
+            drawPolyline()
+        }
     }
 
     private fun loading(timeinMillis: Long) {
@@ -534,9 +541,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val builder = AlertDialog.Builder(this@RunningActivity)
-            builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+            builder.setTitle("달리기를 종료할까요? 나가시면 기록이 저장되지 않습니다.")
                 .setPositiveButton("네"){ _,_ ->
-                    stopRun()
+//                    stopRun()
+                    /** 한번 더 다이얼로그 띄워서 물어야함 **/
+                    startActivity(Intent(this@RunningActivity, MainActivity::class.java))
+                    finish()
                 }
                 .setNegativeButton("아니오"){_,_ ->
                     // 다시 시작
