@@ -1,5 +1,6 @@
 package com.side.domain.repository
 
+import com.side.domain.model.RunningInfo
 import com.side.domain.model.User
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
@@ -19,5 +20,13 @@ interface DataStoreRepository {
 //    fun getJWT(): Flow<ResultType<String>>
 //
 //    fun getRefreshToken(): Flow<ResultType<String>>
+
+    suspend fun saveRunningChallengeSeq(challengeSeq: Int)
+
+    suspend fun saveRunningGoalAmount(goalAmount: Long)
+
+    suspend fun saveRunningGoalType(goalType: String)
+
+    fun getRunningChallengInfo() : Flow<ResultType<RunningInfo>>
 
 }

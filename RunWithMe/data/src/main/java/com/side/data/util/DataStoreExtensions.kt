@@ -14,11 +14,14 @@ object preferencesKeys {
     val EMAIL = stringPreferencesKey("email")
     val SEQ = stringPreferencesKey("seq")
     val WEIGHT = intPreferencesKey("weight")
+    val CHALLENG_SEQ = intPreferencesKey("challeng_seq")
+    val GOAL_AMOUNT = longPreferencesKey("goal_amount")
+    val GOAL_TYPE = stringPreferencesKey("goal_type")
 }
 
 
 enum class DATASTORE_KEY {
-    TYPE_INT, TYPE_STRING, TYPE_BOOLEAN
+    TYPE_INT, TYPE_STRING, TYPE_BOOLEAN, TYPE_LONG
 }
 //const val DATASTORE_KEY_TYPE_INT = 0
 //const val DATASTORE_KEY_TYPE_STRING = 1
@@ -53,6 +56,9 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: D
                 }
                 DATASTORE_KEY.TYPE_STRING -> {
                     ""
+                }
+                DATASTORE_KEY.TYPE_LONG -> {
+                    0L
                 }
                 else -> {}
             }

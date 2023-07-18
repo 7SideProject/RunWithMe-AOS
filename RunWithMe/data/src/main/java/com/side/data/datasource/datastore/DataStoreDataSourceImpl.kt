@@ -3,7 +3,10 @@ package com.side.data.datasource.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.side.data.util.*
+import com.side.data.util.preferencesKeys.CHALLENG_SEQ
 import com.side.data.util.preferencesKeys.EMAIL
+import com.side.data.util.preferencesKeys.GOAL_AMOUNT
+import com.side.data.util.preferencesKeys.GOAL_TYPE
 import com.side.data.util.preferencesKeys.JWT
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
@@ -49,4 +52,27 @@ class DataStoreDataSourceImpl @Inject constructor(
         emit(dataStore.getDecryptStringValue(REFRESH_TOKEN).first().toString())
     }
 
+    override suspend fun saveRunningChallengSeq(challengSeq: Int) {
+        dataStore.saveValue(CHALLENG_SEQ, challengSeq)
+    }
+
+    override suspend fun saveRunningGoalAmount(goalAmount: Long) {
+        dataStore.saveValue(GOAL_AMOUNT, goalAmount)
+    }
+
+    override suspend fun saveRunningGoalType(goalType: String) {
+        dataStore.saveValue(GOAL_TYPE, goalType)
+    }
+
+    override fun getRunningChallengeSeq(): Flow<Int> = flow {
+        emit(dataStore.getValue(CHALLENG_SEQ, DATASTORE_KEY.TYPE_INT).first().toString().toInt())
+    }
+
+    override fun getRunningGoalAmount(): Flow<Long> = flow {
+        emit(dataStore.getValue(GOAL_AMOUNT, DATASTORE_KEY.TYPE_LONG).first().toString().toLong())
+    }
+
+    override fun getRunningGoalType(): Flow<String> = flow {
+        emit(dataStore.getValue(GOAL_TYPE, DATASTORE_KEY.TYPE_STRING).first().toString())
+    }
 }
