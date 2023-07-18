@@ -44,8 +44,6 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
         val runRecord = args.runRecord
         val coordinates = args.coordinates
 
-        Log.d("test123", "coordinates init: ${coordinates?.toList().toString()}")
-
         routeDetailViewModel.apply {
             if(runRecord != null) {
                 putRunRecord(runRecord.mapperToRunRecord())
@@ -56,8 +54,9 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
             }
 
         }
-
     }
+
+
 
     private fun initPolyline(){
         polyline = PathOverlay()
@@ -68,43 +67,48 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
             toolbar.setBackButtonClickEvent {
                 findNavController().popBackStack()
             }
-
+            layoutDistance.setOnClickListener {
+                zoomToWholeTrack()
+            }
         }
     }
 
     private fun initViewModelCallback(){
         repeatOnStarted {
             routeDetailViewModel.coordinates.collect {
-                if(it.isEmpty()){
-                    return@collect
-                }
+                if(it.isNotEmpty()) {
+                    zoomToWholeTrack()
 
-                // polyline.coords에 2개 이상의 리스트를 넣어야함
-                val naverLatLngs = mutableListOf<LatLng>()
-                naverLatLngs.add(it.get(0).mapperToNaverLatLng())
+                    // polyline.coords에 2개 이상의 리스트를 넣어야함
+                    val naverLatLngs = mutableListOf<LatLng>()
+                    naverLatLngs.add(it.get(0).mapperToNaverLatLng())
 
-                for(i in 1 until it.size){
-                    naverLatLngs.add(it.get(i).mapperToNaverLatLng())
-                    drawPolyline(naverLatLngs)
+                    for (i in 1 until it.size) {
+                        naverLatLngs.add(it.get(i).mapperToNaverLatLng())
+                        drawPolyline(naverLatLngs)
 
-                    val delayTime = if(it.size < 20){
-                        POLYLINE_DRAW.SHORT.time
-                    }else if(it.size < 50){
-                        POLYLINE_DRAW.MIDDLE.time
-                    }else {
-                        POLYLINE_DRAW.LONG.time
+                        val delayTime = if (it.size < 20) {
+                            POLYLINE_DRAW.SHORT.time
+                        } else if (it.size < 50) {
+                            POLYLINE_DRAW.MIDDLE.time
+                        } else {
+                            POLYLINE_DRAW.LONG.time
+                        }
+
+                        delay(delayTime)
                     }
 
-                    delay(delayTime)
                 }
-
-                zoomToWholeTrack()
             }
         }
     }
 
     private fun zoomToWholeTrack(){
-        val latLngBoundsBuilder = LatLngBounds.Builder().include(routeDetailViewModel.coordinates.value.mapperToNaverLatLngList())
+        val latlngs = routeDetailViewModel.coordinates.value.mapperToNaverLatLngList()
+
+        if(latlngs.isNullOrEmpty() || naverMap == null) return
+
+        val latLngBoundsBuilder = LatLngBounds.Builder().include(latlngs)
         val bounds = latLngBoundsBuilder.build()
         naverMap.moveCamera(CameraUpdate.fitBounds(bounds, 300))
     }
@@ -121,28 +125,26 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
     }
 
     private fun initMapView(){
-        val fm = activity?.supportFragmentManager
+        val fm = childFragmentManager
         val mapFragment = fm!!.findFragmentById(R.id.map_view) as MapFragment?
             ?: MapFragment.newInstance().also {
                 fm!!.beginTransaction().add(R.id.map_view, it).commit()
             }
-        mapFragment.getMapAsync(this)
 
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+
+        mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(naverMap: NaverMap) {
-        // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
         this.naverMap = naverMap
-        zoomToWholeTrack()
-        initViewModelCallback()
 
         naverMap.locationSource = locationSource
 
         naverMap.isLiteModeEnabled = true
 
+        initViewModelCallback()
+
     }
-
-
 
 }

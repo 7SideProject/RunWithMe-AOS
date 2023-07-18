@@ -185,6 +185,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
                 } else {
                     finish()
                 }
+            }else{
+                navController.popBackStack()
             }
         }
     }
