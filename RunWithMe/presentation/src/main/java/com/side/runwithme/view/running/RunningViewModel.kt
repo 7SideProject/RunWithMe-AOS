@@ -4,16 +4,16 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.domain.modedl.PracticeRunRecord
 import com.side.domain.model.AllRunRecord
-import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
-import com.side.domain.model.User
+import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
+import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
+import com.side.domain.usecase.datastore.SaveRunningChallengeGoalTypeUseCase
+import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
-import com.side.domain.utils.ResultType
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
 import com.side.domain.utils.onSuccess
@@ -26,7 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +33,11 @@ class RunningViewModel @Inject constructor(
     private val stateHandler: SavedStateHandle,
     private val postRunRecordUseCase: PostRunRecordUseCase,
     private val getUserWeightDataStoreUseCase: GetUserWeightDataStoreUseCase,
-    private val insertPracticeRunRecordUseCase: InsertPracticeRunRecordUseCase
+    private val insertPracticeRunRecordUseCase: InsertPracticeRunRecordUseCase,
+    private val saveRunningChallengeSeqUseCase: SaveRunningChallengeSeqUseCase,
+    private val saveRunningChallengeGoalAmountUseCase: SaveRunningChallengeGoalAmountUseCase,
+    private val saveRunningChallengeGoalTypeUseCase: SaveRunningChallengeGoalTypeUseCase,
+    private val getRunningInfoUseCase: GetRunningInfoUseCase
 ): ViewModel(){
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
@@ -71,17 +74,29 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun saveChallengeInfoInViewModel(challengeSeq: Int, goalType: String, goalAmount: Long) {
-        if(challengeSeq == 0){
-            return
+    fun saveChallengeInfo(challengeSeq: Int, goalType: String, goalAmount: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            saveRunningChallengeSeqUseCase(challengeSeq)
+            saveRunningChallengeGoalAmountUseCase(goalAmount)
+            saveRunningChallengeGoalTypeUseCase(goalType)
         }
-
-        _challengeSeq.value = challengeSeq
-        _goalAmount.value = goalAmount
-        _goalType.value = goalType
     }
 
-
+    fun getChallnegeInfo(){
+        viewModelScope.launch(Dispatchers.IO) {
+            getRunningInfoUseCase().collect {
+                it.onSuccess {
+                    _challengeSeq.value = it.challengeSeq
+                    _goalAmount.value = it.goalAmount
+                    _goalType.value = it.goalType
+                }.onFailure {
+                    _postRunRecordEventFlow.emit(Event.GetDataStoreValuesError())
+                }.onError {
+                    _postRunRecordEventFlow.emit(Event.GetDataStoreValuesError())
+                }
+            }
+        }
+    }
 
     fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray){
         viewModelScope.launch(Dispatchers.IO) {
@@ -131,6 +146,7 @@ class RunningViewModel @Inject constructor(
         class Fail : Event()
         class ServerError : Event()
         class Error: Event()
+        class GetDataStoreValuesError : Event()
     }
 
 }

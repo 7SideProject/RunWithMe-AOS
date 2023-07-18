@@ -89,12 +89,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var loadingDialog: LoadingDialog
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
-        val intent = Intent()
+        val intent = intent
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
-        val type = intent.getStringExtra("goalType") ?: GOAL_TYPE_TIME
-        val goal = intent.getIntExtra("goalAmount", 60) * 1000L
+        val type = intent.getStringExtra("goalType") ?: ""
+        val goal = intent.getIntExtra("goalAmount", 0) * 1000L
 
         initMapView()
 
@@ -104,8 +105,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
-            runningViewModel.saveChallengeInfoInViewModel(challengeSeq, type, goal)
-            runningViewModel.getMyWeight()
+
+            if(challengeSeq == 0 || type.isEmpty() || goal == 0L){
+                startError()
+            }
+
+            runningViewModel.saveChallengeInfo(challengeSeq, type, goal)
 
             // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
             require(runningViewModel.challengeSeq.value != 0)
@@ -115,11 +120,26 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             bindService()
         }
 
+        initRunningInfo()
+
         initDrawLine()
 
         initViewModelCallback()
+
     }
 
+    private fun initRunningInfo(){
+        runningViewModel.apply {
+            getMyWeight()
+            getChallnegeInfo()
+        }
+    }
+
+    private fun startError(){
+        showToast("알 수 없는 오류입니다. 다시 러닝을 시작해주세요.")
+        startActivity(Intent(this@RunningActivity, MainActivity::class.java))
+        finish()
+    }
 
     private fun initViewModelCallback() {
         repeatOnStarted {
@@ -143,6 +163,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
+                runningViewModel.saveChallengeInfo(0, "", 0L)
+
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
                     putExtra("coordinates", ArrayList(coordinates.mapperToCoordinates()))
@@ -161,6 +183,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
             is RunningViewModel.Event.Error -> {
 
+            }
+            is RunningViewModel.Event.GetDataStoreValuesError -> {
+                val isOver1Minute = currentTimeInMillis > 60000L
+                if(isOver1Minute) { // 1분
+                    startError()
+                }else{
+                    runningViewModel.getChallnegeInfo()
+                }
             }
         }
     }
@@ -325,6 +355,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
 
             runningService.stopRunningBeforeRegister = true
+            Log.d("test123", "stoprun: challengeSeq : ${runningViewModel.challengeSeq.value}")
 
             if(runningViewModel.challengeSeq.value == -1){
                 runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
@@ -545,6 +576,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 .setPositiveButton("네"){ _,_ ->
 //                    stopRun()
                     /** 한번 더 다이얼로그 띄워서 물어야함 **/
+                    RunningService.serviceState = SERVICE_NOTSTART
                     startActivity(Intent(this@RunningActivity, MainActivity::class.java))
                     finish()
                 }
