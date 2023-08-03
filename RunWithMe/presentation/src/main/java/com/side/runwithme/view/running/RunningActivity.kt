@@ -260,6 +260,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 val isOkToDrawPolyline = it.size >= 2
                 if (isOkToDrawPolyline && naverMap != null) {
                     drawPolyline()
+//                    moveLatLngBounds()
+                    naverMap?.moveCamera(CameraUpdate.zoomTo(16.0))
                 }
             }
         }
