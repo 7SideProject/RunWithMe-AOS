@@ -32,9 +32,16 @@ const val GOAL_TYPE_DISTANCE = "distance"
 /**
  * Tracking 옵션
  */
-const val LOCATION_UPDATE_INTERVAL = 5000L
-const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
+const val LOCATION_UPDATE_INTERVAL = 4000L
+const val FASTEST_LOCATION_UPDATE_INTERVAL = 4000L
 
 const val NOTIFICATION_CHANNEL_ID = "notification_channel_id"
 const val NOTIFICATION_CHANNEL_NAME = "notification_channel_name"
 const val NOTIFICATION_ID = 1 // 채널 ID는 0이면 안됨
+
+
+/** 경로 표시 옵션 **/
+
+enum class POLYLINE_DRAW(val time: Long) {
+    SHORT(150L), MIDDLE(70L), LONG(7L)
+}

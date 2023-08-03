@@ -8,6 +8,7 @@ plugins {
     id(Plugins.SAFEARGS)
     id(Plugins.SECRETS_GRADLE_PLUGIN)
     id(Plugins.KAPT)
+    id("kotlin-parcelize")
 }
 
 fun getProperty(propertyKey: String): String {

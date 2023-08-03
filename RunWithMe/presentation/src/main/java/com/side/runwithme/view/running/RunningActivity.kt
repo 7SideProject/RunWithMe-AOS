@@ -28,6 +28,9 @@ import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
+import com.side.runwithme.mapper.mapperToCoordinateList
+import com.side.runwithme.mapper.mapperToCoordinates
+import com.side.runwithme.mapper.mapperToRunRecordParcelable
 import com.side.runwithme.service.PolyLine
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
@@ -46,6 +49,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,18 +82,20 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private var currentTimeInMillis = 0L
 
     private lateinit var imgFile: MultipartBody.Part
-    private val coordinates: MutableList<Coordinate> = mutableListOf()
+    private lateinit var imgByteArray: ByteArray
+    private var coordinates: List<Coordinate> = listOf()
     private lateinit var runRecord: RunRecord
     private var isStopError = false
 
     private lateinit var loadingDialog: LoadingDialog
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
-        val intent = Intent()
+        val intent = intent
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
-        val type = intent.getStringExtra("goalType") ?: GOAL_TYPE_TIME
-        val goal = intent.getIntExtra("goalAmount", 60) * 1000L
+        val type = intent.getStringExtra("goalType") ?: ""
+        val goal = intent.getIntExtra("goalAmount", 0) * 1000L
 
         initMapView()
 
@@ -99,8 +105,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
-            runningViewModel.saveChallengeInfoInViewModel(challengeSeq, type, goal)
-            runningViewModel.getMyWeight()
+
+            if(challengeSeq == 0 || type.isEmpty() || goal == 0L){
+                startError()
+            }
+
+            runningViewModel.saveChallengeInfo(challengeSeq, type, goal)
 
             // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
             require(runningViewModel.challengeSeq.value != 0)
@@ -110,11 +120,26 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             bindService()
         }
 
+        initRunningInfo()
+
         initDrawLine()
 
         initViewModelCallback()
+
     }
 
+    private fun initRunningInfo(){
+        runningViewModel.apply {
+            getMyWeight()
+            getChallnegeInfo()
+        }
+    }
+
+    private fun startError(){
+        showToast("알 수 없는 오류입니다. 다시 러닝을 시작해주세요.")
+        startActivity(Intent(this@RunningActivity, MainActivity::class.java))
+        finish()
+    }
 
     private fun initViewModelCallback() {
         repeatOnStarted {
@@ -138,16 +163,16 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
-                val intent = Intent(this, RunningResultActivity::class.java)
-                intent.putExtra(
-                    "allRunRecord",
-                    AllRunRecord(
-                        runRecord = runRecord,
-                        coordinates = coordinates,
-                        imgFile = imgFile
-                    )
-                )
-                startActivity(Intent(this, RunningResultActivity::class.java))
+                runningViewModel.saveChallengeInfo(0, "", 0L)
+
+                val intent = Intent(this, RunningResultActivity::class.java).apply {
+                    putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
+                    putExtra("coordinates", ArrayList(coordinates.mapperToCoordinates()))
+                    putExtra("challengeSeq", runningViewModel.challengeSeq.value)
+                }
+                RunningResultActivity.imgByteArray = imgByteArray
+
+                startActivity(intent)
                 finish()
             }
             is RunningViewModel.Event.Fail -> {
@@ -158,6 +183,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
             is RunningViewModel.Event.Error -> {
 
+            }
+            is RunningViewModel.Event.GetDataStoreValuesError -> {
+                val isOver1Minute = currentTimeInMillis > 60000L
+                if(isOver1Minute) { // 1분
+                    startError()
+                }else{
+                    runningViewModel.getChallnegeInfo()
+                }
             }
         }
     }
@@ -200,76 +233,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    private fun endToSaveData() {
-        takeSnapShot()
-        changeCoordinates()
-        saveRunRecord()
-    }
 
-    private fun saveRunRecord() {
-        runRecord = RunRecord(
-            runRecordSeq = 0,
-            runImageSeq = 0,
-            runningDay = runningService.startDay,
-            runningStartTime = timeFormatter(runningService.startTime),
-            runningEndTime = timeFormatter(System.currentTimeMillis()),
-            runningTime = (currentTimeInMillis / 1000).toInt(),
-            runningDistance = sumDistance.toInt(),
-            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
-            runningCalorieBurned = caloriesBurned,
-            runningStartingLat = coordinates.first().latitude,
-            runningStartingLng = coordinates.first().longitude,
-            completed = "",
-            userName = "",
-            userSeq = 0,
-            challengeName = "",
-            challengeSeq = 0
-        )
-    }
-
-    private fun changeCoordinates() {
-        for (latlng in naverLatLng) {
-            coordinates.add(Coordinate(latlng.latitude, latlng.longitude))
-        }
-    }
-
-    private fun takeSnapShot() {
-        moveLatLngBounds()
-
-        naverMap?.takeSnapshot {
-            // image 생성
-            imgFile = createMultiPart(it)
-
-        }
-    }
-
-    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
-        var imageFile: File? = null
-        try {
-            imageFile = createFileFromBitmap(bitmap)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
-        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
-    }
-
-    @Throws(IOException::class)
-    private fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
-        val fileOutputStream = FileOutputStream(newFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
-        fileOutputStream.close()
-        return newFile
-    }
-
-    // 이동한 전체 polyLine 담기
-    private fun moveLatLngBounds() {
-        val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
-        val bounds = latLngBoundsBuilder.build()
-        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 300))
-    }
 
     private fun initMapView() {
         val fm = supportFragmentManager
@@ -296,6 +260,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 val isOkToDrawPolyline = it.size >= 2
                 if (isOkToDrawPolyline && naverMap != null) {
                     drawPolyline()
+//                    moveLatLngBounds()
+                    naverMap?.moveCamera(CameraUpdate.zoomTo(16.0))
                 }
             }
         }
@@ -307,9 +273,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if (it > 0 && runningViewModel.goalType == GOAL_TYPE_TIME) {
+            if (it > 0 && runningViewModel.goalType.value == GOAL_TYPE_TIME) {
                 binding.progressBarGoal.progress =
-                    if ((it / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount / 100)).toInt()
+                    if ((it / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount.value / 100)).toInt()
             }
         }
 
@@ -320,9 +286,9 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if (sumDistance > 0 && runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
+            if (sumDistance > 0 && runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
                 binding.progressBarGoal.progress =
-                    if ((sumDistance / (runningViewModel.goalAmount / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount / 100)).toInt()
+                    if ((sumDistance / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount.value / 100)).toInt()
             }
         }
 
@@ -384,27 +350,121 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
+        lifecycleScope.launch{
+            if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
+                endToSaveData()
+                isStopError = true
+            }
 
-        if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
-            endToSaveData()
-            isStopError = true
+            runningService.stopRunningBeforeRegister = true
+            Log.d("test123", "stoprun: challengeSeq : ${runningViewModel.challengeSeq.value}")
+
+            if(runningViewModel.challengeSeq.value == -1){
+                runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
+            }else {
+                runningViewModel.postChallengeRunRecord(
+                    AllRunRecord(
+                        runRecord = runRecord,
+                        coordinates = coordinates,
+                        imgFile = imgFile
+                    )
+                )
+            }
+
+            loading(2000L)
         }
 
-        runningService.stopRunningBeforeRegister = true
+    }
+
+    private suspend fun endToSaveData() {
+        takeSnapShot()
+        changeCoordinates()
+        saveRunRecord()
+        delay(500L)
+    }
+
+    private suspend fun saveRunRecord() {
+        var completed = "N"
+        /** goalAmount하고 sumDistance, runningTime의 단위 맞춰야함 **/
+        if(runningViewModel.goalType.value == GOAL_TYPE_DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
+            completed = "Y"
+        }
+
+        val runningTime = (currentTimeInMillis / 1000).toInt()
+
+        if(runningViewModel.goalType.value == GOAL_TYPE_TIME && runningViewModel.goalAmount.value <= runningTime){
+            completed = "Y"
+        }
 
 
-        runningViewModel.postRunRecord(
-            AllRunRecord(
-                runRecord = runRecord,
-                coordinates = coordinates,
-                imgFile = imgFile
-            )
+        runRecord = RunRecord(
+            runRecordSeq = 0,
+            runImageSeq = 0,
+            runningDay = runningService.startDay,
+            runningStartTime = timeFormatter(runningService.startTime),
+            runningEndTime = timeFormatter(System.currentTimeMillis()),
+            runningTime = runningTime,
+            runningDistance = sumDistance.toInt(),
+            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
+            runningCalorieBurned = caloriesBurned,
+            runningStartingLat = coordinates.first().latitude,
+            runningStartingLng = coordinates.first().longitude,
+            completed = completed,
+            userName = "",
+            userSeq = 0,
+            challengeName = if(runningViewModel.challengeSeq.value == -1) "연습 러닝" else "",
+            challengeSeq = 0
         )
+    }
 
-        lifecycleScope.launch {
-            loading(5000L)
+    private fun changeCoordinates() {
+        coordinates = naverLatLng.mapperToCoordinateList()
+    }
+
+    private fun takeSnapShot() {
+        moveLatLngBounds()
+
+        naverMap?.takeSnapshot {
+            // image 생성
+            imgFile = createMultiPart(it)
+            imgByteArray = createByteArray(it)
+        }
+    }
+
+    private fun createByteArray(bitmap: Bitmap): ByteArray{
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 40, outputStream)
+        return outputStream.toByteArray()
+    }
+
+    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
+        var imageFile: File? = null
+        try {
+            imageFile = createFileFromBitmap(bitmap)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
 
+        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
+        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
+    }
+
+    @Throws(IOException::class)
+    private fun createFileFromBitmap(bitmap: Bitmap): File? {
+        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
+        val fileOutputStream = FileOutputStream(newFile)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
+        fileOutputStream.close()
+        return newFile
+    }
+
+    // 이동한 전체 polyLine 담기
+    private fun moveLatLngBounds() {
+        if(naverLatLng.isEmpty()) return
+
+        val latLngBoundsBuilder = LatLngBounds.Builder().include(naverLatLng)
+        val bounds = latLngBoundsBuilder.build()
+        naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 200))
     }
 
     private fun stopService(){
@@ -423,7 +483,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvTime.text = time
 
-            if (runningViewModel.goalType == GOAL_TYPE_TIME) {
+            if (runningViewModel.goalType.value == GOAL_TYPE_TIME) {
                 /** goal amount 변경 **/
             }
         }
@@ -433,7 +493,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if (runningViewModel.goalType == GOAL_TYPE_DISTANCE) {
+            if (runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
                 /** goal amount 변경 **/
             }
         }
@@ -476,6 +536,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap.isLiteModeEnabled = true
             // 현위치 버튼 활성화
         naverMap.uiSettings.isLocationButtonEnabled = true
+
+        // 액티비티 재시작 시 naverMap이 ready되지 않은 상태에서 observer되어
+        // 경로가 그려지지 않는 현상 발생
+        val isOkToDrawPolyline = naverLatLng.size >= 2
+        if (isOkToDrawPolyline) {
+            drawPolyline()
+        }
     }
 
     private fun loading(timeinMillis: Long) {
@@ -507,9 +574,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val builder = AlertDialog.Builder(this@RunningActivity)
-            builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
+            builder.setTitle("달리기를 종료할까요? 나가시면 기록이 저장되지 않습니다.")
                 .setPositiveButton("네"){ _,_ ->
-                    stopRun()
+//                    stopRun()
+                    /** 한번 더 다이얼로그 띄워서 물어야함 **/
+                    RunningService.serviceState = SERVICE_NOTSTART
+                    startActivity(Intent(this@RunningActivity, MainActivity::class.java))
+                    finish()
                 }
                 .setNegativeButton("아니오"){_,_ ->
                     // 다시 시작

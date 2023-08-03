@@ -30,6 +30,8 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initMapView()
+
         // Loading 후 Map 보이기
         lifecycleScope.launch {
             delay(1100)
@@ -49,8 +51,6 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     }
 
     override fun init() {
-
-        initMapView()
 
         initClickListener()
 
@@ -106,13 +106,11 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     override fun onMapReady(naverMap: NaverMap) {
         // 라이트 모드 설정 시 지도 심벌의 클릭 이벤트를 처리할 수 없습니다
         this.naverMap = naverMap
-        naverMap.apply {
-            moveCamera(CameraUpdate.zoomTo(16.0))
-            locationSource = locationSource
-            locationTrackingMode = LocationTrackingMode.Follow
-            isLiteModeEnabled = true
-            // 현위치 버튼 활성화
-            uiSettings.isLocationButtonEnabled = true
-        }
+
+        /** apply 적용 시 내 위치로 이동하지 않는 현상 **/
+        naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+
     }
 }

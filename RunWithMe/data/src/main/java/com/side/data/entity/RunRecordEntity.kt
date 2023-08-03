@@ -9,7 +9,7 @@ import okhttp3.MultipartBody
 data class RunRecordEntity(
     @PrimaryKey(autoGenerate = true)
     var seq: Int = 0,
-    var image: MultipartBody.Part,
+    var image: ByteArray,
     var startTime: String,
     var endTime: String,
     var runningTime: Int,

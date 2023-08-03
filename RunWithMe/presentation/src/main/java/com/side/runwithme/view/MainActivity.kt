@@ -6,13 +6,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.seobaseview.base.BaseActivity
@@ -54,9 +52,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
         binding.apply {
             floatingActionButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
-            }
-            btn2.setOnClickListener {
-                startActivity(Intent(this@MainActivity, RunningActivity::class.java))
             }
         }
     }
@@ -174,22 +169,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
         }
     }
 
+    // backpressed에서 스택 pop해주던거 자동으로 됨
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
     // 홈 화면에서 뒤로가기 2번 클릭 시 종료
     var waitTime = 0L
-//    override fun onBackPressed() {
-//        if(navController.currentDestination?.id == R.id.HomeFragment) {
-//            if (System.currentTimeMillis() - waitTime >= 1500) {
-//                waitTime = System.currentTimeMillis()
-//                showToast("뒤로가기 버튼을 한번 더 누르면 종료됩니다.")
-//            } else {
-//                finish()
-//            }
-//        }
-//        else{
-//            super.onBackPressed()
-//        }
-//    }
-
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if(navController.currentDestination?.id == R.id.HomeFragment) {
@@ -199,7 +185,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
                 } else {
                     finish()
                 }
-            }else {
+            }else{
                 navController.popBackStack()
             }
         }

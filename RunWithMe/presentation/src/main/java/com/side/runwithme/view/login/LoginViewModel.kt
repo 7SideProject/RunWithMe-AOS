@@ -28,8 +28,8 @@ class LoginViewModel @Inject constructor(
 
 
     fun loginWithEmail() {
-//        val user = User("abcdef@naver.com", "12341234")
-        val user = User(email.value, password.value)
+        val user = User("ab@naver.com", "1234")
+//        val user = User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {
             loginWithEmailUseCase(user).collectLatest {

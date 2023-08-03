@@ -14,11 +14,18 @@ object preferencesKeys {
     val EMAIL = stringPreferencesKey("email")
     val SEQ = stringPreferencesKey("seq")
     val WEIGHT = intPreferencesKey("weight")
+    val CHALLENG_SEQ = intPreferencesKey("challeng_seq")
+    val GOAL_AMOUNT = longPreferencesKey("goal_amount")
+    val GOAL_TYPE = stringPreferencesKey("goal_type")
 }
 
-const val DATASTORE_KEY_TYPE_INT = 0
-const val DATASTORE_KEY_TYPE_STRING = 1
-const val DATASTORE_KEY_TYPE_BOOLEAN = 2
+
+enum class DATASTORE_KEY {
+    TYPE_INT, TYPE_STRING, TYPE_BOOLEAN, TYPE_LONG
+}
+//const val DATASTORE_KEY_TYPE_INT = 0
+//const val DATASTORE_KEY_TYPE_STRING = 1
+//const val DATASTORE_KEY_TYPE_BOOLEAN = 2
 
 suspend fun <T> DataStore<Preferences>.saveValue(key: Preferences.Key<T>, value: T) {
     edit { prefs -> prefs[key] = value }
@@ -29,7 +36,7 @@ suspend fun DataStore<Preferences>.saveEncryptStringValue(key: Preferences.Key<S
     edit { prefs -> prefs[key] = encrypt(value) }
 }
 
-suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: Int): Flow<Any> {
+suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: DATASTORE_KEY): Flow<Any> {
     return data
         .catch { exception ->
             if (exception is IOException) {
@@ -41,14 +48,17 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: I
         }
         .map { prefs ->
             prefs[key] ?: when (type) {
-                DATASTORE_KEY_TYPE_INT -> {
+                DATASTORE_KEY.TYPE_INT -> {
                     0
                 }
-                DATASTORE_KEY_TYPE_BOOLEAN -> {
+                DATASTORE_KEY.TYPE_BOOLEAN -> {
                     false
                 }
-                DATASTORE_KEY_TYPE_STRING -> {
+                DATASTORE_KEY.TYPE_STRING -> {
                     ""
+                }
+                DATASTORE_KEY.TYPE_LONG -> {
+                    0L
                 }
                 else -> {}
             }

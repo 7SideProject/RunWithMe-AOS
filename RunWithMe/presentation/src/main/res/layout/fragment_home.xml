@@ -17,8 +17,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:back_image="@drawable/baseline_arrow_back_24"
-            app:title="@string/app_name"
+            app:back_image="@drawable/rwm_logo"
+            app:title=""
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

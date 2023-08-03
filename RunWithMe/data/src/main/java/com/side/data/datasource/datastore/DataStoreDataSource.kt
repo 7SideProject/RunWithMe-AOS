@@ -10,7 +10,7 @@ interface DataStoreDataSource {
 
     fun getUserEmail(): Flow<String>
 
-    fun getUserSeq(): Flow<Long>
+    fun getUserSeq(): Flow<String>
 
     fun getUserWeight(): Flow<Int>
 
@@ -19,5 +19,17 @@ interface DataStoreDataSource {
     fun getJWT(): Flow<String>
 
     fun getRefreshToken(): Flow<String>
+
+    suspend fun saveRunningChallengSeq(challengSeq: Int)
+
+    suspend fun saveRunningGoalAmount(goalAmount: Long)
+
+    suspend fun saveRunningGoalType(goalType: String)
+
+    fun getRunningChallengeSeq(): Flow<Int>
+
+    fun getRunningGoalAmount(): Flow<Long>
+
+    fun getRunningGoalType(): Flow<String>
 
 }
