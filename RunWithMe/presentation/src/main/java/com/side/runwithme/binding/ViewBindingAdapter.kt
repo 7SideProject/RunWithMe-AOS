@@ -1,14 +1,11 @@
 package com.side.runwithme.binding
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.side.runwithme.R
-import okhttp3.MultipartBody
 import java.lang.Math.round
-
 
 
 @BindingAdapter("runningResultDay")

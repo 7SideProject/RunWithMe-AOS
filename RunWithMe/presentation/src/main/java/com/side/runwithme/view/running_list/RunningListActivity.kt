@@ -51,7 +51,9 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
     }
 
     override fun init() {
-
+        binding.apply {
+            runningListVM = runningListViewModel
+        }
         initClickListener()
 
         runningListViewModel.apply {
@@ -65,6 +67,9 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
             lottieStartBtn.setOnClickListener {
                 val bottomSheet = RunningListBottomSheet(intentToRunningActivityClickListener, practiceSettingClickListener)
                 bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+            }
+            btnTts.setOnClickListener {
+                runningListViewModel.clickTTsBtn()
             }
         }
     }
@@ -91,6 +96,7 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
             finish()
         }
     }
+
 
     private fun initMapView(){
         val fm = supportFragmentManager

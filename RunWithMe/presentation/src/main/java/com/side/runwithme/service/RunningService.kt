@@ -28,11 +28,13 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.naver.maps.geometry.LatLng
+import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.runwithme.R
 import com.side.runwithme.util.*
 import com.side.runwithme.util.TrackingUtility.Companion.getTTSTime
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.util.Locale
 import javax.inject.Inject
@@ -45,7 +47,7 @@ const val SERVICE_ISRUNNING = 1
 @AndroidEntryPoint
 class RunningService : LifecycleService() {
 
-    private lateinit var tts: TextToSpeech
+    private var tts: TextToSpeech? = null
 
     // Binder
     private val binder = LocalBinder()
@@ -62,6 +64,9 @@ class RunningService : LifecycleService() {
     // FusedLocationProviderClient 주입
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    @Inject
+    lateinit var getTTSOptionUseCase: GetTTSOptionUseCase
 
     // NotificationCompat.Builder 수정하기 위함, 없으면 notification 삭제 안됨
     lateinit var currentNotificationBuilder: NotificationCompat.Builder
@@ -132,22 +137,32 @@ class RunningService : LifecycleService() {
 //            return
 //        }
 
-        tts = TextToSpeech(this) {
-            if (it == TextToSpeech.SUCCESS) {
-                val result = tts.setLanguage(Locale.KOREAN)
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    showToast("음성 안내를 지원하지 않는 언어입니다.")
-                    return@TextToSpeech
+        lifecycleScope.launch(Dispatchers.IO) {
+            if(getTTSOptionUseCase().first()){
+                tts = TextToSpeech(this@RunningService) {
+                    if (it == TextToSpeech.SUCCESS) {
+                        val result = tts?.setLanguage(Locale.KOREAN)
+                        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                            showToast("음성 안내를 지원하지 않는 언어입니다.")
+                            return@TextToSpeech
+                        }
+                    } else {
+                        Log.e("tes t123", "initTextToSpeech Initialize Failed")
+                    }
                 }
-            } else {
-                Log.e("test123", "initTextToSpeech Initialize Failed")
             }
         }
+
+
     }
 
     private fun ttsSpeakAndVibrate(strTTS: String) {
         vibrate() // 1초간 진동
-        tts.speak(strTTS, TextToSpeech.QUEUE_FLUSH, null, null)
+
+        if(tts == null){
+            return
+        }
+        tts?.speak(strTTS, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun vibrate(){
@@ -585,8 +600,8 @@ class RunningService : LifecycleService() {
     override fun onDestroy() {
 
         if (tts != null) {
-            tts.stop()
-            tts.shutdown()
+            tts?.stop()
+            tts?.shutdown()
         }
 
         super.onDestroy()
