@@ -29,4 +29,8 @@ interface DataStoreRepository {
 
     fun getRunningChallengInfo() : Flow<ResultType<RunningInfo>>
 
+    suspend fun saveTTSOption(option: Boolean)
+
+    fun getTTSOption(): Flow<Boolean>
+
 }

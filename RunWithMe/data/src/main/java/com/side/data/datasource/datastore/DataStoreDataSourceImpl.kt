@@ -10,6 +10,7 @@ import com.side.data.util.preferencesKeys.GOAL_TYPE
 import com.side.data.util.preferencesKeys.JWT
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
+import com.side.data.util.preferencesKeys.TTS_OPTION
 import com.side.data.util.preferencesKeys.WEIGHT
 import com.side.domain.model.User
 import kotlinx.coroutines.flow.Flow
@@ -74,5 +75,13 @@ class DataStoreDataSourceImpl @Inject constructor(
 
     override fun getRunningGoalType(): Flow<String> = flow {
         emit(dataStore.getValue(GOAL_TYPE, DATASTORE_KEY.TYPE_STRING).first().toString())
+    }
+
+    override suspend fun saveTTSOption(option: Boolean) {
+        dataStore.saveValue(TTS_OPTION, option)
+    }
+
+    override fun getTTSOption(): Flow<Boolean> = flow {
+        emit(dataStore.getValue(TTS_OPTION, DATASTORE_KEY.TYPE_BOOLEAN).first().toString().toBoolean())
     }
 }

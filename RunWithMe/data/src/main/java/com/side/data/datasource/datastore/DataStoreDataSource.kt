@@ -31,5 +31,7 @@ interface DataStoreDataSource {
     fun getRunningGoalAmount(): Flow<Long>
 
     fun getRunningGoalType(): Flow<String>
+    suspend fun saveTTSOption(option: Boolean)
 
+    fun getTTSOption(): Flow<Boolean>
 }

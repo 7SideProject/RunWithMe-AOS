@@ -93,6 +93,15 @@ class DataStoreRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
+    override suspend fun saveTTSOption(option: Boolean) = dataStoreDataSource.saveTTSOption(option)
+
+    override fun getTTSOption(): Flow<Boolean> = flow {
+
+        val option = dataStoreDataSource.getTTSOption().first()
+
+        emit(option)
+    }
+
     //
 //    override fun getRefreshToken(): Flow<ResultType<String>> = flow {
 //        emitResultTypeLoading()
