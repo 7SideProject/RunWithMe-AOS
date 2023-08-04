@@ -11,12 +11,9 @@ const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
 
-const val ACTION_START_OR_RESUME_SERVICE = "action_start_or_resume_service"
-const val ACTION_RESUME_SERVICE = "action_resume_service"
-const val ACTION_START_SERVICE = "action_start_service"
-const val ACTION_STOP_SERVICE = "action_stop_service"
-const val ACTION_PAUSE_SERVICE = "action_pause_service"
-const val ACTION_SHOW_RUNNING_ACTIVITY = "ACTION_SHOW_RUNNING_ACTIVITY"
+enum class SERVICE_ACTION {
+    START, RESUME, STOP, PAUSE, FIRST_SHOW
+}
 
 /**
  * 타이머 갱신 주기
@@ -26,6 +23,9 @@ const val TIMER_UPDATE_INTERVAL = 50L
 /**
  * 목표 타입
  */
+enum class GOAL_TYPE {
+    TIME, DISTANCE
+}
 const val GOAL_TYPE_TIME = "time"
 const val GOAL_TYPE_DISTANCE = "distance"
 

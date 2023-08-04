@@ -466,7 +466,7 @@ class RunningService : LifecycleService() {
         intent.let {
             when (it.action) {
                 // 시작 되었을 때
-                ACTION_START_SERVICE -> {
+                SERVICE_ACTION.START.name -> {
                     startTimer()
                     startForegroundService()
                     _isFirstRun = false
@@ -475,23 +475,23 @@ class RunningService : LifecycleService() {
                     ttsSpeakAndVibrate("러닝을 시작합니다.")
                 }
                 // 재개 되었을 때
-                ACTION_RESUME_SERVICE -> {
+                SERVICE_ACTION.RESUME.name -> {
                     startTimer()
                     _startTime = System.currentTimeMillis()
                     ttsSpeakAndVibrate("러닝을 다시 시작합니다.")
                 }
                 // 일시정지 되었을 때
-                ACTION_PAUSE_SERVICE -> {
+                SERVICE_ACTION.PAUSE.name -> {
                     ttsSpeakAndVibrate("러닝이 일시 중지되었습니다.")
                     pauseService()
                 }
                 // 종료 되었을 때
-                ACTION_STOP_SERVICE -> {
+                SERVICE_ACTION.STOP.name -> {
                     ttsSpeakAndVibrate("러닝이 종료되었습니다.")
                     killService()
                 }
                 // 처음 화면 켰을 때
-                ACTION_SHOW_RUNNING_ACTIVITY -> {
+                SERVICE_ACTION.FIRST_SHOW.name -> {
                     updateLocation(true)
                 }
             }
@@ -561,13 +561,13 @@ class RunningService : LifecycleService() {
         // 정지 or 시작 버튼 클릭 시 그에 맞는 액션 전달
         val pendingIntent = if (isTracking) {
             val pauseIntent = Intent(this, RunningService::class.java).apply {
-                action = ACTION_PAUSE_SERVICE
+                action = SERVICE_ACTION.PAUSE.name
             }
             // pending Intent 객체 생성
             PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_MUTABLE)
         } else {
             val resumeIntent = Intent(this, RunningService::class.java).apply {
-                action = ACTION_START_OR_RESUME_SERVICE
+                action = SERVICE_ACTION.RESUME.name
             }
             PendingIntent.getService(this, 2, resumeIntent, PendingIntent.FLAG_MUTABLE)
         }

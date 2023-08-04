@@ -200,13 +200,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             ibStart.setOnClickListener {
                 runningBtnUI()
 
-                sendCommandToService(ACTION_RESUME_SERVICE)
+                sendCommandToService(SERVICE_ACTION.RESUME.name)
             }
 
             ibPause.setOnClickListener {
                 pauseBtnUI()
 
-                sendCommandToService(ACTION_PAUSE_SERVICE)
+                sendCommandToService(SERVICE_ACTION.PAUSE.name)
             }
 
             ibStop.setOnClickListener {
@@ -338,10 +338,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private suspend fun startRun() {
-        sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
+        sendCommandToService(SERVICE_ACTION.FIRST_SHOW.name)
         delay(3000L)
 
-        sendCommandToService(ACTION_START_SERVICE)
+        sendCommandToService(SERVICE_ACTION.START.name)
 
         bindService()
 
@@ -469,7 +469,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun stopService(){
         unbindService(serviceConnection)
-        sendCommandToService(ACTION_STOP_SERVICE)
+        sendCommandToService(SERVICE_ACTION.STOP.name)
     }
 
 
