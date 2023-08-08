@@ -25,10 +25,15 @@
     <string name="goal">목표</string>
     <string name="nickname">닉네임</string>
     <string name="email">이메일</string>
+    <string name="phone">핸드폰 번호</string>
+    <string name="verify_number">인증 번호</string>
     <string name="password">비밀번호</string>
+    <string name="password_confirm">비밀번호 확인</string>
+    <string name="wrong_password">입력하신 비밀번호가 일치하지 않습니다.</string>
 
 
     <string name="ok">확인</string>
+    <string name="next">다음</string>
     <string name="cancel">취소</string>
     <string name="add">등록</string>
     <string name="edit">수정</string>
@@ -72,6 +77,10 @@
     <string name="practice_alert">연습 결과는 누적 기록에 포함되지 않습니다.</string>
     <string name="minute">분</string>
     <string name="start">시작</string>
+
+    <string name="verify_phone_number">번호 인증</string>
+    <string name="verify">인증</string>
+    <string name="send_verify_number">인증 번호 전송</string>
 
 
 </resources>
