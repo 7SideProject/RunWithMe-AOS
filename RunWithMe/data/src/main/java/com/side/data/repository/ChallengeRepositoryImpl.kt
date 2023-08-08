@@ -19,7 +19,6 @@ import javax.inject.Singleton
 
 @Singleton
 class ChallengeRepositoryImpl @Inject constructor(
-    private val challengeRemoteDataSource: ChallengeRemoteDataSource,
     private val challengeApi: ChallengeApi
 ) : ChallengeRepository {
     override fun getChallengeList(

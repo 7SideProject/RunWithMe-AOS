@@ -16,7 +16,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DataStoreDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): DataStoreDataSource {

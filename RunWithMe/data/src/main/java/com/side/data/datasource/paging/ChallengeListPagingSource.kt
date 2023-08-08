@@ -11,7 +11,9 @@ import com.side.domain.model.Challenge
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ChallengeListPagingSource @Inject constructor(
     private val size: Int,
     private val challengeApi: ChallengeApi
