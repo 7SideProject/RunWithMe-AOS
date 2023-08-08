@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_join"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/join1Fragment">
+
+    <fragment
+        android:id="@+id/join1Fragment"
+        android:name="com.side.runwithme.view.join.Join1Fragment"
+        tools:layout="@layout/fragment_join1"
+        android:label="Join1Fragment" >
+        <action
+            android:id="@+id/action_join1Fragment_to_join2Fragment"
+            app:destination="@id/join2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/join2Fragment"
+        android:name="com.side.runwithme.view.join.Join2Fragment"
+        android:label="Join2Fragment" >
+        <action
+            android:id="@+id/action_join2Fragment_to_join3Fragment"
+            app:destination="@id/join3Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/join3Fragment"
+        android:name="com.side.runwithme.view.join.Join3Fragment"
+        android:label="Join3Fragment" />
+</navigation>

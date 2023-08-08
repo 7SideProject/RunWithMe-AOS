@@ -12,9 +12,14 @@ import com.side.runwithme.util.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -28,6 +33,8 @@ class JoinViewModel @Inject constructor(
 
     val password: MutableStateFlow<String> = MutableStateFlow("")
 
+    val password_confirm: MutableStateFlow<String> = MutableStateFlow("")
+
     val nickname: MutableStateFlow<String> = MutableStateFlow("")
 
     private val _weight = MutableStateFlow<Int>(0)
@@ -36,8 +43,30 @@ class JoinViewModel @Inject constructor(
     private val _height = MutableStateFlow<Int>(0)
     val height get() = _height.asStateFlow()
 
-    private val _imgFile = MutableStateFlow<MultipartBody.Part?>(null)
-    val imgFile get() = _imgFile.asStateFlow()
+    val phoneNumber = MutableStateFlow<String>("")
+
+    val verifyNumber = MutableStateFlow<String>("")
+
+    private val _resending = MutableStateFlow<Boolean>(false)
+    val resending get() = _resending.asStateFlow()
+
+    private val _complete = MutableStateFlow<Boolean>(false)
+    val complete get() = _complete.asStateFlow()
+
+    private val _completePassword = MutableStateFlow<Boolean>(false)
+    val completePassword get() = _completePassword.asStateFlow()
+
+    val allDone : StateFlow<Boolean> = combine(height, nickname, weight){ height, nickname, weight ->
+            Log.d("test123", "combine: ${height}, ${nickname}, ${weight}")
+            height != 0 && weight != 0 && nickname.isNotBlank()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
+//    private val _imgFile = MutableStateFlow<MultipartBody.Part?>(null)
+//    val imgFile get() = _imgFile.asStateFlow()
+
+
+    private val _emailConfirmEventFlow = MutableEventFlow<Event>()
+    val emailConfirmEventFlow get() = _emailConfirmEventFlow.asEventFlow()
 
     private val _joinEventFlow = MutableEventFlow<Event>()
     val joinEventFlow get() = _joinEventFlow.asEventFlow()
@@ -50,9 +79,29 @@ class JoinViewModel @Inject constructor(
         this._weight.update { weight }
     }
 
-    fun setImgFile(imgFile: MultipartBody.Part){
-        this._imgFile.update { imgFile }
+    fun completeVerify(){
+        this._complete.value = true
     }
+
+    fun completePassword(){
+        _completePassword.value = true
+    }
+
+    fun initCompletePassword(){
+        _completePassword.value = false
+    }
+
+    fun clickSendButton(){
+        this._resending.value = true
+    }
+
+    fun initSendButton(){
+        this._resending.value = false
+    }
+
+//    fun setImgFile(imgFile: MultipartBody.Part){
+//        this._imgFile.update { imgFile }
+//    }
 
     fun join() {
         val user = User(
@@ -87,6 +136,29 @@ class JoinViewModel @Inject constructor(
             }
         }
     }
+
+    fun checkEmail(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _emailConfirmEventFlow.emit(Event.Success("이메일 체크 완료"))
+        }
+    }
+
+//    fun clear(){
+//        this.apply {
+//            email.value = ""
+//            password.value = ""
+//            password_confirm.value = ""
+//            nickname.value = ""
+//            _weight.value = 0
+//            _height.value = 0
+//            phoneNumber.value = ""
+//            verifyNumber.value = ""
+//            _resending.value = false
+//            _complete.value = false
+//            _completePassword.value = false
+//            _allDone.value = false
+//        }
+//    }
 
 
     sealed class Event {

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="joinVM"
+            type="com.side.runwithme.view.join.JoinViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.join.Join2Fragment">
+
+
+        <com.side.runwithme.component.CustomToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:back_image="@drawable/baseline_arrow_back_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/join" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_join"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_next">
+
+            <TextView
+                android:id="@+id/tv_join_email"
+                style="@style/header_text"
+                android:layout_marginStart="@dimen/margin_regular"
+                android:layout_marginTop="@dimen/margin_xlarge"
+                android:text="@string/email"
+                android:textSize="@dimen/fontsize_h4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_join_email"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:hint="runwithme@naver.com"
+                android:inputType="textWebEmailAddress"
+                android:maxLines="1"
+                android:text="@={joinVM.email}"
+                android:layout_marginTop="@dimen/margin_regular"
+                android:layout_marginEnd="@dimen/margin_regular"
+                app:layout_constraintStart_toStartOf="@id/tv_join_email"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_join_email"/>
+
+
+            <TextView
+                android:id="@+id/tv_join_password"
+                style="@style/header_text"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="@dimen/margin_regular"
+                android:text="@string/password"
+                android:textSize="@dimen/fontsize_h4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_join_email" />
+
+            <EditText
+                android:id="@+id/et_join_password"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="8dp"
+                android:inputType="textWebPassword"
+                android:text="@={joinVM.password}"
+                android:maxLines="1"
+                android:maxLength="28"
+                app:layout_constraintStart_toStartOf="@id/tv_join_password"
+                app:layout_constraintTop_toBottomOf="@id/tv_join_password" />
+
+            <TextView
+                android:id="@+id/tv_join_password_confirm"
+                style="@style/header_text"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="@dimen/margin_regular"
+                android:text="@string/password_confirm"
+                android:textSize="@dimen/fontsize_h4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_join_password" />
+
+            <EditText
+                android:id="@+id/et_join_password_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="8dp"
+                android:inputType="textWebPassword"
+                android:text="@={joinVM.password_confirm}"
+                android:maxLines="1"
+                android:maxLength="28"
+                app:layout_constraintStart_toStartOf="@id/tv_join_password_confirm"
+                app:layout_constraintTop_toBottomOf="@id/tv_join_password_confirm" />
+
+            <TextView
+                android:id="@+id/tv_alert_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wrong_password"
+                android:textColor="@color/main_red"
+                android:visibility="gone"
+                android:layout_marginEnd="@dimen/margin_regular"
+                app:layout_constraintTop_toBottomOf="@id/et_join_password_confirm"
+                app:layout_constraintEnd_toEndOf="@id/et_join_password_confirm"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_next"
+            style="@style/WeakButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="8dp"
+            android:includeFontPadding="false"
+            android:text="@string/next"
+            enabledEmailNextButton="@{joinVM.email}"
+            completePassword="@{joinVM.completePassword}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_join" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
