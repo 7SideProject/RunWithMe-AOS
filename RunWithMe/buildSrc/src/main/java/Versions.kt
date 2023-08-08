@@ -2,8 +2,9 @@ object Versions {
 
     // Projects
     const val AGP = "7.4.0"
-    const val KOTLIN = "1.7.20"
+    const val KOTLIN = "1.8.0"
     const val SECRETS_GRALDE = "2.0.1"
+    const val GOOGLE_SERVICE = "4.3.15"
 
 
 
@@ -49,6 +50,7 @@ object Versions {
     const val DESUGARING = "1.1.5"
     const val PAGING = "3.1.1"
     const val ROOM = "2.5.0"
-
+    const val FIREBASE_PLATFORM = "32.2.2"
+    const val FIREBASE_AUTH = "22.1.1"
 
 }
