@@ -4,6 +4,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentHomeBinding
+import com.side.runwithme.di.BearerException
 
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
@@ -18,6 +19,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.apply {
             cvChallenge.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_challengeListFragment)
+            }
+            ivMyRunning.setOnClickListener {
+                throw BearerException()
             }
         }
 
