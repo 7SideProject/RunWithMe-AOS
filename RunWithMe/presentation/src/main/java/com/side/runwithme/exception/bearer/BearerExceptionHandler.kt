@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.gun0912.tedpermission.TedPermissionActivity
+import com.side.domain.exception.BearerException
 import com.side.runwithme.view.login.LoginActivity
 
 class BearerExceptionHandler(
@@ -57,18 +58,21 @@ class BearerExceptionHandler(
             })
     }
     override fun uncaughtException(t: Thread, e: Throwable) {
-
-        if(e.cause?.cause is BearerException){
-            val intent = Intent(lastActivity, LoginActivity::class.java).apply {
-                putExtra("BearerError", "로그인을 다시 해주세요.")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            }
-            lastActivity?.apply {
-                startActivity(intent)
-                finish()
-            }
-
-            System.exit(-1)
+        if(e is BearerException || e.cause is BearerException || e.cause?.cause is BearerException){
+            handleBearerException()
         }
+    }
+
+    private fun handleBearerException(){
+        val intent = Intent(lastActivity, LoginActivity::class.java).apply {
+            putExtra("BearerError", "로그인을 다시 해주세요.")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        lastActivity?.apply {
+            startActivity(intent)
+            finish()
+        }
+
+        System.exit(-1)
     }
 }

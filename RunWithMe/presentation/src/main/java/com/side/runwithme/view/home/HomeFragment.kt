@@ -2,9 +2,9 @@ package com.side.runwithme.view.home
 
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
+import com.side.domain.exception.BearerException
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentHomeBinding
-import com.side.runwithme.exception.bearer.BearerException
 
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
