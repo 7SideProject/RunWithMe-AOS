@@ -38,14 +38,6 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
     private fun initClickListener() {
         binding.apply {
             btnJoin.setOnClickListener {
-
-
-                if(!matchesNickNameRule(joinViewModel.nickname.value)){
-                    showToast("닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다.")
-                    return@setOnClickListener
-                }
-
-
                 joinViewModel.join()
             }
             toolbar.setBackButtonClickEvent {
@@ -66,15 +58,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
         editText.requestFocus()
     }
 
-    private fun matchesNickNameRule(nickName: String): Boolean{
-        val ps = Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\u318D\\u119E\\u11A2\\u2022\\u2025a\\u00B7\\uFE55]+$")
 
-        if(nickName.isBlank() || ps.matcher(nickName).matches()){
-            return true
-        }
-
-        return false
-    }
 
     private fun initSpinner(){
         initWeightSpinner()

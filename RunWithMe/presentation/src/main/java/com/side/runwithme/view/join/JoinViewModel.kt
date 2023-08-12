@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +30,7 @@ class JoinViewModel @Inject constructor(
     private val joinUseCase: JoinUseCase
 ) : ViewModel() {
 
-    val email: MutableStateFlow<String> = MutableStateFlow("")
+    val id: MutableStateFlow<String> = MutableStateFlow("")
 
     val password: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -65,8 +66,8 @@ class JoinViewModel @Inject constructor(
 //    val imgFile get() = _imgFile.asStateFlow()
 
 
-    private val _emailConfirmEventFlow = MutableEventFlow<Event>()
-    val emailConfirmEventFlow get() = _emailConfirmEventFlow.asEventFlow()
+    private val _idConfirmEventFlow = MutableEventFlow<Event>()
+    val idConfirmEventFlow get() = _idConfirmEventFlow.asEventFlow()
 
     private val _joinEventFlow = MutableEventFlow<Event>()
     val joinEventFlow get() = _joinEventFlow.asEventFlow()
@@ -104,9 +105,17 @@ class JoinViewModel @Inject constructor(
 //    }
 
     fun join() {
+        if(!matchesNickNameRule(nickname.value)){
+            viewModelScope.launch {
+                _joinEventFlow.emit(Event.Fail("닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다."))
+            }
+            return
+        }
+
+
         val user = User(
             seq = 0L,
-            email = email.value,
+            id = id.value,
             password = password.value,
             nickname = nickname.value,
             height = height.value,
@@ -137,10 +146,22 @@ class JoinViewModel @Inject constructor(
         }
     }
 
-    fun checkEmail(){
+    fun checkIdIsDuplicate(){
         viewModelScope.launch(Dispatchers.IO) {
-            _emailConfirmEventFlow.emit(Event.Success("이메일 체크 완료"))
+
+            _idConfirmEventFlow.emit(Event.Success("아이디 체크 완료"))
         }
+    }
+
+    //한글, 영문, 숫자로만 2자~8자까지 입력 가능
+    fun matchesNickNameRule(nickName: String): Boolean{
+        val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
+
+        if(nickName.length >= 2 && nickName.length <= 8 && pattern.matches(nickName)){
+            return true
+        }
+
+        return false
     }
 
 //    fun clear(){

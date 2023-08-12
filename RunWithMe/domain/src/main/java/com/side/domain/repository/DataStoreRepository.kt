@@ -17,9 +17,9 @@ interface DataStoreRepository {
 
     suspend fun saveToken(jwt: String, refreshToken: String)
 
-//    fun getJWT(): Flow<ResultType<String>>
-//
-//    fun getRefreshToken(): Flow<ResultType<String>>
+    fun getJWT(): Flow<String>
+
+    fun getRefreshToken(): Flow<String>
 
     suspend fun saveRunningChallengeSeq(challengeSeq: Int)
 

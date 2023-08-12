@@ -25,7 +25,7 @@ fun JoinResponse.mapperToUser(): User = this.run {
 }
 
 fun User.mapperToJoinRequest(): JoinRequest = this.run {
-    JoinRequest(email, password, nickname, height, weight)
+    JoinRequest(id, password, nickname, height, weight)
 }
 
 fun EmailLoginResponse.mapperToUser(): User = this.run {
@@ -33,7 +33,7 @@ fun EmailLoginResponse.mapperToUser(): User = this.run {
 }
 
 fun User.mapperToEmailLoginRequest(): EmailLoginRequest = this.run {
-    EmailLoginRequest(email, password)
+    EmailLoginRequest(id, password)
 }
 
 fun AllRunRecord.mapperToRunRecordRequest(): RunRecordRequest = this.run {

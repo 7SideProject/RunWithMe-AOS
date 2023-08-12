@@ -25,6 +25,7 @@
     <string name="goal">목표</string>
     <string name="nickname">닉네임</string>
     <string name="email">이메일</string>
+    <string name="id">아이디</string>
     <string name="phone">핸드폰 번호</string>
     <string name="verify_number">인증 번호</string>
     <string name="password">비밀번호</string>

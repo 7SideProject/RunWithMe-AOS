@@ -43,7 +43,7 @@ class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2
             }
 
             repeatOnStarted {
-                emailConfirmEventFlow.collectLatest {
+                idConfirmEventFlow.collectLatest {
                     handleEvent(it)
                 }
             }
@@ -68,7 +68,7 @@ class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2
             }
             btnNext.setOnClickListener {
                 //이메일 중복 검증
-                joinViewModel.checkEmail()
+                joinViewModel.checkIdIsDuplicate()
             }
         }
     }
