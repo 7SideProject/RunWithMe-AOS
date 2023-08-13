@@ -27,12 +27,20 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
-        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
-        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
-        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
 
-        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
-        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+//        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
+//        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
+//        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
+//
+//        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
+//        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+
+        buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
+        buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
+        buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+
+        manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
+        manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
 
     }
 
