@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.side.data.BuildConfig
 import com.side.data.api.TokenApi
 import com.side.data.datasource.datastore.DataStoreDataSource
+import com.side.domain.exception.BearerException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
