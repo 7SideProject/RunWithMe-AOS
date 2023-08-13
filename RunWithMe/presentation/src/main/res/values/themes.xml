@@ -90,5 +90,18 @@
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/border_rectangle_blue</item>
     </style>
+
+    <style name="StrongSmallButton">
+        <item name="android:textSize">@dimen/fontsize_h5</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/btn_round_main_color</item>
+    </style>
+
+    <style name="WeakSmallButton">
+        <item name="android:textSize">@dimen/fontsize_h5</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/border_rectangle_blue</item>
+    </style>
 </resources>
 

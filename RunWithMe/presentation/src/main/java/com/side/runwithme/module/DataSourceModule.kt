@@ -1,14 +1,14 @@
 package com.side.runwithme.module
 
-import com.side.data.datasource.running.RunningRemoteDataSource
-import com.side.data.datasource.running.RunningRemoteDataSourceImpl
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.datastore.DataStoreDataSourceImpl
 import com.side.data.datasource.local.PracticeLocalDataSource
 import com.side.data.datasource.local.PracticeLocalDataSourceImpl
+import com.side.data.datasource.running.RunningRemoteDataSource
+import com.side.data.datasource.running.RunningRemoteDataSourceImpl
+
 import com.side.data.datasource.user.UserRemoteDataSource
 import com.side.data.datasource.user.UserRemoteDataSourceImpl
-
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -40,4 +40,10 @@ interface DataSourceModule {
     fun providePracticeDataSource(
         impl: PracticeLocalDataSourceImpl
     ): PracticeLocalDataSource
+
+//    @Binds
+//    @Singleton
+//    fun provideTokenDataSource(
+//        impl: TokenDataSourceImpl
+//    ): TokenDataSource
 }

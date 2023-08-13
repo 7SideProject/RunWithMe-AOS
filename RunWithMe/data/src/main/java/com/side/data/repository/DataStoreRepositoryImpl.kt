@@ -26,7 +26,7 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override fun getUserEmail(): Flow<ResultType<String>> = flow<ResultType<String>> {
         emitResultTypeLoading()
-        dataStoreDataSource.getUserEmail().collect {
+        dataStoreDataSource.getUserID().collect {
             if(it.isBlank()){
                 emitResultTypeFail(it)
             }else {
@@ -93,13 +93,11 @@ class DataStoreRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
-    //
-//    override fun getRefreshToken(): Flow<ResultType<String>> = flow {
-//        emitResultTypeLoading()
-//        dataStoreDataSource.getRefreshToken().collect {
-//            emitResultTypeSuccess(it)
-//        }
-//    }.catch {
-//        emitResultTypeError(it)
-//    }
+    override fun getJWT(): Flow<String> =
+        dataStoreDataSource.getJWT()
+
+
+    override fun getRefreshToken(): Flow<String> =
+        dataStoreDataSource.getRefreshToken()
+
 }

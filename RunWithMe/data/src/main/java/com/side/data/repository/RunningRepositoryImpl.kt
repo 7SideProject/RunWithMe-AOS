@@ -8,6 +8,7 @@ import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.AllRunRecord
+import com.side.domain.repository.PostRunRecordResponse
 import com.side.domain.repository.RunningRepository
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.*
@@ -22,7 +23,7 @@ class RunningRepositoryImpl @Inject constructor(
     override fun postRunRecord(
         challengeSeq: Int,
         allRunRecord: AllRunRecord
-    ): Flow<ResultType<BaseResponse<String>>> = flow {
+    ): Flow<PostRunRecordResponse> = flow {
         emitResultTypeLoading()
         runningRemoteDataSourceImpl.postRunRecord(challengeSeq, allRunRecord.mapperToRunRecordRequest()).collect {
             /** 성공, 실패 나누기 **/

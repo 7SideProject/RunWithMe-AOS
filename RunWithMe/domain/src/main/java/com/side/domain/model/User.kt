@@ -2,7 +2,7 @@ package com.side.domain.model
 
 data class User(
     val seq: Long,
-    val email: String,
+    val id: String,
     val nickname: String,
     val height: Int,
     val weight: Int,
@@ -11,9 +11,9 @@ data class User(
     val password: String? = null
 ) {
 
-    constructor(email: String, password: String) : this(
+    constructor(id: String, password: String) : this(
         seq = 0,
-        email = email,
+        id = id,
         nickname = "",
         height = 0,
         weight = 0,

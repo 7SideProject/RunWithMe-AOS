@@ -6,4 +6,5 @@ object Plugins {
     const val SAFEARGS = "androidx.navigation.safeargs.kotlin"
     const val SECRETS_GRADLE_PLUGIN = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
     const val KAPT = "kotlin-kapt"
+    const val GOOGLE_SERVICE = "com.google.gms.google-services"
 }

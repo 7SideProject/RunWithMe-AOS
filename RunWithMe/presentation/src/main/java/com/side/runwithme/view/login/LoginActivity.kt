@@ -40,6 +40,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
         requestPermission()
 
+        BearerError()
+
         binding.apply {
             loginVM = loginViewModel
         }
@@ -179,6 +181,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 loadingDialog.dismiss()
             }
         }
+    }
+
+    private fun BearerError(){
+        val intent = intent
+        val errorMsg = intent.getStringExtra("BearerError")
+        if(errorMsg.isNullOrBlank()) return
+
+        showToast(errorMsg)
     }
 }
 

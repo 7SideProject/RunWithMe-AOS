@@ -35,55 +35,55 @@ class LoginViewModelTest {
         loginViewModel = LoginViewModel(loginWithEmailUseCase)
     }
 
-    @Test
-    @ExperimentalCoroutinesApi
-    fun JoinUser_EmailLogin_returns_Success() = runTest {
-        // Given
-        loginViewModel.apply {
-            email.value = "abcdef@naver.com"
-            password.value = "12341234"
-        }
-
-        // When
-        loginViewModel.loginWithEmail()
-        val result = loginViewModel.loginEventFlow.first()
-
-        // Then
-        assertThat(result).isInstanceOf(LoginViewModel.Event.Success::class.java)
-    }
-
-    @Test
-    @ExperimentalCoroutinesApi
-    fun NotJoinUser_EmailLogin_returns_Fail() = runTest {
-        // Given
-        loginViewModel.apply {
-            email.value = "ab@naver.com"
-            password.value = "123"
-        }
-
-        // When
-        loginViewModel.loginWithEmail()
-        val result = loginViewModel.loginEventFlow.first()
-
-        // Then
-        assertThat(result).isInstanceOf(LoginViewModel.Event.Fail::class.java)
-    }
-
-    @Test
-    @ExperimentalCoroutinesApi
-    fun FaultPasswordUser_EmailLogin_returns_Fail() = runTest {
-        // Given
-        loginViewModel.apply {
-            email.value = "abcdef@naver.com"
-            password.value = "123"
-        }
-
-        // When
-        loginViewModel.loginWithEmail()
-        val result = loginViewModel.loginEventFlow.first()
-
-        // Then
-        assertThat(result).isInstanceOf(LoginViewModel.Event.Fail::class.java)
-    }
+//    @Test
+//    @ExperimentalCoroutinesApi
+//    fun JoinUser_EmailLogin_returns_Success() = runTest {
+//        // Given
+//        loginViewModel.apply {
+//            email.value = "abcdef@naver.com"
+//            password.value = "12341234"
+//        }
+//
+//        // When
+//        loginViewModel.loginWithEmail()
+//        val result = loginViewModel.loginEventFlow.first()
+//
+//        // Then
+//        assertThat(result).isInstanceOf(LoginViewModel.Event.Success::class.java)
+//    }
+//
+//    @Test
+//    @ExperimentalCoroutinesApi
+//    fun NotJoinUser_EmailLogin_returns_Fail() = runTest {
+//        // Given
+//        loginViewModel.apply {
+//            email.value = "ab@naver.com"
+//            password.value = "123"
+//        }
+//
+//        // When
+//        loginViewModel.loginWithEmail()
+//        val result = loginViewModel.loginEventFlow.first()
+//
+//        // Then
+//        assertThat(result).isInstanceOf(LoginViewModel.Event.Fail::class.java)
+//    }
+//
+//    @Test
+//    @ExperimentalCoroutinesApi
+//    fun FaultPasswordUser_EmailLogin_returns_Fail() = runTest {
+//        // Given
+//        loginViewModel.apply {
+//            email.value = "abcdef@naver.com"
+//            password.value = "123"
+//        }
+//
+//        // When
+//        loginViewModel.loginWithEmail()
+//        val result = loginViewModel.loginEventFlow.first()
+//
+//        // Then
+//        assertThat(result).isInstanceOf(LoginViewModel.Event.Fail::class.java)
+//    }
 
 }

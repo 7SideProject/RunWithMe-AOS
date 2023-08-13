@@ -11,7 +11,7 @@ import java.io.IOException
 object preferencesKeys {
     val JWT = stringPreferencesKey("jwt")
     val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
-    val EMAIL = stringPreferencesKey("email")
+    val ID = stringPreferencesKey("id")
     val SEQ = stringPreferencesKey("seq")
     val WEIGHT = intPreferencesKey("weight")
     val CHALLENG_SEQ = intPreferencesKey("challeng_seq")

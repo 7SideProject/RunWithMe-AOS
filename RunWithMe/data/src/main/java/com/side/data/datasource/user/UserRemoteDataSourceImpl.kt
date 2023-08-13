@@ -1,5 +1,6 @@
 package com.side.data.datasource.user
 
+import com.side.data.api.LoginApi
 import com.side.data.api.UserApi
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
@@ -15,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRemoteDataSourceImpl @Inject constructor(
-    private val userApi: UserApi
+    private val userApi: UserApi,
+    private val loginApi: LoginApi
 ): UserRemoteDataSource {
     override fun login(loginRequest: LoginRequest): Flow<BaseResponse<User>> = flow {
         emit(userApi.login(loginRequest.code, loginRequest.state))
@@ -27,6 +29,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
 
     override fun loginWithEmail(emailLoginRequest: EmailLoginRequest): Flow<BaseResponse<EmailLoginResponse?>> =
         flow {
-            emit(userApi.loginWithEmail(emailLoginRequest))
+            emit(loginApi.loginWithEmail(emailLoginRequest))
         }
+
 }

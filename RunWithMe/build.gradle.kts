@@ -19,4 +19,5 @@ plugins {
     id(Plugins.ANDROID_LIBRARY) version Versions.AGP apply false
     id(Plugins.KOTLIN_ANDROID) version Versions.KOTLIN apply false
     id(Plugins.SECRETS_GRADLE_PLUGIN) version Versions.SECRETS_GRALDE apply false
+    id(Plugins.GOOGLE_SERVICE) version Versions.GOOGLE_SERVICE apply false
 }

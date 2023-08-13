@@ -9,6 +9,7 @@ plugins {
     id(Plugins.SECRETS_GRADLE_PLUGIN)
     id(Plugins.KAPT)
     id("kotlin-parcelize")
+    id(Plugins.GOOGLE_SERVICE)
 }
 
 fun getProperty(propertyKey: String): String {
@@ -194,4 +195,10 @@ dependencies {
     annotationProcessor(Dependencies.ROOM_KAPT)
     kapt(Dependencies.ROOM_KAPT)
     implementation(Dependencies.ROOM_COROUTINE)
+
+    // Firebase
+    implementation(platform(Dependencies.FIREBASE_PLATFORM))
+    implementation(Dependencies.FIREBASE_ANALYTICS)
+    implementation(Dependencies.FIREBASE_AUTH)
+
 }
