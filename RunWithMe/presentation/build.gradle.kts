@@ -82,7 +82,7 @@ android {
 }
 
 fun getProperty(propertyKey: String): String {
-    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+    return gradleLocalProperties(rootProject.rootDir).getProperty(propertyKey)
 }
 
 dependencies {
