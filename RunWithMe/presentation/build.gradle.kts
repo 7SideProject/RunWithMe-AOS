@@ -12,9 +12,7 @@ plugins {
     id(Plugins.GOOGLE_SERVICE)
 }
 
-fun getProperty(propertyKey: String): String {
-    return gradleLocalProperties(rootDir).getProperty(propertyKey)
-}
+
 
 android {
     namespace = "com.side.runwithme"
@@ -29,12 +27,20 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
-        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
-        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
-        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
 
-        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
-        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+//        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
+//        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
+//        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
+//
+//        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
+//        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+
+        buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
+        buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
+        buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+
+        manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
+        manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
 
     }
 
@@ -81,6 +87,10 @@ android {
     buildFeatures {
         dataBinding = true
     }
+}
+
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootProject.rootDir).getProperty(propertyKey)
 }
 
 dependencies {

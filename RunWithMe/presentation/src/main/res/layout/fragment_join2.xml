@@ -129,7 +129,7 @@
             android:layout_marginBottom="8dp"
             android:includeFontPadding="false"
             android:text="@string/next"
-            enabledEmailNextButton="@{joinVM.id}"
+            enabledIDNextButton="@{joinVM.id}"
             completePassword="@{joinVM.completePassword}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

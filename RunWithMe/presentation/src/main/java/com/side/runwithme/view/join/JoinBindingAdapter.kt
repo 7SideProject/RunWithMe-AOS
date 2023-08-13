@@ -3,7 +3,6 @@ package com.side.runwithme.view.join
 import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
 import com.side.runwithme.R
-import com.side.runwithme.util.isEmailValid
 
 @BindingAdapter("enabledSendButton")
 fun AppCompatButton.setEnabledSendButton(phoneNumber: String){
@@ -50,10 +49,10 @@ fun AppCompatButton.setEnabledNextButton(complete: Boolean){
     }
 }
 
-@BindingAdapter("enabledEmailNextButton", "completePassword")
-fun AppCompatButton.setEnabledEmailNextButton(email: String, completePassword: Boolean){
+@BindingAdapter("enabledIDNextButton", "completePassword")
+fun AppCompatButton.setEnabledEmailNextButton(id: String, completePassword: Boolean){
 
-    if(isEmailValid(email) && completePassword){
+    if(id.length >= 4 && completePassword){
         this.apply {
             isEnabled = true
             setTextAppearance(R.style.StrongButton)
@@ -65,6 +64,8 @@ fun AppCompatButton.setEnabledEmailNextButton(email: String, completePassword: B
         }
     }
 }
+
+
 
 @BindingAdapter("enabledJoinButton")
 fun AppCompatButton.setEnabledJoinButton(allDone: Boolean){
