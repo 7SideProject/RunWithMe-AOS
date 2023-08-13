@@ -60,7 +60,9 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: D
                 DATASTORE_KEY.TYPE_LONG -> {
                     0L
                 }
-                else -> {}
+                else -> {
+                    ""
+                }
             }
         }
 }
