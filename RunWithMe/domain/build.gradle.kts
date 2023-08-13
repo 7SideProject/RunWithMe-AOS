@@ -22,4 +22,6 @@ dependencies {
 
     // gson - serializable 사용하기 위함
     implementation(Dependencies.GSON)
+
+    testImplementation(Test.JUNIT)
 }
