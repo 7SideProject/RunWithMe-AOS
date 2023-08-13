@@ -12,9 +12,7 @@ plugins {
     id(Plugins.GOOGLE_SERVICE)
 }
 
-fun getProperty(propertyKey: String): String {
-    return gradleLocalProperties(rootDir).getProperty(propertyKey)
-}
+
 
 android {
     namespace = "com.side.runwithme"
@@ -81,6 +79,10 @@ android {
     buildFeatures {
         dataBinding = true
     }
+}
+
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }
 
 dependencies {
