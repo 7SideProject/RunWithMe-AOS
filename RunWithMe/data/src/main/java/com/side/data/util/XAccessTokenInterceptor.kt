@@ -37,7 +37,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
         val request = chain.request()
             .newBuilder()
-            .addHeader("JWT", token)
+            .addHeader("authorization", token)
             .build()
         val response = chain.proceed(request)
 
@@ -131,7 +131,7 @@ class XAccessTokenInterceptor @Inject constructor(
         if (code == TokenError.NOTHEADERTOKEN.code || code == TokenError.INVALIDSIGNATURE.code || code == TokenError.INVALIDTOKEN.code || code == TokenError.NOTSUPPORTEDTOKEN.code
 //            || code == TokenError.EXPIREDTOKEN.code
         ) {
-            Log.d("test123", "isTokenError: ")
+
             throw BearerException()
         }
     }
