@@ -1,22 +1,14 @@
-package com.side.data.util
+package com.side.data.interceptor
 
 import android.util.Log
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.side.data.BuildConfig
-import com.side.data.api.TokenApi
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.token.TokenDataSource
-import com.side.domain.base.BaseResponse
 import com.side.domain.exception.BearerException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.json.JSONObject
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -78,9 +70,7 @@ class XAccessTokenInterceptor @Inject constructor(
 //            }
             200 -> {
 
-                getToken(response)
 
-                return response
             }
         }
 

@@ -8,14 +8,13 @@ import com.side.data.api.LoginApi
 import com.side.data.api.RunningApi
 import com.side.data.api.TokenApi
 import com.side.data.api.UserApi
-import com.side.data.util.LoginInterceptor
-import com.side.data.util.XAccessTokenInterceptor
+import com.side.data.interceptor.LoginInterceptor
+import com.side.data.interceptor.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
