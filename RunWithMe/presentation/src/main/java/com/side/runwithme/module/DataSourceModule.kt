@@ -6,6 +6,8 @@ import com.side.data.datasource.local.PracticeLocalDataSource
 import com.side.data.datasource.local.PracticeLocalDataSourceImpl
 import com.side.data.datasource.running.RunningRemoteDataSource
 import com.side.data.datasource.running.RunningRemoteDataSourceImpl
+import com.side.data.datasource.token.TokenDataSource
+import com.side.data.datasource.token.TokenDataSourceImpl
 
 import com.side.data.datasource.user.UserRemoteDataSource
 import com.side.data.datasource.user.UserRemoteDataSourceImpl
@@ -41,9 +43,9 @@ interface DataSourceModule {
         impl: PracticeLocalDataSourceImpl
     ): PracticeLocalDataSource
 
-//    @Binds
-//    @Singleton
-//    fun provideTokenDataSource(
-//        impl: TokenDataSourceImpl
-//    ): TokenDataSource
+    @Binds
+    @Singleton
+    fun provideTokenDataSource(
+        impl: TokenDataSourceImpl
+    ): TokenDataSource
 }

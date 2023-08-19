@@ -19,7 +19,6 @@ android {
 
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
-        buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
 
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -75,4 +74,7 @@ dependencies {
     annotationProcessor(Dependencies.ROOM_KAPT)
     kapt(Dependencies.ROOM_KAPT)
     implementation(Dependencies.ROOM_COROUTINE)
+
+    implementation(AndroidX.VIEWMODEL)
+
 }
