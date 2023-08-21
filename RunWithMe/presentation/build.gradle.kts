@@ -10,6 +10,8 @@ plugins {
     id(Plugins.KAPT)
     id("kotlin-parcelize")
     id(Plugins.GOOGLE_SERVICE)
+//    id("com.google.gms.google-services")
+    id(Plugins.FIREBASE_CRASHLYTICS_PLUGINS)
 }
 
 
@@ -104,6 +106,7 @@ dependencies {
     implementation(AndroidX.LEGACY_SUPPORT)
     implementation(AndroidX.METERIAL)
     implementation(AndroidX.VIEWMODEL)
+
 //    implementation("androidx.lifecycle:lifecycle-viewmodel:${Versions.VIEWMODEL}")
 
     // Test
