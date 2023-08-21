@@ -4,13 +4,15 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import com.gun0912.tedpermission.TedPermissionActivity
 import com.side.domain.exception.BearerException
 import com.side.runwithme.view.login.LoginActivity
 
 class BearerExceptionHandler(
-    application: Application
+    application: Application,
+    private val bearerExceptionHandler: Thread.UncaughtExceptionHandler
 ) : Thread.UncaughtExceptionHandler {
 
     private var lastActivity: Activity? = null
@@ -57,10 +59,16 @@ class BearerExceptionHandler(
                 }
             })
     }
-    override fun uncaughtException(t: Thread, e: Throwable) {
-        if(e is BearerException || e.cause is BearerException || e.cause?.cause is BearerException){
+    override fun uncaughtException(thread: Thread, exception: Throwable) {
+        Log.d("test123", "uncaughtException: ${exception}")
+        if(exception is BearerException || exception.cause is BearerException || exception.cause?.cause is BearerException){
+            Log.d("test123", "uncaughtException: bearerexception")
             handleBearerException()
+        }else {
+            bearerExceptionHandler.uncaughtException(thread,exception)
         }
+        Process.killProcess(Process.myPid())
+        System.exit(-1)
     }
 
     private fun handleBearerException(){

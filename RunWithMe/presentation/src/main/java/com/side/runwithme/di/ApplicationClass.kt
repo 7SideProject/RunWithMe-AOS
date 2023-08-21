@@ -10,7 +10,16 @@ class ApplicationClass: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Thread.setDefaultUncaughtExceptionHandler(BearerExceptionHandler(this))
+        setBearerExceptionHandler()
+    }
+
+    private fun setBearerExceptionHandler(){
+        val bearerExceptionHandler = Thread.getDefaultUncaughtExceptionHandler() ?: return
+        Thread.setDefaultUncaughtExceptionHandler(
+            BearerExceptionHandler(this, bearerExceptionHandler
+            )
+        )
+
     }
 
 }
