@@ -9,21 +9,21 @@
         tools:context=".view.crew.create.CrewCreate4Fragment">
 
         <com.side.runwithme.component.CustomToolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:back_image="@drawable/baseline_arrow_back_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="챌린지 크루 생성" />
+            app:title="@string/create_challenge" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/btn_next"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_main"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             android:layout_marginHorizontal="16dp"
             >
 
@@ -40,15 +40,15 @@
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="챌린지 크루의 \n참가 인원, 참가비를 입력해주세요"
+                android:text="챌린지의 참가 가능 인원,\n참가비를 입력해주세요"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="@dimen/fontsize_h3"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/iv_page" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_crew_detail"
+                android:id="@+id/layout_challenge_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -62,46 +62,45 @@
 
 
                 <TextView
-                    android:id="@+id/tv_create_crew_max_member"
+                    android:id="@+id/tv_create_challenge_max_member"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="참가 인원"
+                    android:text="@string/challenge_max_member"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_create_crew_max_member"
+                    android:id="@+id/btn_create_challenge_max_member"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/border_rectangle_grey"
-                    app:layout_constraintEnd_toStartOf="@id/tv_max"
+                    app:layout_constraintEnd_toStartOf="@id/tv_member_unit"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_create_crew_max_member"
+                    app:layout_constraintTop_toBottomOf="@id/tv_create_challenge_max_member"
                     tools:text="20" />
 
                 <TextView
-                    android:id="@+id/tv_max"
+                    android:id="@+id/tv_member_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:text="Max"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@id/btn_create_crew_max_member"
+                    android:layout_marginEnd="@dimen/margin_regular"
+                    android:text="@string/people_unit"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_create_challenge_max_member"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/btn_create_crew_max_member" />
+                    app:layout_constraintTop_toTopOf="@id/btn_create_challenge_max_member" />
 
                 <TextView
-                    android:id="@+id/tv_create_crew_cost"
+                    android:id="@+id/tv_create_challenge_cost"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="참가비"
+                    android:text="@string/cost"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_create_crew_max_member" />
+                    app:layout_constraintTop_toBottomOf="@id/btn_create_challenge_max_member" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_create_crew_cost"
+                    android:id="@+id/btn_create_challenge_cost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -110,7 +109,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tv_point"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_create_crew_cost"
+                    app:layout_constraintTop_toBottomOf="@id/tv_create_challenge_cost"
                     tools:text="10,000" />
 
 
@@ -119,11 +118,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Point"
+                    android:text="@string/point"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@id/btn_create_crew_cost"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_create_challenge_cost"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/btn_create_crew_cost"
+                    app:layout_constraintTop_toTopOf="@id/btn_create_challenge_cost"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -134,7 +133,7 @@
             style="@style/StrongButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="다음"
+            android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
