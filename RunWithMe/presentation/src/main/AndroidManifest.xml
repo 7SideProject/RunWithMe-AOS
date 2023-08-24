@@ -30,7 +30,8 @@
 
         <activity
             android:name=".view.join.JoinActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".view.running_result.RunningResultActivity"
             android:exported="false" />
@@ -42,7 +43,8 @@
             android:exported="false" />
         <activity
             android:name=".view.MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".view.login.LoginActivity"
             android:exported="true">
