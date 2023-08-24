@@ -20,23 +20,31 @@ class ChallengeListFragment :
 
     private val challengeViewModel: ChallengeViewModel by viewModels()
 
-    private lateinit var challengeListAdapter: ChallengeListAdapter
+//    private lateinit var challengeListAdapter: ChallengeListAdapter
 
     override fun init() {
 
         binding.challengeVM = challengeViewModel
         initToolbarClickListener()
-        initChallengeList()
-        initViewModelCallback()
-
+//        initChallengeList()
+//        initViewModelCallback()
+        initClickListener()
     }
 
-    private fun initViewModelCallback() {
-        repeatOnStarted {
-            challengeViewModel.challengeList.collectLatest { challengeList ->
+//    private fun initViewModelCallback() {
+//        repeatOnStarted {
+//            challengeViewModel.challengeList.collectLatest { challengeList ->
+//
+//                challengeListAdapter.submitData(challengeList)
+//
+//            }
+//        }
+//    }
 
-                challengeListAdapter.submitData(challengeList)
-
+    private fun initClickListener() {
+        binding.apply {
+            fabCreateChallenge.setOnClickListener {
+                findNavController().navigate(R.id.action_challengeListFragment_to_challengeCreate1Fragment)
             }
         }
     }
@@ -53,10 +61,10 @@ class ChallengeListFragment :
 
     }
 
-    private fun initChallengeList() {
-        challengeListAdapter = ChallengeListAdapter()
-        binding.rvChallengeList.adapter = challengeListAdapter
-        challengeViewModel.getChallengesPaging(10)
-
-    }
+//    private fun initChallengeList() {
+//        challengeListAdapter = ChallengeListAdapter()
+//        binding.rvChallengeList.adapter = challengeListAdapter
+//        challengeViewModel.getChallengesPaging(10)
+//
+//    }
 }

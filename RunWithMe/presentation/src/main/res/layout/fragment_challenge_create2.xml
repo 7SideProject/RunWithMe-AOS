@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <data>
+        <variable
+            name="challengeCreateVM"
+            type="com.side.runwithme.view.challenge.create.ChallengeCreateViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.crew.create.CrewCreate2Fragment">
@@ -71,6 +79,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/border_rectangle_grey"
                         tools:text="2023-01-01"
+                        android:text="@{challengeCreateVM.dateStart}"
                         app:layout_constraintTop_toTopOf="parent"
                         />
 
@@ -103,6 +112,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/border_rectangle_grey"
                     tools:text="2023-01-01"
+                    android:text="@{challengeCreateVM.dateEnd}"
                     app:layout_constraintTop_toBottomOf="@id/tv_challenge_end_date"
                     android:enabled="false"
                     android:layout_marginVertical="8dp"
@@ -121,7 +131,8 @@
                     android:id="@+id/btn_challenge_duration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1"
+                    android:text="@{challengeCreateVM.goalWeeks.toString()}"
+                    tools:text="1"
                     app:layout_constraintTop_toBottomOf="@id/tv_challenge_duration"
                     android:background="@drawable/border_rectangle_grey"
                     android:layout_marginVertical="8dp"
