@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="challengeCreateVM"
+            type="com.side.runwithme.view.challenge.create.ChallengeCreateViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -79,6 +85,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/main_blue"
+                        android:checked="true"
                         android:text="@string/time"
                         android:textColor="@color/black_high_emphasis" />
 
@@ -88,7 +95,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="72dp"
                         android:buttonTint="@color/main_blue"
-                        android:checked="true"
                         android:text="@string/distance"
                         android:textColor="@color/black_high_emphasis" />
 
@@ -109,10 +115,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:text="@{challengeCreateVM.goalAmount}"
                     android:textColor="@color/black_high_emphasis"
                     android:background="@drawable/border_rectangle_grey"
                     app:layout_constraintTop_toBottomOf="@id/tv_goal_head"
-                    tools:text="5.0" />
+                    tools:text="30" />
 
 
                 <TextView
@@ -120,7 +127,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="km"
+                    tools:text="분"
+                    goalType="@{challengeCreateVM.goalType}"
                     android:textColor="@color/black_high_emphasis"
                     app:layout_constraintBottom_toBottomOf="@id/btn_create_goal_amount"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -143,6 +151,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
+                    android:text="@{challengeCreateVM.goalDays}"
                     android:background="@drawable/border_rectangle_grey"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tv_goal_day_text"

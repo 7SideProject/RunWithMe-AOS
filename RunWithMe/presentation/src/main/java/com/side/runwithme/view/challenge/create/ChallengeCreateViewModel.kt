@@ -3,10 +3,17 @@ package com.side.runwithme.view.challenge.create
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.side.runwithme.util.GOAL_TYPE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
 import okhttp3.MultipartBody
+import java.lang.Math.round
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.StringTokenizer
@@ -32,6 +39,17 @@ class ChallengeCreateViewModel(
     private val _dateEnd : MutableStateFlow<String> = MutableStateFlow("")
     val dateEnd get() = _dateEnd.asStateFlow()
 
+    private val _goalType : MutableStateFlow<String> = MutableStateFlow(GOAL_TYPE.TIME.type)
+    val goalType get() = _goalType.asStateFlow()
+
+    private val _goalAmount : MutableStateFlow<String> = MutableStateFlow("30")
+    val goalAmount get() = _goalAmount.asStateFlow()
+
+    private val goalDistanceAmount : MutableStateFlow<Int> = MutableStateFlow(30)
+    private val goalTimeAmount : MutableStateFlow<Int> = MutableStateFlow(3)
+
+    private val _goalDays : MutableStateFlow<String> = MutableStateFlow("3")
+    val goalDays get() = _goalDays.asStateFlow()
 
 
     fun setDateStart(year: Int, month: Int, day : Int) {
@@ -85,8 +103,42 @@ class ChallengeCreateViewModel(
         setDateEnd()
     }
 
+    fun setGoalType(type: GOAL_TYPE){
+        _goalType.value = type.type
+    }
+
+
+    fun setGoalDistance(amount: Int){
+        goalDistanceAmount.value = amount
+
+        setGoalAmountByDistance()
+    }
+
+    fun setGoalTime(amount: Int){
+        goalTimeAmount.value = amount
+
+        setGoalAmountByTime()
+    }
+
+    fun setGoalAmountByDistance(){
+        _goalAmount.value = "${goalDistanceAmount.value}.0"
+    }
+
+    fun setGoalAmountByTime(){
+        _goalAmount.value = goalTimeAmount.value.toString()
+    }
+
+    fun setDays(days: Int){
+        _goalDays.value = days.toString()
+    }
+
+    fun create(){
+        // amount는 type에 따라 km -> m , 분 -> 초로 변경
+    }
+
 
     fun refresh(){
 
     }
+
 }

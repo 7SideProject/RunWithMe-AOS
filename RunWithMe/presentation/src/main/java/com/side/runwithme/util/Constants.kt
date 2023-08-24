@@ -45,3 +45,7 @@ const val NOTIFICATION_ID = 1 // 채널 ID는 0이면 안됨
 enum class POLYLINE_DRAW(val time: Long) {
     SHORT(150L), MIDDLE(70L), LONG(7L)
 }
+
+enum class GOAL_TYPE(val type: String) {
+    TIME("time"), DISTANCE("distance")
+}

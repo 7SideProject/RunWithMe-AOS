@@ -6,9 +6,9 @@ import androidx.core.content.ContextCompat
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.DialogOneNumberpickerBinding
-import com.side.runwithme.databinding.DialogWeeksBinding
 
-class GoalWeeksDialog(private val listener: GoalWeeksDialogListener): BaseDialogFragment<DialogOneNumberpickerBinding>(R.layout.dialog_one_numberpicker) {
+class GoalTypeDistanceDialog(private val listener: GoalTypeDistanceDialogListener): BaseDialogFragment<DialogOneNumberpickerBinding>(
+    R.layout.dialog_one_numberpicker) {
 
     override fun init() {
 
@@ -20,14 +20,15 @@ class GoalWeeksDialog(private val listener: GoalWeeksDialogListener): BaseDialog
     private fun initNumberPicker(){
         binding.apply {
             np.minValue = 1
-            np.maxValue = 25
-            np.value = 4
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                np.textColor = ContextCompat.getColor(requireActivity(), R.color.main_blue)
-            }
+            np.maxValue = 60
+            np.value = 3
 
             //순환 안되게 막기
             np.wrapSelectorWheel = false
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                np.textColor = ContextCompat.getColor(requireActivity(), R.color.main_blue)
+            }
 
             np.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }
@@ -36,8 +37,8 @@ class GoalWeeksDialog(private val listener: GoalWeeksDialogListener): BaseDialog
     private fun initClickListener() {
         binding.apply {
             tvPositive.setOnClickListener {
-                val weeks = np.value
-                listener.onItemClick(weeks)
+                val amount = np.value
+                listener.onItemClick(amount)
                 dismiss()
             }
         }

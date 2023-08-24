@@ -1,11 +1,10 @@
 package com.side.runwithme.view.challenge.create
 
-import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
-import com.side.runwithme.R
-import com.side.runwithme.view.join.setEnabledSendButton
+import com.side.runwithme.util.GOAL_TYPE
 
 @BindingAdapter("create1NextBtnAvailable")
 fun AppCompatButton.setCreate1NextBtnAvailable(challengeName: String){
@@ -20,4 +19,13 @@ fun AppCompatButton.setCreate1NextBtnAvailable(challengeName: String){
         }
     }
 
+}
+
+@BindingAdapter("goalType")
+fun TextView.setGoalType(goalType: String){
+    if(goalType == GOAL_TYPE.TIME.type){
+        this.text = "분"
+    }else{
+        this.text = "km"
+    }
 }
