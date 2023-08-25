@@ -1,5 +1,7 @@
 package com.side.runwithme.util
 
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 
@@ -11,4 +13,10 @@ fun timeFormatter(time: Long?): String {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     return dateFormat.format(time)
+}
+
+// Cost 포매터
+fun costFormatter(cost: String): String {
+    val formatter: NumberFormat = DecimalFormat("#,###")
+    return formatter.format(cost.toInt())
 }
