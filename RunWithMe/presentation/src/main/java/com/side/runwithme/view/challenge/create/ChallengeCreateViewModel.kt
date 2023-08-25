@@ -51,6 +51,12 @@ class ChallengeCreateViewModel(
     private val _goalDays : MutableStateFlow<String> = MutableStateFlow("3")
     val goalDays get() = _goalDays.asStateFlow()
 
+    private val _maxMember: MutableStateFlow<String> = MutableStateFlow("7")
+    val maxMember get() = _maxMember.asStateFlow()
+
+    private val _cost : MutableStateFlow<String> = MutableStateFlow("500")
+    val cost get() = _cost.asStateFlow()
+
 
     fun setDateStart(year: Int, month: Int, day : Int) {
 
@@ -130,6 +136,14 @@ class ChallengeCreateViewModel(
 
     fun setDays(days: Int){
         _goalDays.value = days.toString()
+    }
+
+    fun setMaxMember(max: String){
+        _maxMember.value = max
+    }
+
+    fun setCost(cost: String){
+        _cost.value = cost
     }
 
     fun create(){
