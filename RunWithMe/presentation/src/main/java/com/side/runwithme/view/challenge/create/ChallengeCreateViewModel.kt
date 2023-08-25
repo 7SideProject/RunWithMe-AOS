@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.runwithme.util.GOAL_TYPE
+import com.side.runwithme.util.MutableEventFlow
+import com.side.runwithme.util.asEventFlow
+import com.side.runwithme.view.join.JoinViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -57,6 +60,12 @@ class ChallengeCreateViewModel(
     private val _cost : MutableStateFlow<String> = MutableStateFlow("500")
     val cost get() = _cost.asStateFlow()
 
+    private val _password: MutableStateFlow<String?> = MutableStateFlow(null)
+    val password get() = _password.asStateFlow()
+
+
+    private val _createEventFlow = MutableEventFlow<Event>()
+    val createEventFlow get() = _createEventFlow.asEventFlow()
 
     fun setDateStart(year: Int, month: Int, day : Int) {
 
@@ -146,13 +155,37 @@ class ChallengeCreateViewModel(
         _cost.value = cost
     }
 
+    fun setPassword(password: String?){
+        _password.value = password
+    }
+
     fun create(){
         // amount는 type에 따라 km -> m , 분 -> 초로 변경
     }
 
 
     fun refresh(){
+        challengeImg.value = null
+        challengeImgMultiPart.value = null
+        challengeName.value = ""
+        challengeDescription.value = ""
+        _goalWeeks.value = 4
+        _goalType.value = GOAL_TYPE.TIME.type
+        _goalAmount.value = "30"
+        goalDistanceAmount.value = 30
+        goalTimeAmount.value = 3
+        _goalDays.value = "3"
+        _maxMember.value = "7"
+        _cost.value = "500"
+        _password.value = null
+    }
 
+
+    sealed class Event {
+        data class Success(val message: String) : Event()
+        data class Fail(val message: String) : Event()
+
+        class Error(): Event()
     }
 
 }

@@ -29,3 +29,12 @@ fun TextView.setGoalType(goalType: String){
         this.text = "km"
     }
 }
+
+@BindingAdapter("isVisibleChallengeCreateButton")
+fun AppCompatButton.setVisibleChallengeCreateButton(password: String?){
+    if(password.isNullOrBlank()){
+        this.visibility = View.GONE
+    }else{
+        this.visibility = View.VISIBLE
+    }
+}
