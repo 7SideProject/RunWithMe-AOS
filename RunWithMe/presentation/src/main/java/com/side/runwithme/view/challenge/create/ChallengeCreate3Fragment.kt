@@ -38,7 +38,7 @@ class ChallengeCreate3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R
             }
 
             btnCreateGoalAmount.setOnClickListener {
-                if(challengeCreateViewModel.goalType.value == GOAL_TYPE.TIME.type){
+                if(challengeCreateViewModel.goalType.value == GOAL_TYPE.TIME){
                     initGoalTypeTimeDialog()
                 }else{
                     initGoalTypeDistanceDialog()

@@ -19,8 +19,8 @@ import com.side.runwithme.mapper.mapperToCoordinate
 import com.side.runwithme.mapper.mapperToNaverLatLng
 import com.side.runwithme.mapper.mapperToNaverLatLngList
 import com.side.runwithme.mapper.mapperToRunRecord
+import com.side.runwithme.util.DRAWING_POLYLINE_FAST
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
-import com.side.runwithme.util.POLYLINE_DRAW
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.delay
 
@@ -88,11 +88,11 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
                         drawPolyline(naverLatLngs)
 
                         val delayTime = if (it.size < 20) {
-                            POLYLINE_DRAW.SHORT.time
+                            DRAWING_POLYLINE_FAST.SHORT
                         } else if (it.size < 50) {
-                            POLYLINE_DRAW.MIDDLE.time
+                            DRAWING_POLYLINE_FAST.MIDDLE
                         } else {
-                            POLYLINE_DRAW.LONG.time
+                            DRAWING_POLYLINE_FAST.LONG
                         }
 
                         delay(delayTime)

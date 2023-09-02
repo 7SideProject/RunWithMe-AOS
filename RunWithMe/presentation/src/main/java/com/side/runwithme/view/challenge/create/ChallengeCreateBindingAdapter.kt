@@ -23,7 +23,7 @@ fun AppCompatButton.setCreate1NextBtnAvailable(challengeName: String){
 
 @BindingAdapter("goalType")
 fun TextView.setGoalType(goalType: String){
-    if(goalType == GOAL_TYPE.TIME.type){
+    if(goalType == GOAL_TYPE.TIME){
         this.text = "분"
     }else{
         this.text = "km"
