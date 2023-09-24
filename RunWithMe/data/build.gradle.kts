@@ -18,8 +18,6 @@ android {
         targetSdk = DefaultConfig.TARGET_SDK
 
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
-//        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
-//        buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
 
         consumerProguardFiles("consumer-rules.pro")
     }
