@@ -19,6 +19,7 @@ android {
 
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
+
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -73,4 +74,7 @@ dependencies {
     annotationProcessor(Dependencies.ROOM_KAPT)
     kapt(Dependencies.ROOM_KAPT)
     implementation(Dependencies.ROOM_COROUTINE)
+
+    implementation(AndroidX.VIEWMODEL)
+
 }
