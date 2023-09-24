@@ -1,4 +1,4 @@
-package com.side.data.util
+package com.side.data.interceptor
 
 import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource

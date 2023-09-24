@@ -14,3 +14,10 @@ fun <T, C> BaseResponse<C>.changeData(changeData: T): BaseResponse<T> =
         this.message,
         changeData
     )
+
+fun <T, C> BaseResponse<C>.changeMessageAndData(message: String, changeData: T): BaseResponse<T> =
+    BaseResponse(
+        this.code,
+        message,
+        changeData
+    )
