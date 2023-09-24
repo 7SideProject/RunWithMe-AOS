@@ -22,20 +22,20 @@ class XAccessTokenInterceptor @Inject constructor(
 
     ) : Interceptor {
 
-    private val tokenApi: TokenApi
+//    private val tokenApi: TokenApi
 
-    init {
-        val gson = GsonBuilder().setLenient().create()
-        val client = OkHttpClient.Builder().build()
-        val BASE_URL = BuildConfig.BASEURL
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(client)
-            .build()
-        tokenApi = retrofit.create(TokenApi::class.java)
-    }
+//    init {
+//        val gson = GsonBuilder().setLenient().create()
+//        val client = OkHttpClient.Builder().build()
+//        val BASE_URL = BuildConfig.BASEURL
+//
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl(BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .client(client)
+//            .build()
+//        tokenApi = retrofit.create(TokenApi::class.java)
+//    }
 
     override fun intercept(chain: Interceptor.Chain): Response = synchronized(chain){
 
@@ -45,12 +45,13 @@ class XAccessTokenInterceptor @Inject constructor(
             dataStoreDataSource.getJWT().first()
         }
 
+        Log.d("test123", "intercept TOKEN: $token ")
         val request = chain.request()
             .newBuilder()
-            .addHeader("JWT", token)
+            .addHeader("authorization", token)
             .build()
         val response = chain.proceed(request)
-
+        Log.d("test123", "intercept RESPONSE : $response ")
         when (response.code) {
 //            400 -> {
 //
@@ -59,15 +60,15 @@ class XAccessTokenInterceptor @Inject constructor(
                 // 토큰 만료
                 // jwt 토큰 갱신 요청 api
                 // 토큰 저장
-                runBlocking {
-                    tokenApi.refreshingToken(dataStoreDataSource.getRefreshToken().first())
-                    if(response.isSuccessful){
-                        getToken(response)
-                    }else {
-                        // refresh 토큰도 만료되면 로그인화면 보내기
-                        throw Exception()
-                    }
-                }
+//                runBlocking {
+//                    tokenApi.refreshingToken(dataStoreDataSource.getRefreshToken().first())
+//                    if(response.isSuccessful){
+//                        getToken(response)
+//                    }else {
+//                        // refresh 토큰도 만료되면 로그인화면 보내기
+//                        throw Exception()
+//                    }
+//                }
 
 //                getToken(response)
                 // request 다시 보내기

@@ -5,6 +5,8 @@ buildscript {
         classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}")
         classpath("com.android.tools.build:gradle:${Versions.AGP}")
+        classpath("com.google.gms:google-services:4.3.10")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.8.1")
     }
     repositories {
         google()
