@@ -4,26 +4,28 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.side.domain.model.Challenge
+import com.side.domain.usecase.challenge.CreateChallengeUseCase
+import com.side.domain.utils.onError
+import com.side.domain.utils.onFailure
+import com.side.domain.utils.onSuccess
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
-import com.side.runwithme.view.join.JoinViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import java.lang.Math.round
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.StringTokenizer
+import javax.inject.Inject
 
-//@HiltViewModel
-class ChallengeCreateViewModel(
-
+@HiltViewModel
+class ChallengeCreateViewModel @Inject constructor(
+    private val createChallengeUseCase: CreateChallengeUseCase
 ): ViewModel(){
 
     val challengeImg : MutableStateFlow<Uri?> = MutableStateFlow(null)
@@ -34,45 +36,67 @@ class ChallengeCreateViewModel(
     val challengeDescription : MutableStateFlow<String> = MutableStateFlow("")
 
     private val _goalWeeks : MutableStateFlow<Int> = MutableStateFlow(1)
-    val goalWeeks get() = _goalWeeks.asStateFlow()
+    val goalWeeks = _goalWeeks.asStateFlow()
 
-    private val _dateStart : MutableStateFlow<String> = MutableStateFlow("")
-    val dateStart get() = _dateStart.asStateFlow()
+    val dateStart : MutableStateFlow<String> = MutableStateFlow("")
 
     private val _dateEnd : MutableStateFlow<String> = MutableStateFlow("")
-    val dateEnd get() = _dateEnd.asStateFlow()
+    val dateEnd = _dateEnd.asStateFlow()
 
-    private val _goalType : MutableStateFlow<String> = MutableStateFlow(GOAL_TYPE.TIME.type)
-    val goalType get() = _goalType.asStateFlow()
+    val goalType = MutableStateFlow(GOAL_TYPE.TIME)
 
     private val _goalAmount : MutableStateFlow<String> = MutableStateFlow("30")
-    val goalAmount get() = _goalAmount.asStateFlow()
+    val goalAmount = _goalAmount.asStateFlow()
 
-    private val goalDistanceAmount : MutableStateFlow<Int> = MutableStateFlow(30)
-    private val goalTimeAmount : MutableStateFlow<Int> = MutableStateFlow(3)
+    private val goalDistanceAmount : MutableStateFlow<Int> = MutableStateFlow(3)
+    private val goalTimeAmount : MutableStateFlow<Int> = MutableStateFlow(30)
 
     private val _goalDays : MutableStateFlow<String> = MutableStateFlow("3")
-    val goalDays get() = _goalDays.asStateFlow()
+    val goalDays = _goalDays.asStateFlow()
 
     private val _maxMember: MutableStateFlow<String> = MutableStateFlow("7")
-    val maxMember get() = _maxMember.asStateFlow()
+    val maxMember = _maxMember.asStateFlow()
 
     private val _cost : MutableStateFlow<String> = MutableStateFlow("500")
-    val cost get() = _cost.asStateFlow()
+    val cost = _cost.asStateFlow()
 
     private val _password: MutableStateFlow<String?> = MutableStateFlow(null)
-    val password get() = _password.asStateFlow()
+    val password = _password.asStateFlow()
 
+    val isPasswordChallenge: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    // EventFlow
 
     private val _createEventFlow = MutableEventFlow<Event>()
     val createEventFlow get() = _createEventFlow.asEventFlow()
+
+    private val _dialogGoalWeeksEventFlow = MutableEventFlow<Event>()
+    val dialogGoalWeeksEventFlow get() = _dialogGoalWeeksEventFlow.asEventFlow()
+
+    private val _dialogGoalDistanceEventFlow = MutableEventFlow<Event>()
+    val dialogGoalDistanceEventFlow = _dialogGoalDistanceEventFlow.asEventFlow()
+
+    private val _dialogGoalTimeEventFlow = MutableEventFlow<Event>()
+    val dialogGoalTimeEventFlow = _dialogGoalTimeEventFlow.asEventFlow()
+
+    private val _dialogGoalDaysEventFlow = MutableEventFlow<Event>()
+    val dialogGoalDaysEventFlow = _dialogGoalDaysEventFlow.asEventFlow()
+
+    private val _dialogMaxMemberEventFlow = MutableEventFlow<Event>()
+    val dialogMaxMemberEventFlow = _dialogMaxMemberEventFlow.asEventFlow()
+
+    private val _dialogCostEventFlow = MutableEventFlow<Event>()
+    val dialogCostEventFlow = _dialogCostEventFlow.asEventFlow()
+
+    private val _dialogPasswordEventFlow = MutableEventFlow<Event>()
+    val dialogPasswordEventFlow = _dialogPasswordEventFlow.asEventFlow()
 
     fun setDateStart(year: Int, month: Int, day : Int) {
 
         val fullMonth = if(month < 10) "0" + month else month.toString()
         val fullDay = if(day < 10) "0" + day else day.toString()
 
-        _dateStart.value = "$year-$fullMonth-$fullDay"
+        dateStart.value = "$year-$fullMonth-$fullDay"
 
         setDateEnd()
     }
@@ -112,56 +136,151 @@ class ChallengeCreateViewModel(
         setDateStart(startDateYearInt, startDateMonthInt, startDateDayInt)
     }
 
-    fun setWeeks(weeks: Int){
+
+    fun onClickGoalWeeksDialog(weeks: Int){
         _goalWeeks.value = weeks
-
         setDateEnd()
+
+        viewModelScope.launch {
+            _dialogGoalWeeksEventFlow.emit(Event.Success(""))
+        }
     }
 
-    fun setGoalType(type: GOAL_TYPE){
-        _goalType.value = type.type
+    fun setGoalType(type: Int){
+        goalType.value = type
     }
 
 
-    fun setGoalDistance(amount: Int){
+
+    fun onClickGoalDistance(amount: Int){
         goalDistanceAmount.value = amount
 
         setGoalAmountByDistance()
+
+        viewModelScope.launch {
+            _dialogGoalDistanceEventFlow.emit(Event.Success(""))
+        }
     }
 
-    fun setGoalTime(amount: Int){
-        goalTimeAmount.value = amount
+    fun onClickGoalTime(amount: Int){
+        goalTimeAmount.value = (amount + 1) * 10
 
         setGoalAmountByTime()
+
+        viewModelScope.launch {
+            _dialogGoalTimeEventFlow.emit(Event.Success(""))
+        }
     }
 
+
     fun setGoalAmountByDistance(){
-        _goalAmount.value = "${goalDistanceAmount.value}.0"
+        _goalAmount.value = "${goalDistanceAmount.value}"
     }
 
     fun setGoalAmountByTime(){
         _goalAmount.value = goalTimeAmount.value.toString()
     }
 
-    fun setDays(days: Int){
-        _goalDays.value = days.toString()
+//    fun setDays(days: Int){
+//        _goalDays.value = days.toString()
+//    }
+
+    fun onClickGoalDaysDialog(day: Int){
+        _goalDays.value = day.toString()
+
+        viewModelScope.launch {
+            _dialogGoalDaysEventFlow.emit(Event.Success(""))
+        }
     }
 
-    fun setMaxMember(max: String){
-        _maxMember.value = max
+    fun onClickMaxMemberDialog(max: Int){
+        _maxMember.value = max.toString()
+
+        viewModelScope.launch {
+            _dialogMaxMemberEventFlow.emit(Event.Success(""))
+        }
     }
 
-    fun setCost(cost: String){
-        _cost.value = cost
+    fun onClickCostDialog(cost: Int){
+        _cost.value = ((cost + 1) * 500).toString()
+
+        viewModelScope.launch {
+            _dialogCostEventFlow.emit(Event.Success(""))
+        }
     }
 
-    fun setPassword(password: String?){
+    fun onClickPassWordDialog(password: String?){
+
+        if(password.isNullOrBlank()){
+            failPasswordEvent()
+            return
+        }
+
+        if(password.length < 4){
+            failPasswordEvent()
+            return
+        }
+
         _password.value = password
+        viewModelScope.launch {
+            _dialogPasswordEventFlow.emit(Event.Success(""))
+        }
     }
+
+    private fun failPasswordEvent(){
+        viewModelScope.launch {
+            _dialogPasswordEventFlow.emit(Event.Fail("비밀번호는 공백없이 4자리를 입력해주세요."))
+        }
+    }
+
+
 
     fun create(){
         // amount는 type에 따라 km -> m , 분 -> 초로 변경
+
+        if(!isPasswordChallenge.value){
+            _password.value = null
+        }
+
+        val goalType = if(this.goalType.value == GOAL_TYPE.TIME) "time" else "distance"
+
+
+        val goalAmount = if(this.goalType.value == GOAL_TYPE.TIME) {
+            this.goalAmount.value.toLong() * 60
+        } else {
+            this.goalAmount.value.toLong() * 1000
+        }
+
+        val challenge = Challenge(
+            seq = 0,
+            managerSeq = 0,
+            name = challengeName.value,
+            description = challengeDescription.value,
+            imgSeq = 0,
+            goalDays = goalDays.value.toInt(),
+            goalType = goalType,
+            goalAmount = goalAmount,
+            timeStart = dateStart.value,
+            timeEnd = dateEnd.value,
+            maxMember = maxMember.value.toInt(),
+            cost = cost.value.toInt(),
+            password = password.value
+        )
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+            createChallengeUseCase(challenge, challengeImgMultiPart.value).collectLatest {
+                it.onSuccess {
+                    _createEventFlow.emit(Event.Success(""))
+                }.onFailure {
+                    _createEventFlow.emit(Event.Fail(it.message))
+                }.onError {
+                    Log.e("test123", "Create Challenge Error : ${it.message}  , ${it.cause}")
+                }
+            }
+        }
     }
+
 
 
     fun refresh(){
@@ -170,7 +289,7 @@ class ChallengeCreateViewModel(
         challengeName.value = ""
         challengeDescription.value = ""
         _goalWeeks.value = 4
-        _goalType.value = GOAL_TYPE.TIME.type
+        goalType.value = GOAL_TYPE.TIME
         _goalAmount.value = "30"
         goalDistanceAmount.value = 30
         goalTimeAmount.value = 3
@@ -178,6 +297,7 @@ class ChallengeCreateViewModel(
         _maxMember.value = "7"
         _cost.value = "500"
         _password.value = null
+        isPasswordChallenge.value = false
     }
 
 
