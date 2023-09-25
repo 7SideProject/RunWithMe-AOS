@@ -17,13 +17,12 @@ import com.side.runwithme.util.resizeBitmapFormUri
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class ChallengeCreate1Fragment : BaseFragment<FragmentChallengeCreate1Binding>(R.layout.fragment_challenge_create1) {
+class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Binding>(R.layout.fragment_challenge_create1) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
@@ -46,7 +45,7 @@ class ChallengeCreate1Fragment : BaseFragment<FragmentChallengeCreate1Binding>(R
             }
 
             btnNext.setOnClickListener {
-                findNavController().navigate(ChallengeCreate1FragmentDirections.actionChallengeCreate1FragmentToChallengeCreate2Fragment())
+                findNavController().navigate(ChallengeCreateStep1FragmentDirections.actionChallengeCreateStep1FragmentToChallengeCreateStep2Fragment())
             }
 
             toolbar.setBackButtonClickEvent {
@@ -87,6 +86,7 @@ class ChallengeCreate1Fragment : BaseFragment<FragmentChallengeCreate1Binding>(R
 
     private val pickPhotoResult : ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
+
         if(it.resultCode == Activity.RESULT_OK){
             challengeCreateViewModel.challengeImg.value = it.data?.data
 

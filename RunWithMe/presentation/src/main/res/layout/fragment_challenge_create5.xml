@@ -152,6 +152,7 @@
             android:layout_height="wrap_content"
             android:text="@string/create"
             isVisibleChallengeCreateButton="@{challengeCreateVM.password}"
+            isPasswordChallenge="@{challengeCreateVM.isPasswordChallenge}"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

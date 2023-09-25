@@ -3,18 +3,37 @@ package com.side.runwithme.view.challenge.create.dialog
 import android.os.Build
 import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogOneNumberpickerBinding
+import com.side.runwithme.databinding.DialogGoalDaysBinding
+import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.view.challenge.create.ChallengeCreateViewModel
 
-class GoalDaysDialog(private val listener: GoalDaysDialogListener): BaseDialogFragment<DialogOneNumberpickerBinding>(
-    R.layout.dialog_one_numberpicker) {
+class GoalDaysDialog(): BaseDialogFragment<DialogGoalDaysBinding>(
+    R.layout.dialog_goal_days) {
+
+    private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     override fun init() {
 
+        binding.apply {
+            challengeCreateVM = challengeCreateViewModel
+        }
+
         initNumberPicker()
 
-        initClickListener()
+        initViewModelCallbacks()
+    }
+
+    private fun initViewModelCallbacks(){
+        repeatOnStarted {
+            challengeCreateViewModel.dialogGoalDaysEventFlow.collect {
+                if(it is ChallengeCreateViewModel.Event.Success){
+                    dismiss()
+                }
+            }
+        }
     }
 
     private fun initNumberPicker(){
@@ -32,13 +51,4 @@ class GoalDaysDialog(private val listener: GoalDaysDialogListener): BaseDialogFr
         }
     }
 
-    private fun initClickListener() {
-        binding.apply {
-            tvPositive.setOnClickListener {
-                val days = np.value
-                listener.onItemClick(days)
-                dismiss()
-            }
-        }
-    }
 }

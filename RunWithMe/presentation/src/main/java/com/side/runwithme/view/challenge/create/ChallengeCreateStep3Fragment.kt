@@ -7,13 +7,10 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate3Binding
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.view.challenge.create.dialog.GoalDaysDialog
-import com.side.runwithme.view.challenge.create.dialog.GoalDaysDialogListener
 import com.side.runwithme.view.challenge.create.dialog.GoalTypeDistanceDialog
-import com.side.runwithme.view.challenge.create.dialog.GoalTypeDistanceDialogListener
 import com.side.runwithme.view.challenge.create.dialog.GoalTypeTimeDialog
-import com.side.runwithme.view.challenge.create.dialog.GoalTypeTimeDialogListener
 
-class ChallengeCreate3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R.layout.fragment_challenge_create3) {
+class ChallengeCreateStep3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R.layout.fragment_challenge_create3) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
@@ -34,7 +31,7 @@ class ChallengeCreate3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R
             }
 
             btnNext.setOnClickListener {
-                findNavController().navigate(R.id.action_challengeCreate3Fragment_to_challengeCreate4Fragment)
+                findNavController().navigate(ChallengeCreateStep3FragmentDirections.actionChallengeCreateStep3FragmentToChallengeCreateStep4Fragment())
             }
 
             btnCreateGoalAmount.setOnClickListener {
@@ -67,37 +64,20 @@ class ChallengeCreate3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R
     }
 
     private fun initGoalTypeDistanceDialog() {
-        val goalTypeDistanceDialog = GoalTypeDistanceDialog(goalTypeDistanceDialogListener)
+        val goalTypeDistanceDialog = GoalTypeDistanceDialog()
         goalTypeDistanceDialog.show(childFragmentManager, "GoalTypeDistanceDialog")
     }
 
     private fun initGoalTypeTimeDialog() {
-        val goalTypeTimeDialog = GoalTypeTimeDialog(goalTypeTimeDialogListener)
+        val goalTypeTimeDialog = GoalTypeTimeDialog()
         goalTypeTimeDialog.show(childFragmentManager, "GoalTypeTimeDialog")
     }
 
-    private val goalTypeTimeDialogListener : GoalTypeTimeDialogListener = object :
-        GoalTypeTimeDialogListener {
-        override fun onItemClick(time: Int) {
-            challengeCreateViewModel.setGoalTime(time)
-        }
-    }
-
-    private val goalTypeDistanceDialogListener : GoalTypeDistanceDialogListener = object :
-        GoalTypeDistanceDialogListener {
-        override fun onItemClick(distance: Int) {
-            challengeCreateViewModel.setGoalDistance(distance)
-        }
-    }
 
     private fun initGoalDaysDialog() {
-        val goalDaysDialog = GoalDaysDialog(goalDaysDialogListener)
+        val goalDaysDialog = GoalDaysDialog()
         goalDaysDialog.show(childFragmentManager, "GoalDaysDialog")
     }
 
-    private val goalDaysDialogListener : GoalDaysDialogListener = object : GoalDaysDialogListener {
-        override fun onItemClick(days: Int) {
-            challengeCreateViewModel.setDays(days)
-        }
-    }
+
 }

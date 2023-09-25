@@ -22,7 +22,7 @@ fun AppCompatButton.setCreate1NextBtnAvailable(challengeName: String){
 }
 
 @BindingAdapter("goalType")
-fun TextView.setGoalType(goalType: String){
+fun TextView.setGoalType(goalType: Int){
     if(goalType == GOAL_TYPE.TIME){
         this.text = "분"
     }else{
@@ -30,8 +30,13 @@ fun TextView.setGoalType(goalType: String){
     }
 }
 
-@BindingAdapter("isVisibleChallengeCreateButton")
-fun AppCompatButton.setVisibleChallengeCreateButton(password: String?){
+@BindingAdapter("isVisibleChallengeCreateButton", "isPasswordChallenge")
+fun AppCompatButton.setVisibleChallengeCreateButton(password: String?, isPasswordChallenge: Boolean){
+    if(!isPasswordChallenge){
+        this.visibility = View.VISIBLE
+        return
+    }
+
     if(password.isNullOrBlank()){
         this.visibility = View.GONE
     }else{

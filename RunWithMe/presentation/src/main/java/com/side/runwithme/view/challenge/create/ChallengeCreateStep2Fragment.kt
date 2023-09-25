@@ -7,10 +7,9 @@ import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate2Binding
 import com.side.runwithme.view.challenge.create.dialog.GoalWeeksDialog
-import com.side.runwithme.view.challenge.create.dialog.GoalWeeksDialogListener
 import java.util.Calendar
 
-class ChallengeCreate2Fragment : BaseFragment<FragmentChallengeCreate2Binding>(R.layout.fragment_challenge_create2) {
+class ChallengeCreateStep2Fragment : BaseFragment<FragmentChallengeCreate2Binding>(R.layout.fragment_challenge_create2) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
@@ -42,7 +41,7 @@ class ChallengeCreate2Fragment : BaseFragment<FragmentChallengeCreate2Binding>(R
             }
 
             btnNext.setOnClickListener {
-                findNavController().navigate(R.id.action_challengeCreate2Fragment_to_challengeCreate3Fragment)
+                findNavController().navigate(ChallengeCreateStep2FragmentDirections.actionChallengeCreateStep2FragmentToChallengeCreateStep3Fragment())
             }
         }
     }
@@ -54,29 +53,15 @@ class ChallengeCreate2Fragment : BaseFragment<FragmentChallengeCreate2Binding>(R
     }
 
     private fun initGoalWeeksDialog() {
-        val goalWeeksDialog = GoalWeeksDialog(goalWeeksDialogListener)
+        val goalWeeksDialog = GoalWeeksDialog()
         goalWeeksDialog.show(childFragmentManager, "GoalWeeksDialog")
     }
 
-    private val goalWeeksDialogListener: GoalWeeksDialogListener = object : GoalWeeksDialogListener {
-        override fun onItemClick(weeks: Int) {
-            /** goalweeks 설정 후, 끝나는 날 변경되도록 **/
-            challengeCreateViewModel.setWeeks(weeks)
-        }
-    }
 
     private fun initDatePickerDialog() {
         val today_calendar = Calendar.getInstance()
         val minDate = Calendar.getInstance()
         val maxDate = Calendar.getInstance()
-
-//        val now = System.currentTimeMillis()
-//        val date = Date(now)
-//        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd")
-//        val today = dateTimeFormat.format(date)
-//        val todayCalendarType = dateTimeFormat.parse(today)
-//
-//        today_calendar.time = todayCalendarType
 
         val dataSetListener = DatePickerDialog.OnDateSetListener { view, year, month, day ->
             challengeCreateViewModel.setDateStart(year, month + 1, day)

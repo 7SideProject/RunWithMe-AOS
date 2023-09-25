@@ -3,22 +3,41 @@ package com.side.runwithme.view.challenge.create.dialog
 import android.os.Build
 import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogOneNumberpickerBinding
+import com.side.runwithme.databinding.DialogCostBinding
+import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.view.challenge.create.ChallengeCreateViewModel
 
-class CostDialog(private val listener: CostDialogListener): BaseDialogFragment<DialogOneNumberpickerBinding>(
-    R.layout.dialog_one_numberpicker) {
+class CostDialog(): BaseDialogFragment<DialogCostBinding>(
+    R.layout.dialog_cost) {
+
+    private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     private lateinit var costValues : Array<String>
 
     override fun init() {
 
+        binding.apply {
+            challengeCreateVM = challengeCreateViewModel
+        }
+
         initCostValues()
 
         initNumberPicker()
 
-        initClickListener()
+        initViewModelCallbacks()
+    }
+
+    private fun initViewModelCallbacks(){
+        repeatOnStarted {
+            challengeCreateViewModel.dialogCostEventFlow.collect {
+                if(it is ChallengeCreateViewModel.Event.Success){
+                    dismiss()
+                }
+            }
+        }
     }
 
     private fun initCostValues(){
@@ -42,13 +61,4 @@ class CostDialog(private val listener: CostDialogListener): BaseDialogFragment<D
         }
     }
 
-    private fun initClickListener() {
-        binding.apply {
-            tvPositive.setOnClickListener {
-                val cost = costValues[np.value]
-                listener.onItemClick(cost)
-                dismiss()
-            }
-        }
-    }
 }

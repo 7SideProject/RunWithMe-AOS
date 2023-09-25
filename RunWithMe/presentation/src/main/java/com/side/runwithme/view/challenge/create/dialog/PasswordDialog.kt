@@ -1,30 +1,39 @@
 package com.side.runwithme.view.challenge.create.dialog
 
-import android.os.Build
-import android.widget.NumberPicker
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogOneNumberpickerBinding
 import com.side.runwithme.databinding.DialogPasswordBinding
+import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.view.challenge.create.ChallengeCreateViewModel
 
-class PasswordDialog(private val listener: PasswordDialogListener): BaseDialogFragment<DialogPasswordBinding>(
+class PasswordDialog(): BaseDialogFragment<DialogPasswordBinding>(
     R.layout.dialog_password) {
+
+    private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     override fun init() {
 
-        initClickListener()
+        binding.apply {
+            challengeCreateVM = challengeCreateViewModel
+        }
 
+        initViewModelCallbacks()
     }
 
-
-
-    private fun initClickListener() {
-        binding.apply {
-            tvPositive.setOnClickListener {
-                val passwd = etPasswd.text.toString()
-                listener.onItemClick(passwd)
-                dismiss()
+    private fun initViewModelCallbacks(){
+        repeatOnStarted {
+            challengeCreateViewModel.dialogPasswordEventFlow.collect {
+                when(it) {
+                    is ChallengeCreateViewModel.Event.Success -> {
+                        dismiss()
+                    }
+                    is ChallengeCreateViewModel.Event.Fail -> {
+                        showToast(it.message)
+                        dismiss()
+                    }
+                    else -> {}
+                }
             }
         }
     }

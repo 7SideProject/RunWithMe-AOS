@@ -3,23 +3,40 @@ package com.side.runwithme.view.challenge.create.dialog
 import android.os.Build
 import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogOneNumberpickerBinding
+import com.side.runwithme.databinding.DialogGoalTypeTimeBinding
+import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.view.challenge.create.ChallengeCreateViewModel
 
-class GoalTypeTimeDialog(private val listener: GoalTypeTimeDialogListener): BaseDialogFragment<DialogOneNumberpickerBinding>(
-    R.layout.dialog_one_numberpicker) {
+class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
+    R.layout.dialog_goal_type_time) {
 
     private lateinit var timeValues : Array<String>
-
+    private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     override fun init() {
+
+        binding.apply {
+            challengeCreateVM = challengeCreateViewModel
+        }
 
         initTimeValues()
 
         initNumberPicker()
 
-        initClickListener()
+        initViewModelCallbacks()
+    }
+
+    private fun initViewModelCallbacks(){
+        repeatOnStarted {
+            challengeCreateViewModel.dialogGoalTimeEventFlow.collect {
+                if(it is ChallengeCreateViewModel.Event.Success){
+                    dismiss()
+                }
+            }
+        }
     }
 
     private fun initTimeValues(){
@@ -43,13 +60,4 @@ class GoalTypeTimeDialog(private val listener: GoalTypeTimeDialogListener): Base
         }
     }
 
-    private fun initClickListener() {
-        binding.apply {
-            tvPositive.setOnClickListener {
-                val time = timeValues[np.value].toInt()
-                listener.onItemClick(time)
-                dismiss()
-            }
-        }
-    }
 }

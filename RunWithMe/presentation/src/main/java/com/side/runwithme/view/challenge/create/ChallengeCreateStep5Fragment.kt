@@ -1,6 +1,5 @@
 package com.side.runwithme.view.challenge.create
 
-import android.annotation.SuppressLint
 import android.view.View
 import android.widget.RadioGroup
 import androidx.fragment.app.activityViewModels
@@ -11,16 +10,12 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate5Binding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge.create.dialog.PasswordDialog
-import com.side.runwithme.view.challenge.create.dialog.PasswordDialogListener
-import com.side.runwithme.view.join.JoinViewModel
 import com.side.runwithme.view.loading.LoadingDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class ChallengeCreate5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R.layout.fragment_challenge_create5) {
+class ChallengeCreateStep5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R.layout.fragment_challenge_create5) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
     private lateinit var loadingDialog: LoadingDialog
@@ -88,14 +83,14 @@ class ChallengeCreate5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R
                         R.id.rb_no_password ->{
                             binding.apply {
                                 layoutPasswordExist.visibility = View.GONE
-                                challengeCreateViewModel.setPassword(null)
+                                challengeCreateViewModel.isPasswordChallenge.value = false
                             }
                         }
 
                         R.id.rb_password -> {
                             binding.apply {
                                 layoutPasswordExist.visibility = View.VISIBLE
-
+                                challengeCreateViewModel.isPasswordChallenge.value = true
                             }
                         }
                     }
@@ -106,15 +101,10 @@ class ChallengeCreate5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R
     }
 
     private fun initPasswdDialog() {
-        val passwdDialog = PasswordDialog(passwdDialogListener)
+        val passwdDialog = PasswordDialog()
         passwdDialog.show(childFragmentManager, "PasswordDialog")
     }
 
-    private val passwdDialogListener: PasswordDialogListener = object : PasswordDialogListener {
-        override fun onItemClick(passwd: String) {
-            challengeCreateViewModel.setPassword(passwd)
-        }
-    }
 
     private fun handleEvent(event: ChallengeCreateViewModel.Event) {
         when (event) {
@@ -122,7 +112,7 @@ class ChallengeCreate5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R
                 showToast(event.message)
                 loadingDialog.dismiss()
                 challengeCreateViewModel.refresh()
-                findNavController().navigate(R.id.action_challengeCreate5Fragment_to_challengeListFragment)
+                findNavController().navigate(ChallengeCreateStep5FragmentDirections.actionChallengeCreateStep5FragmentToChallengeListFragment())
             }
             is ChallengeCreateViewModel.Event.Fail -> {
                 showToast(event.message)
