@@ -6,6 +6,7 @@ buildscript {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}")
         classpath("com.android.tools.build:gradle:${Versions.AGP}")
         classpath(Plugins.FIREBASE_CRASHLYTICS)
+        classpath("com.google.gms:google-services:4.3.10")
     }
     repositories {
         google()

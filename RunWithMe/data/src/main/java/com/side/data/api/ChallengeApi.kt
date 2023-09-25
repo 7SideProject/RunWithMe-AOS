@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeResponse
 import com.side.domain.base.BaseResponse
 import okhttp3.MultipartBody
@@ -14,9 +15,9 @@ interface ChallengeApi {
 
     @GET("challenge/all")
     suspend fun getChallengeList(
-        @Query("cursor") page: Int,
+        @Query("cursorSeq") cursorSeq: Int,
         @Query("size") size: Int,
-    ): BaseResponse<List<ChallengeResponse>>
+    ): BaseResponse<ChallengeListResponse>
 
 
     @Multipart
