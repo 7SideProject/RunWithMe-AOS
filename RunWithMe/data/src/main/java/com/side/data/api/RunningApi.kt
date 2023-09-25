@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface RunningApi {
 
-    @POST("/challenge/{challengeSeq}/record")
+    @POST("challenge/{challengeSeq}/record")
     suspend fun postRunRecord(@Path("challengeSeq") challengeSeq: Int, @Body runRecordRequest: RunRecordRequest): BaseResponse<String>
 
 }
