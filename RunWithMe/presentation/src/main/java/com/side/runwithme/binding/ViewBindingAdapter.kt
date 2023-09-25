@@ -1,6 +1,5 @@
 package com.side.runwithme.binding
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -8,10 +7,7 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.side.runwithme.R
 import com.side.runwithme.util.costFormatter
-import okhttp3.MultipartBody
 import java.lang.Math.round
-import java.text.DecimalFormat
-import java.text.NumberFormat
 
 
 @BindingAdapter("runningResultDay")

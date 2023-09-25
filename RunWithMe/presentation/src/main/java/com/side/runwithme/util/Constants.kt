@@ -52,7 +52,9 @@ class DRAWING_POLYLINE_FAST {
 
 class GOAL_TYPE {
     companion object{
-        const val TIME = "time"
-        const val DISTANCE = "distance"
+        const val TIME = 0
+        const val DISTANCE = 1
     }
+
+    
 }

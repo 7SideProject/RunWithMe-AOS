@@ -359,7 +359,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             runningService.stopRunningBeforeRegister = true
             Log.d("test123", "stoprun: challengeSeq : ${runningViewModel.challengeSeq.value}")
 
-            if(runningViewModel.challengeSeq.value == -1){
+            if(runningViewModel.challengeSeq.value == -1){ // 연습러닝
                 runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
             }else {
                 runningViewModel.postChallengeRunRecord(
