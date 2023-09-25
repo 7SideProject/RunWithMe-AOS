@@ -1,5 +1,7 @@
 package com.side.runwithme.module
 
+import com.side.data.datasource.challenge.ChallengeRemoteDataSource
+import com.side.data.datasource.challenge.ChallengeRemoteDataSourceImpl
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.datastore.DataStoreDataSourceImpl
 import com.side.data.datasource.local.PracticeLocalDataSource
@@ -48,4 +50,10 @@ interface DataSourceModule {
     fun provideTokenDataSource(
         impl: TokenDataSourceImpl
     ): TokenDataSource
+
+    @Binds
+    @Singleton
+    fun provideChallengeDataSource(
+        impl: ChallengeRemoteDataSourceImpl
+    ): ChallengeRemoteDataSource
 }
