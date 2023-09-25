@@ -44,7 +44,7 @@ class ChallengeListFragment :
     private fun initClickListener() {
         binding.apply {
             fabCreateChallenge.setOnClickListener {
-                findNavController().navigate(R.id.action_challengeListFragment_to_challengeCreate1Fragment)
+                findNavController().navigate(ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeCreateStep1Fragment())
             }
         }
     }
@@ -55,7 +55,7 @@ class ChallengeListFragment :
                 findNavController().popBackStack()
             }
             toolbarChallengeList.setOptionButtonClickEvent(1) {
-                findNavController().navigate(R.id.action_challengeListFragment_to_challengeSearchFragment)
+                findNavController().navigate(ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeSearchFragment())
             }
         }
 

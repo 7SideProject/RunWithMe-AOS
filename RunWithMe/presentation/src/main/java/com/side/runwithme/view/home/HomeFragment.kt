@@ -1,13 +1,12 @@
 package com.side.runwithme.view.home
 
+import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
-import com.side.domain.exception.BearerException
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentHomeBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.home.HomeViewModel.Event.*
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -26,10 +25,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         repeatOnStarted {
             homeViewModel.moveScreenEventFlow.collectLatest { event ->
+                Log.d("test123", "initViewModelCallbacks: ${event}")
                 when (event) {
-                    ChallengeListAction -> {
+                    HomeViewModel.MoveEvent.ChallengeListAction -> {
                         moveChallengeList()
                     }
+
 
                 }
             }
@@ -43,15 +44,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initClickListener() {
         binding.apply {
+            /** CardView에는 onClick binding이 작동하지 않는 현상 발생 **/
             cvChallenge.setOnClickListener {
-                findNavController().navigate(R.id.action_homeFragment_to_challengeListFragment)
-            }
-            ivMyRunning.setOnClickListener {
-                throw BearerException()
+                homeViewModel.onClickChallengeList()
             }
         }
-
     }
+
+
 
 
 }
