@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge.create
+package com.side.runwithme.view.challenge_list.create
 
 import android.net.Uri
 import android.util.Log

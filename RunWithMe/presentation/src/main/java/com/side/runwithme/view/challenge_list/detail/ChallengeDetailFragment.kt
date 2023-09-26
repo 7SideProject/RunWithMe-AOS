@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge.detail
+package com.side.runwithme.view.challenge_list.detail
 
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R

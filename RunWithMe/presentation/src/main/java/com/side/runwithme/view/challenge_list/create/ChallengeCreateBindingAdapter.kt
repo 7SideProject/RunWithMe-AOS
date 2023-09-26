@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge.create
+package com.side.runwithme.view.challenge_list.create
 
 import android.view.View
 import android.widget.TextView

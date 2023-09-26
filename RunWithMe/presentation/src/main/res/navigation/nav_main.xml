@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeListFragment"
-        android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
+        android:name="com.side.runwithme.view.challenge_list.ChallengeListFragment"
         android:label="ChallengeListFragment">
         <action
             android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeSearchFragment"
-        android:name="com.side.runwithme.view.challenge.ChallengeSearchFragment"
+        android:name="com.side.runwithme.view.challenge_list.search.ChallengeSearchFragment"
         android:label="ChallengeSearchFragment" />
     <fragment
         android:id="@+id/recommendFragment"

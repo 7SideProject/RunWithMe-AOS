@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge.create.dialog
+package com.side.runwithme.view.challenge_list.create.dialog
 
 import android.os.Build
 import android.widget.NumberPicker
@@ -8,7 +8,7 @@ import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.DialogGoalTypeDistanceBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
 
 class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
     R.layout.dialog_goal_type_distance) {

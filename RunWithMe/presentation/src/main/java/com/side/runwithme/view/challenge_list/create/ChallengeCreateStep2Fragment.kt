@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge.create
+package com.side.runwithme.view.challenge_list.create
 
 import android.app.DatePickerDialog
 import androidx.fragment.app.activityViewModels
@@ -6,7 +6,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate2Binding
-import com.side.runwithme.view.challenge.create.dialog.GoalWeeksDialog
+import com.side.runwithme.view.challenge_list.create.dialog.GoalWeeksDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
