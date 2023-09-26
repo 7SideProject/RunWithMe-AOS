@@ -9,7 +9,9 @@ import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.view.challenge.create.dialog.GoalDaysDialog
 import com.side.runwithme.view.challenge.create.dialog.GoalTypeDistanceDialog
 import com.side.runwithme.view.challenge.create.dialog.GoalTypeTimeDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChallengeCreateStep3Fragment : BaseFragment<FragmentChallengeCreate3Binding>(R.layout.fragment_challenge_create3) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()

@@ -7,7 +7,10 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate4Binding
 import com.side.runwithme.view.challenge.create.dialog.CostDialog
 import com.side.runwithme.view.challenge.create.dialog.MaxMemberDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class ChallengeCreateStep4Fragment : BaseFragment<FragmentChallengeCreate4Binding>(R.layout.fragment_challenge_create4) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()

@@ -7,8 +7,10 @@ import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate2Binding
 import com.side.runwithme.view.challenge.create.dialog.GoalWeeksDialog
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
+@AndroidEntryPoint
 class ChallengeCreateStep2Fragment : BaseFragment<FragmentChallengeCreate2Binding>(R.layout.fragment_challenge_create2) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()

@@ -11,10 +11,12 @@ import com.side.runwithme.databinding.FragmentChallengeCreate5Binding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge.create.dialog.PasswordDialog
 import com.side.runwithme.view.loading.LoadingDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ChallengeCreateStep5Fragment : BaseFragment<FragmentChallengeCreate5Binding>(R.layout.fragment_challenge_create5) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
@@ -23,7 +25,7 @@ class ChallengeCreateStep5Fragment : BaseFragment<FragmentChallengeCreate5Bindin
     override fun init() {
 
         binding.apply {
-
+            challengeCreateVM = challengeCreateViewModel
         }
 
         loadingDialog = LoadingDialog(requireContext())
@@ -111,8 +113,7 @@ class ChallengeCreateStep5Fragment : BaseFragment<FragmentChallengeCreate5Bindin
             is ChallengeCreateViewModel.Event.Success -> {
                 showToast(event.message)
                 loadingDialog.dismiss()
-                challengeCreateViewModel.refresh()
-                findNavController().navigate(ChallengeCreateStep5FragmentDirections.actionChallengeCreateStep5FragmentToChallengeListFragment())
+                requireActivity().finish()
             }
             is ChallengeCreateViewModel.Event.Fail -> {
                 showToast(event.message)
