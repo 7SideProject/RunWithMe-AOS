@@ -28,7 +28,9 @@ class ChallengeCreateViewModel @Inject constructor(
     private val createChallengeUseCase: CreateChallengeUseCase
 ): ViewModel(){
 
+    // 화면에 binding 하기 위한 Img 객체 (Step2에서 Step1으로 이동해도 이미지가 살아있음)
     val challengeImg : MutableStateFlow<Uri?> = MutableStateFlow(null)
+    // 실제 API로 요청하는 MultipartBody.Part
     val challengeImgMultiPart : MutableStateFlow<MultipartBody.Part?> = MutableStateFlow(null)
 
     val challengeName : MutableStateFlow<String> = MutableStateFlow("")
@@ -65,13 +67,14 @@ class ChallengeCreateViewModel @Inject constructor(
 
     val isPasswordChallenge: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+
     // EventFlow
 
     private val _createEventFlow = MutableEventFlow<Event>()
-    val createEventFlow get() = _createEventFlow.asEventFlow()
+    val createEventFlow = _createEventFlow.asEventFlow()
 
     private val _dialogGoalWeeksEventFlow = MutableEventFlow<Event>()
-    val dialogGoalWeeksEventFlow get() = _dialogGoalWeeksEventFlow.asEventFlow()
+    val dialogGoalWeeksEventFlow = _dialogGoalWeeksEventFlow.asEventFlow()
 
     private val _dialogGoalDistanceEventFlow = MutableEventFlow<Event>()
     val dialogGoalDistanceEventFlow = _dialogGoalDistanceEventFlow.asEventFlow()
@@ -151,7 +154,6 @@ class ChallengeCreateViewModel @Inject constructor(
     }
 
 
-
     fun onClickGoalDistance(amount: Int){
         goalDistanceAmount.value = amount
 
@@ -180,10 +182,6 @@ class ChallengeCreateViewModel @Inject constructor(
     fun setGoalAmountByTime(){
         _goalAmount.value = goalTimeAmount.value.toString()
     }
-
-//    fun setDays(days: Int){
-//        _goalDays.value = days.toString()
-//    }
 
     fun onClickGoalDaysDialog(day: Int){
         _goalDays.value = day.toString()
@@ -271,7 +269,7 @@ class ChallengeCreateViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             createChallengeUseCase(challenge, challengeImgMultiPart.value).collectLatest {
                 it.onSuccess {
-                    _createEventFlow.emit(Event.Success(""))
+                    _createEventFlow.emit(Event.Success(it.message))
                 }.onFailure {
                     _createEventFlow.emit(Event.Fail(it.message))
                 }.onError {
@@ -281,24 +279,6 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-
-
-    fun refresh(){
-        challengeImg.value = null
-        challengeImgMultiPart.value = null
-        challengeName.value = ""
-        challengeDescription.value = ""
-        _goalWeeks.value = 4
-        goalType.value = GOAL_TYPE.TIME
-        _goalAmount.value = "30"
-        goalDistanceAmount.value = 30
-        goalTimeAmount.value = 3
-        _goalDays.value = "3"
-        _maxMember.value = "7"
-        _cost.value = "500"
-        _password.value = null
-        isPasswordChallenge.value = false
-    }
 
 
     sealed class Event {
