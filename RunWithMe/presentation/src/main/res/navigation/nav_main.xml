@@ -67,46 +67,5 @@
         android:id="@+id/MyPageFragment"
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
         android:label="MyPageFragment" />
-    <fragment
-        android:id="@+id/challengeCreateStep1Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep1Fragment"
-        android:label="ChallengeCreateStep1Fragment" >
-        <action
-            android:id="@+id/action_challengeCreateStep1Fragment_to_challengeCreateStep2Fragment"
-            app:destination="@id/challengeCreateStep2Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeCreateStep2Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep2Fragment"
-        android:label="ChallengeCreateStep2Fragment" >
-        <action
-            android:id="@+id/action_challengeCreateStep2Fragment_to_challengeCreateStep3Fragment"
-            app:destination="@id/challengeCreateStep3Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeCreateStep3Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep3Fragment"
-        android:label="ChallengeCreateStep3Fragment" >
-        <action
-            android:id="@+id/action_challengeCreateStep3Fragment_to_challengeCreateStep4Fragment"
-            app:destination="@id/challengeCreateStep4Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeCreateStep4Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep4Fragment"
-        android:label="ChallengeCreateStep4Fragment" >
-        <action
-            android:id="@+id/action_challengeCreateStep4Fragment_to_challengeCreateStep5Fragment"
-            app:destination="@id/challengeCreateStep5Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeCreateStep5Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep5Fragment"
-        android:label="ChallengeCreateStep5Fragment" >
-        <action
-            android:id="@+id/action_challengeCreateStep5Fragment_to_challengeListFragment"
-            app:destination="@id/challengeListFragment"
-            app:popUpTo="@layout/fragment_challenge_list"
-            app:popUpToInclusive="true"/>
-    </fragment>
+
 </navigation>

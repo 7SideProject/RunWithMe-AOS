@@ -14,6 +14,7 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate1Binding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.util.resizeBitmapFormUri
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -22,6 +23,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+@AndroidEntryPoint
 class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Binding>(R.layout.fragment_challenge_create1) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
@@ -49,7 +51,7 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
             }
 
             toolbar.setBackButtonClickEvent {
-                findNavController().popBackStack()
+                requireActivity().finish()
             }
         }
     }

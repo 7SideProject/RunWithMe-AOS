@@ -55,6 +55,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".view.challenge.create.ChallengeCreateActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
         <meta-data
             android:name="android.app.lib_name"
             android:value="" />

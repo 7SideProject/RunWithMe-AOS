@@ -1,5 +1,6 @@
 package com.side.runwithme.view.challenge
 
+import android.content.Intent
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,7 @@ import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeListBinding
 import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.view.challenge.create.ChallengeCreateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,7 +46,7 @@ class ChallengeListFragment :
     private fun initClickListener() {
         binding.apply {
             fabCreateChallenge.setOnClickListener {
-                findNavController().navigate(ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeCreateStep1Fragment())
+                startActivity(Intent(requireContext(), ChallengeCreateActivity::class.java))
             }
         }
     }
