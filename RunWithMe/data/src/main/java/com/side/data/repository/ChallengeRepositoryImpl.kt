@@ -4,25 +4,25 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.google.gson.Gson
 import com.side.data.api.ChallengeApi
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
-import com.side.data.mapper.mapperToChallengeRequest
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
-import com.side.domain.base.BaseResponse
 import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeRepository
 import com.side.domain.repository.JoinResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,7 +52,11 @@ class ChallengeRepositoryImpl @Inject constructor(
         imgFile: MultipartBody.Part?
     ): Flow<JoinResponse> = flow {
         emitResultTypeLoading()
-        challengeRemoteDataSource.createChallenge(challenge.mapperToChallengeRequest(), imgFile).collect {
+
+        val json = Gson().toJson(challenge)
+        val challengeRequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        challengeRemoteDataSource.createChallenge(challengeRequestBody, imgFile).collect {
 
             when(it.code){
 

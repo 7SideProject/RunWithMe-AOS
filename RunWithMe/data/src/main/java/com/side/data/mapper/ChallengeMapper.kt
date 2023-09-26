@@ -1,6 +1,5 @@
 package com.side.data.mapper
 
-import com.side.data.model.request.CreateChallengeRequest
 import com.side.data.model.response.ChallengeResponse
 import com.side.domain.model.Challenge
 
@@ -24,19 +23,5 @@ fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
 }
 
 
-fun Challenge.mapperToChallengeRequest(): CreateChallengeRequest = this.run {
-    CreateChallengeRequest(
-        name = this.name,
-        description = this.description,
-        goalDays = this.goalDays,
-        goalType = this.goalType,
-        goalAmount = this.goalAmount,
-        timeStart = this.timeStart,
-        timeEnd = this.timeEnd,
-        password = this.password,
-        cost = this.cost,
-        maxMember = this.maxMember
-    )
-}
 
 
