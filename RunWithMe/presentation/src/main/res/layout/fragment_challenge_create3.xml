@@ -3,27 +3,33 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="challengeCreateVM"
+            type="com.side.runwithme.view.challenge.create.ChallengeCreateViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.crew.create.CrewCreate3Fragment">
 
         <com.side.runwithme.component.CustomToolbar
-            android:id="@+id/toolbar_main"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:back_image="@drawable/baseline_arrow_back_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="챌린지 크루 생성" />
+            app:title="@string/create_challenge" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="16dp"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_main"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintBottom_toTopOf="@id/btn_next"
             >
 
@@ -39,14 +45,14 @@
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="챌린지 크루의 \n목표를 입력해주세요."
+                android:text="챌린지의 \n목표를 입력해주세요."
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="@dimen/fontsize_h3"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/iv_page" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_crew_detail"
+                android:id="@+id/layout_challenge_goal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -57,62 +63,63 @@
 
 
                 <TextView
-                    android:id="@+id/tv_purpose"
+                    android:id="@+id/tv_goal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="목표 설정"
+                    android:text="@string/setting_goal"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 
                 <RadioGroup
-                    android:id="@+id/radio_group_purpose"
+                    android:id="@+id/rg_goal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_purpose">
+                    app:layout_constraintTop_toBottomOf="@id/tv_goal">
 
                     <RadioButton
-                        android:id="@+id/radio_btn_time"
+                        android:id="@+id/rb_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/main_blue"
-                        android:text="시간"
+                        android:checked="true"
+                        android:text="@string/time"
                         android:textColor="@color/black_high_emphasis" />
 
                     <RadioButton
-                        android:id="@+id/radio_btn_distance"
+                        android:id="@+id/rb_distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="72dp"
                         android:buttonTint="@color/main_blue"
-                        android:checked="true"
-                        android:text="거리"
+                        android:text="@string/distance"
                         android:textColor="@color/black_high_emphasis" />
 
                 </RadioGroup>
 
 
                 <TextView
-                    android:id="@+id/tv_purpose_k"
+                    android:id="@+id/tv_goal_head"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="목표"
+                    android:text="@string/each_day_goal_amount"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/radio_group_purpose" />
+                    app:layout_constraintTop_toBottomOf="@id/rg_goal" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_create_goal_amount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:text="@{challengeCreateVM.goalAmount}"
                     android:textColor="@color/black_high_emphasis"
                     android:background="@drawable/border_rectangle_grey"
-                    app:layout_constraintTop_toBottomOf="@id/tv_purpose_k"
-                    tools:text="5.0" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_goal_head"
+                    tools:text="30" />
 
 
                 <TextView
@@ -120,7 +127,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="km"
+                    tools:text="분"
+                    goalType="@{challengeCreateVM.goalType}"
                     android:textColor="@color/black_high_emphasis"
                     app:layout_constraintBottom_toBottomOf="@id/btn_create_goal_amount"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="주"
+                    android:text="@string/each_weeks_goal_days"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/btn_create_goal_amount" />
 
@@ -143,6 +151,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
+                    android:text="@{challengeCreateVM.goalDays}"
                     android:background="@drawable/border_rectangle_grey"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tv_goal_day_text"
@@ -151,15 +160,28 @@
                     tools:text="3" />
 
                 <TextView
+                    android:id="@+id/tv_goal_day_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/week"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/margin_regular"
+                    app:layout_constraintTop_toTopOf="@id/btn_create_goal_days"
+                    app:layout_constraintStart_toStartOf="@id/btn_create_goal_days"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_create_goal_days"
+                    />
+
+                <TextView
                     android:id="@+id/tv_goal_day_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="일"
+                    android:text="@string/day"
                     android:textColor="@color/black"
+                    android:layout_marginEnd="@dimen/margin_regular"
                     app:layout_constraintTop_toTopOf="@id/btn_create_goal_days"
                     app:layout_constraintEnd_toEndOf="@id/btn_create_goal_days"
                     app:layout_constraintBottom_toBottomOf="@id/btn_create_goal_days"
-                    android:layout_marginHorizontal="16dp"/>
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -170,7 +192,7 @@
             style="@style/StrongButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="다음"
+            android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

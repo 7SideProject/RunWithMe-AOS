@@ -43,6 +43,10 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     GET_ALL_BOARD_SUCCESS(402, "게시글 전체 조회에 성공하였습니다."),
     DELETE_BOARD_SUCCESS(403, "게시글 삭제에 성공하였습니다."),
 
+    // Challenge 등록
+    CREATE_CHALLENGE_FAIL(-402, "챌린지 등록에 실패했습니다."),
+    CREATE_CHALLENGE_SUCCESS(406, "챌린지 등록에 성공했습니다."),
+
     // Image
     IMAGE_NOT_FOUND(-500, "이미지를 찾을 수 없습니다."),
     FAILED_CONVERT(-501, "잘못된 파일입니다."),

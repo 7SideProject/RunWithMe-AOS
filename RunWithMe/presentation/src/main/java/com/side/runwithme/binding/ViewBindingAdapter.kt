@@ -1,14 +1,13 @@
 package com.side.runwithme.binding
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.side.runwithme.R
-import okhttp3.MultipartBody
+import com.side.runwithme.util.costFormatter
 import java.lang.Math.round
-
 
 
 @BindingAdapter("runningResultDay")
@@ -90,4 +89,9 @@ fun ImageView.setRunningResultCompleted(completed: String) {
 @BindingAdapter("runningCalorie")
 fun TextView.setRunningCalorie(calorie: Int){
     this.text = "$calorie kcal"
+}
+
+@BindingAdapter("costFormat")
+fun AppCompatButton.setCostFormat (cost: String){
+    this.setText(costFormatter(cost))
 }

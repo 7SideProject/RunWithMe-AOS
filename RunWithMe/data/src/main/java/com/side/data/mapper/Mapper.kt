@@ -13,12 +13,6 @@ import com.side.domain.model.RunRecord
 import com.side.domain.model.Challenge
 import com.side.domain.model.User
 
-fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
-    Challenge(
-        seq,
-        managerSeq, name, imgSeq, goalDays, goalType, goalAmount, timeStart, timeEnd
-    )
-}
 
 fun JoinResponse.mapperToUser(): User = this.run {
     User(seq, email, nickname, height, weight, point, profileImgSeq)
