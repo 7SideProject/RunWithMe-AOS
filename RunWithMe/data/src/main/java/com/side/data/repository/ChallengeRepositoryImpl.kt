@@ -1,11 +1,9 @@
 package com.side.data.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.gson.Gson
-import com.side.data.api.ChallengeApi
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.util.ResponseCodeStatus
@@ -17,6 +15,8 @@ import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeRepository
 import com.side.domain.repository.JoinResponse
+import com.side.domain.repository.PagingChallengeResponse
+import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -28,23 +28,27 @@ import javax.inject.Singleton
 
 @Singleton
 class ChallengeRepositoryImpl @Inject constructor(
-    private val challengeApi: ChallengeApi,
     private val challengeRemoteDataSource: ChallengeRemoteDataSource
 ) : ChallengeRepository {
-    override fun getChallengeList(
-        size: Int
-        ): Flow<PagingData<Challenge>> {
-        Log.d("test123", "ChallengeRepositoryImpl: ")
+
+    override fun getRecruitingChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
+        emitResultTypeLoading()
+
         val pagingSourceFactory =
-            { ChallengeListPagingSource(size, challengeApi = challengeApi) }
-        return Pager(
+            { ChallengeListPagingSource(size, challengeRemoteDataSource = challengeRemoteDataSource) }
+        Pager(
             config = PagingConfig(
                 pageSize = size,
                 enablePlaceholders = false,
                 maxSize = size * 3
             ), pagingSourceFactory = pagingSourceFactory
-        ).flow
+        ).flow.collect {
 
+            emitResultTypeSuccess(it)
+        }
+
+    }.catch {
+        emitResultTypeError(it)
     }
 
     override fun createChallenge(

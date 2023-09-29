@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.side.data.api.ChallengeApi
+import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.mapper.mapperToChallenge
 import com.side.data.model.response.ChallengeResponse
 import com.side.domain.model.Challenge
+import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -16,45 +18,34 @@ import javax.inject.Singleton
 @Singleton
 class ChallengeListPagingSource @Inject constructor(
     private val size: Int,
-    private val challengeApi: ChallengeApi
-) : PagingSource<Int, Challenge>() {
-    override fun getRefreshKey(state: PagingState<Int, Challenge>): Int? {
+    private val challengeRemoteDataSource: ChallengeRemoteDataSource
+) : PagingSource<Long, Challenge>() {
+    override fun getRefreshKey(state: PagingState<Long, Challenge>): Long? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Challenge> {
+    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Challenge> {
         return try {
-            Log.d("test123", "ChallengeListPagingSource: ")
             val nextCursor = params.key ?: 0
 
-            val response = challengeApi.getChallengeList(nextCursor, size)
+            val response = challengeRemoteDataSource.getRecruitingChallengeList(nextCursor, size)
 
-            val challengeList = response.data.result
+            val challengeList = response.first().data
 
             val nextKey = if (challengeList.size < size) {
                 null
             } else {
-                challengeList.last().seq.toInt()
+                challengeList.last().seq
             }
-            Log.d("test123", "challengeList: $challengeList")
+
             LoadResult.Page(
                 data = challengeList,
                 prevKey = null,
                 nextKey = nextKey
             )
-        } catch (exception: IOException) {
-            Log.d("test123", "IOException: $exception")
-            LoadResult.Error(exception)
-
-        } catch (exception: HttpException) {
-            Log.d("test123", "HttpException: ${exception.message}")
-            Log.d("test123", "HttpException: ${exception.localizedMessage}")
-            Log.d("test123", "HttpException: ${exception.stackTrace.contentToString()}")
-            Log.d("test123", "HttpException: ${exception.cause}")
-            LoadResult.Error(exception)
         } catch (exception: Exception) {
             Log.d("test123", "Exception: ${exception.message}")
             LoadResult.Error(exception)
