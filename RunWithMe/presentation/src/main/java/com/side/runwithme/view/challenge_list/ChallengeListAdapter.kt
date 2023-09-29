@@ -1,21 +1,19 @@
-package com.side.runwithme.view.challenge
+package com.side.runwithme.view.challenge_list
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.runwithme.databinding.ItemChallengeListBinding
 
 class ChallengeListAdapter() : PagingDataAdapter<Challenge, ChallengeListAdapter.ChallengeListViewHolder>(diffUtil) {
 
-    inner class ChallengeListViewHolder(val binding: ItemChallengeListBinding) :
+    class ChallengeListViewHolder(val binding: ItemChallengeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(challenge: Challenge) {
-            Log.d("test123", "bind: $challenge")
             binding.apply {
                 this.challenge = challenge
                 executePendingBindings()
