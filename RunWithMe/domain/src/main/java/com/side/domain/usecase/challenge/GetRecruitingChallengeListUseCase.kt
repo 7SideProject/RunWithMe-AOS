@@ -1,15 +1,15 @@
-package com.side.domain.usecase.user
+package com.side.domain.usecase.challenge
 
 import com.side.domain.repository.ChallengeRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetChallengeListUseCase @Inject constructor(
+class GetRecruitingChallengeListUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ) {
     operator fun invoke(
         size: Int,
 
-    ) = challengeRepository.getChallengeList(size)
+    ) = challengeRepository.getRecruitingChallengeList(size)
 }

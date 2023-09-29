@@ -10,13 +10,13 @@ import retrofit2.http.Body
 import retrofit2.http.Part
 
 typealias JoinResponse = ResultType<BaseResponse<Any?>>
+typealias PagingChallengeResponse = ResultType<PagingData<Challenge>>
 
 interface ChallengeRepository {
 
-    fun getChallengeList(
-        size: Int,
-
-    ): Flow<PagingData<Challenge>>
+    fun getRecruitingChallengeList(
+        size: Int
+    ): Flow<PagingChallengeResponse>
 
     fun createChallenge(challenge: Challenge, imgFile: MultipartBody.Part?): Flow<JoinResponse>
 
