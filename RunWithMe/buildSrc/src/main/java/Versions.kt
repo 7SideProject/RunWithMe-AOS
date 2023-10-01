@@ -34,7 +34,7 @@ object Versions {
     const val GSON = "2.9.0"
     const val OKHTTP = "4.10.0"
     const val VIEWMODEL = "2.5.1"
-    const val COROUTINE_ANDROID = "1.6.4"
+    const val COROUTINE_ANDROID = "1.7.3"
     const val NAVIGATION = "2.5.3"
     const val TED_PERMISSION = "3.3.0"
     const val GLIDE = "4.13.2"
