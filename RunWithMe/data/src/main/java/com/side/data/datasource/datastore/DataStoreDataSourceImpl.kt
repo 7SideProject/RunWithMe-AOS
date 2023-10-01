@@ -2,34 +2,40 @@ package com.side.data.datasource.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.side.data.util.*
+import com.side.data.util.DATASTORE_KEY
+import com.side.data.util.getDecryptStringValue
+import com.side.data.util.getValue
 import com.side.data.util.preferencesKeys.CHALLENG_SEQ
-import com.side.data.util.preferencesKeys.EMAIL
 import com.side.data.util.preferencesKeys.GOAL_AMOUNT
 import com.side.data.util.preferencesKeys.GOAL_TYPE
+import com.side.data.util.preferencesKeys.ID
 import com.side.data.util.preferencesKeys.JWT
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
 import com.side.data.util.preferencesKeys.TTS_OPTION
 import com.side.data.util.preferencesKeys.WEIGHT
+import com.side.data.util.saveEncryptStringValue
+import com.side.data.util.saveValue
 import com.side.domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DataStoreDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): DataStoreDataSource {
 
     override suspend fun saveUser(user: User) {
-        dataStore.saveEncryptStringValue(EMAIL, user.email)
+        dataStore.saveEncryptStringValue(ID, user.id)
         dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
         dataStore.saveValue(WEIGHT, user.weight)
     }
 
-    override fun getUserEmail(): Flow<String> = flow {
-        emit(dataStore.getDecryptStringValue(EMAIL).first().toString())
+    override fun getUserID(): Flow<String> = flow {
+        emit(dataStore.getDecryptStringValue(ID).first().toString())
     }
 
     override fun getUserSeq(): Flow<String> = flow {

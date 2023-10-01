@@ -3,19 +3,16 @@ package com.side.runwithme.module
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.side.data.api.UserApi
-import com.side.data.util.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
 import com.side.runwithme.util.TestXAccessTokenInterceptor
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module

@@ -9,11 +9,12 @@ plugins {
     id(Plugins.SECRETS_GRADLE_PLUGIN)
     id(Plugins.KAPT)
     id("kotlin-parcelize")
+    id(Plugins.GOOGLE_SERVICE)
+//    id("com.google.gms.google-services")
+    id(Plugins.FIREBASE_CRASHLYTICS_PLUGINS)
 }
 
-fun getProperty(propertyKey: String): String {
-    return gradleLocalProperties(rootDir).getProperty(propertyKey)
-}
+
 
 android {
     namespace = "com.side.runwithme"
@@ -28,12 +29,20 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
-        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
-        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
-        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
 
-        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
-        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+//        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
+//        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
+//        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
+//
+//        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
+//        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
+
+        buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
+        buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
+        buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+
+        manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
+        manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
 
     }
 
@@ -82,6 +91,10 @@ android {
     }
 }
 
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootProject.rootDir).getProperty(propertyKey)
+}
+
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
@@ -93,6 +106,7 @@ dependencies {
     implementation(AndroidX.LEGACY_SUPPORT)
     implementation(AndroidX.METERIAL)
     implementation(AndroidX.VIEWMODEL)
+
 //    implementation("androidx.lifecycle:lifecycle-viewmodel:${Versions.VIEWMODEL}")
 
     // Test
@@ -194,4 +208,10 @@ dependencies {
     annotationProcessor(Dependencies.ROOM_KAPT)
     kapt(Dependencies.ROOM_KAPT)
     implementation(Dependencies.ROOM_COROUTINE)
+
+    // Firebase
+    implementation(platform(Dependencies.FIREBASE_PLATFORM))
+    implementation(Dependencies.FIREBASE_ANALYTICS)
+    implementation(Dependencies.FIREBASE_AUTH)
+
 }

@@ -5,6 +5,8 @@ buildscript {
         classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}")
         classpath("com.android.tools.build:gradle:${Versions.AGP}")
+        classpath(Plugins.FIREBASE_CRASHLYTICS)
+        classpath("com.google.gms:google-services:4.3.10")
     }
     repositories {
         google()
@@ -19,4 +21,5 @@ plugins {
     id(Plugins.ANDROID_LIBRARY) version Versions.AGP apply false
     id(Plugins.KOTLIN_ANDROID) version Versions.KOTLIN apply false
     id(Plugins.SECRETS_GRADLE_PLUGIN) version Versions.SECRETS_GRALDE apply false
+    id(Plugins.GOOGLE_SERVICE) version Versions.GOOGLE_SERVICE apply false
 }

@@ -1,6 +1,8 @@
 package com.side.data.repository
 
+import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource
+import com.side.data.util.asResult
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
@@ -11,7 +13,6 @@ import com.side.domain.repository.DataStoreRepository
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override fun getUserEmail(): Flow<ResultType<String>> = flow<ResultType<String>> {
         emitResultTypeLoading()
-        dataStoreDataSource.getUserEmail().collect {
+        dataStoreDataSource.getUserID().collect {
             if(it.isBlank()){
                 emitResultTypeFail(it)
             }else {
@@ -50,18 +51,29 @@ class DataStoreRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
-    override fun getUserWeight(): Flow<ResultType<Int>> = flow {
-        emitResultTypeLoading()
-        dataStoreDataSource.getUserWeight().collect {
+//    override fun getUserWeight(): Flow<ResultType<Int>> = flow {
+//        emitResultTypeLoading()
+//        dataStoreDataSource.getUserWeight().collect {
+//            if(it == 0){
+//                emitResultTypeFail(0)
+//            }else {
+//                emitResultTypeSuccess(it)
+//            }
+//        }
+//    }.catch {
+//        emitResultTypeError(it)
+//    }
+
+
+    override fun getUserWeight(): Flow<ResultType<Int>> =
+        dataStoreDataSource.getUserWeight().asResult {
             if(it == 0){
-                emitResultTypeFail(0)
+                ResultType.Fail(0)
             }else {
-                emitResultTypeSuccess(it)
+                ResultType.Success(it)
             }
         }
-    }.catch {
-        emitResultTypeError(it)
-    }
+
     override suspend fun saveToken(jwt: String, refreshToken: String) = dataStoreDataSource.saveToken(jwt, refreshToken)
 
     //    override fun getJWT(): Flow<ResultType<String>> = flow {
@@ -76,7 +88,7 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun saveRunningGoalAmount(goalAmount: Long) = dataStoreDataSource.saveRunningGoalAmount(goalAmount)
 
-    override suspend fun saveRunningGoalType(goalType: String) = dataStoreDataSource.saveRunningGoalType(goalType)
+    override suspend fun saveRunningGoalType(goalType: Int) = dataStoreDataSource.saveRunningGoalType(goalType)
     override fun getRunningChallengInfo(): Flow<ResultType<RunningInfo>> = flow {
         emitResultTypeLoading()
 
@@ -84,10 +96,10 @@ class DataStoreRepositoryImpl @Inject constructor(
         val goalAmount = dataStoreDataSource.getRunningGoalAmount().first()
         val goalType = dataStoreDataSource.getRunningGoalType().first()
 
-        if(challengeSeq != 0 && goalAmount != 0L && goalType.isNotEmpty()){
+        if(challengeSeq != 0 && goalAmount != 0L && goalType != -1){
             emitResultTypeSuccess(RunningInfo(challengeSeq, goalAmount, goalType))
         }else{
-            emitResultTypeFail(RunningInfo(0, 0L, ""))
+            emitResultTypeFail(RunningInfo(0, 0L, -1))
         }
     }.catch {
         emitResultTypeError(it)
@@ -111,4 +123,5 @@ class DataStoreRepositoryImpl @Inject constructor(
 //    }.catch {
 //        emitResultTypeError(it)
 //    }
+
 }

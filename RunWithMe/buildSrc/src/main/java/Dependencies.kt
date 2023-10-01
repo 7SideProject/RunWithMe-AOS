@@ -58,4 +58,8 @@ object Dependencies {
     const val ROOM_COMMON = "androidx.room:room-common::${Versions.ROOM}"
     const val ROOM_KAPT = "androidx.room:room-compiler:${Versions.ROOM}"
     const val ROOM_COROUTINE = "androidx.room:room-ktx:${Versions.ROOM}"
+    const val FIREBASE_PLATFORM = "com.google.firebase:firebase-bom:${Versions.FIREBASE_PLATFORM}"
+    const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
+    const val FIREBASE_AUTH = "com.google.firebase:firebase-auth-ktx:${Versions.FIREBASE_AUTH}"
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-ktx:${Versions.FIREBASE_CRASHLYTICS_DEPENDENCY}"
 }

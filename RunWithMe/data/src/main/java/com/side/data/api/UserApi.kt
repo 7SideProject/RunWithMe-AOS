@@ -21,7 +21,10 @@ interface UserApi {
     @POST("users/join")
     suspend fun join(@Body request: JoinRequest): BaseResponse<JoinResponse>
 
-    @POST("users/login")
-    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse?>
+//    @POST("users/login")
+//    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse?>
+
+//    @POST("/token")
+//    suspend fun refreshingToken(@Body refreshToken: String)
 
 }

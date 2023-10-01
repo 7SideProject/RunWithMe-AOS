@@ -6,4 +6,9 @@ object Plugins {
     const val SAFEARGS = "androidx.navigation.safeargs.kotlin"
     const val SECRETS_GRADLE_PLUGIN = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
     const val KAPT = "kotlin-kapt"
+    const val GOOGLE_SERVICE = "com.google.gms.google-services"
+    const val FIREBASE_CRASHLYTICS_PLUGINS = "com.google.firebase.crashlytics"
+
+    // dependency
+    const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
 }

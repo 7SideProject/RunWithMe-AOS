@@ -5,6 +5,10 @@ plugins {
     id(Plugins.KAPT)
 }
 
+fun getProperty(propertyKey: String): String {
+    return com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty(propertyKey)
+}
+
 android {
     namespace = "com.side.data"
     compileSdk = DefaultConfig.COMPILE_SDK
@@ -14,6 +18,8 @@ android {
         targetSdk = DefaultConfig.TARGET_SDK
 
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
+
+
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -68,4 +74,9 @@ dependencies {
     annotationProcessor(Dependencies.ROOM_KAPT)
     kapt(Dependencies.ROOM_KAPT)
     implementation(Dependencies.ROOM_COROUTINE)
+
+    implementation(AndroidX.VIEWMODEL)
+
+
 }
+

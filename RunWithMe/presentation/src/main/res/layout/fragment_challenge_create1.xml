@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="challengeCreateVM"
+            type="com.side.runwithme.view.challenge.create.ChallengeCreateViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.crew.create.CrewCreate1Fragment"
+        >
+
+        <com.side.runwithme.component.CustomToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:back_image="@drawable/baseline_arrow_back_24"
+            app:title="@string/create_challenge"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/btn_next"
+            android:layout_marginBottom="8dp"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_regular">
+
+                <ImageView
+                    android:id="@+id/iv_page"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/page1" />
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="챌린지의 이름과\n사진, 소개를 입력해주세요."
+                    android:textSize="@dimen/fontsize_h3"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/iv_page"/>
+
+                <TextView
+                    android:id="@+id/tv_challenge_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/challenge_image"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_challenge_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_challenge_image"
+                    android:layout_marginVertical="8dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/iv_challenge"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:src="@drawable/img_crew"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:scaleType="centerCrop"
+                        android:alpha="0.1"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_challenge_image_notice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="미등록 시 기본 이미지가 등록됩니다."
+                        app:layout_constraintTop_toTopOf="@id/iv_challenge"
+                        app:layout_constraintBottom_toBottomOf="@id/iv_challenge"
+                        app:layout_constraintStart_toStartOf="@id/iv_challenge"
+                        app:layout_constraintEnd_toEndOf="@id/iv_challenge"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/tv_challenge_image_select"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="이미지 선택하기"
+                        android:textColor="@color/main_blue"
+                        android:background="@drawable/border_rectangle_blue"
+                        android:paddingHorizontal="8dp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_challenge_image_notice"
+                        app:layout_constraintStart_toStartOf="@id/tv_challenge_image_notice"
+                        app:layout_constraintEnd_toEndOf="@id/tv_challenge_image_notice"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_challenge_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/challnege_name"
+                    app:layout_constraintTop_toBottomOf="@id/layout_challenge_img"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginVertical="16dp"/>
+
+
+                <EditText
+                    android:id="@+id/et_challenge_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="@string/challnege_name"
+                    android:text="@={challengeCreateVM.challengeName}"
+                    android:textSize="@dimen/fontsize_h5"
+                    android:background="@drawable/border_rectangle_grey"
+                    app:layout_constraintTop_toBottomOf="@id/tv_challenge_name"
+                    android:layout_marginVertical="8dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_challenge_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/challenge_description"
+                    app:layout_constraintTop_toBottomOf="@id/et_challenge_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginVertical="16dp"/>
+
+                <EditText
+                    android:id="@+id/et_challenge_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:maxLines="5"
+                    android:hint="챌린지 소개를 입력해주세요."
+                    android:text="@={challengeCreateVM.challengeDescription}"
+                    app:layout_constraintTop_toBottomOf="@id/tv_challenge_description"
+                    android:background="@drawable/border_rectangle_grey"
+                    android:layout_marginVertical="8dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_next"
+            style="@style/StrongButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            create1NextBtnAvailable="@{challengeCreateVM.challengeName}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

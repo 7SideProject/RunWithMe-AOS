@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
             app:destination="@id/challengeSearchFragment" />
+        <action
+            android:id="@+id/action_challengeListFragment_to_challengeCreateStep1Fragment"
+            app:destination="@id/challengeCreateStep1Fragment" />
     </fragment>
     <fragment
         android:id="@+id/challengeSearchFragment"
@@ -64,4 +67,5 @@
         android:id="@+id/MyPageFragment"
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
         android:label="MyPageFragment" />
+
 </navigation>

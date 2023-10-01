@@ -28,7 +28,7 @@ class ChallengeViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             getChallengeListUseCase(size).collectLatest {
-
+                Log.d("test123", "getChallengesPaging: ${it}")
                 _challengeList.value = it
             }
         }

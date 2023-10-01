@@ -1,19 +1,25 @@
 <resources>
     <string name="app_name">RunWithMe</string>
 
-
+    // Toolbar strings
     <string name="recommend_course">추천 코스</string>
     <string name="running_hard">러닝 난이도</string>
     <string name="running_environment">러닝 환경</string>
-
     <string name="my_running_challenge">러닝 환경</string>
     <string name="recruiting_challenge">모집 중인 챌린지</string>
     <string name="my_challenge">내 챌린지</string>
+    <string name="create_challenge">챌린지 생성</string>
     <string name="recommend_course_by_user">유저들이 추천하는 러닝 코스</string>
+    <string name="my_page">마이페이지</string>
+    <string name="edit_profile">프로필 수정</string>
+    <string name="register_profile">프로필 등록</string>
+    <string name="join">회원가입</string>
+    <string name="practice_running">연습 러닝</string>
+
+
 
     <string name="research_in_range">범위 내 재검색</string>
 
-    <string name="recommend">추천</string>
     <string name="distance_header">이동 거리</string>
     <string name="time_header">소요 시간</string>
     <string name="calorie_header">칼로리</string>
@@ -25,34 +31,54 @@
     <string name="goal">목표</string>
     <string name="nickname">닉네임</string>
     <string name="email">이메일</string>
+    <string name="id">아이디</string>
+    <string name="phone">핸드폰 번호</string>
+    <string name="verify_number">인증 번호</string>
     <string name="password">비밀번호</string>
+    <string name="password_confirm">비밀번호 확인</string>
+    <string name="wrong_password">입력하신 비밀번호가 일치하지 않습니다.</string>
+
+
 
 
     <string name="ok">확인</string>
+    <string name="recommend">추천</string>
+    <string name="next">다음</string>
     <string name="cancel">취소</string>
     <string name="add">등록</string>
     <string name="edit">수정</string>
+    <string name="btn_register">등록하기</string>
+
 
     <string name="route_detail">상세 경로</string>
 
     <string name="challnege_name">챌린지명</string>
+    <string name="challenge_image">챌린지 이미지</string>
+    <string name="challenge_description">챌린지 소개</string>
     <string name="challenge_start_date_range">시작 범위</string>
+    <string name="challenge_start_date">시작 일</string>
+    <string name="challenge_end_date">종료 일</string>
     <string name="running_start_time">러닝 시작 시간</string>
+    <string name="goal_duration">목표 기간</string>
+    <string name="setting_goal">목표 설정</string>
+    <string name="each_day_goal_amount">일일 목표</string>
+    <string name="each_weeks_goal_days">1주간 목표 횟수</string>
+    <string name="challenge_max_member">참가 가능 인원</string>
     <string name="cost">참가비</string>
     <string name="time">시간</string>
     <string name="distance">거리</string>
     <string name="km">km</string>
     <string name="week">주</string>
     <string name="day">일</string>
+    <string name="people_unit">명</string>
+    <string name="point">point</string>
+    <string name="setting_password">비밀번호 설정</string>
+    <string name="exist">있음</string>
+    <string name="no_exist">없음</string>
+    <string name="create">생성</string>
+
     <string name="search">검색</string>
 
-    <string name="my_page">마이페이지</string>
-    <string name="edit_profile">프로필 수정</string>
-    <string name="register_profile">프로필 등록</string>
-    <string name="btn_register">등록하기</string>
-    <string name="join">회원가입</string>
-
-    <string name="practice_running">연습 러닝</string>
 
     <string name="calorie">%d kcal</string>
     <string name="running_result_day">%s 년 %d 월 %d 일 러닝</string>
@@ -72,6 +98,10 @@
     <string name="practice_alert">연습 결과는 누적 기록에 포함되지 않습니다.</string>
     <string name="minute">분</string>
     <string name="start">시작</string>
+
+    <string name="verify_phone_number">번호 인증</string>
+    <string name="verify">인증</string>
+    <string name="send_verify_number">인증 번호 전송</string>
 
 
 </resources>

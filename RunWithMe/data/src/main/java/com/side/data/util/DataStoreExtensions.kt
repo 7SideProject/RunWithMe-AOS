@@ -11,7 +11,7 @@ import java.io.IOException
 object preferencesKeys {
     val JWT = stringPreferencesKey("jwt")
     val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
-    val EMAIL = stringPreferencesKey("email")
+    val ID = stringPreferencesKey("id")
     val SEQ = stringPreferencesKey("seq")
     val WEIGHT = intPreferencesKey("weight")
     val CHALLENG_SEQ = intPreferencesKey("challeng_seq")
@@ -61,7 +61,9 @@ suspend fun <T> DataStore<Preferences>.getValue(key: Preferences.Key<T>, type: D
                 DATASTORE_KEY.TYPE_LONG -> {
                     0L
                 }
-                else -> {}
+                else -> {
+                    ""
+                }
             }
         }
 }

@@ -11,7 +11,9 @@ import com.side.domain.model.Challenge
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ChallengeListPagingSource @Inject constructor(
     private val size: Int,
     private val challengeApi: ChallengeApi
@@ -30,15 +32,16 @@ class ChallengeListPagingSource @Inject constructor(
 
             val response = challengeApi.getChallengeList(nextCursor, size)
 
-            Log.d("test123", "load: ")
-            val nextKey = if (response.data.size < size) {
+            val challengeList = response.data.result
+
+            val nextKey = if (challengeList.size < size) {
                 null
             } else {
-                response.data.last().seq.toInt()
+                challengeList.last().seq.toInt()
             }
-
+            Log.d("test123", "challengeList: $challengeList")
             LoadResult.Page(
-                data = response.data.map { it.mapperToChallenge() },
+                data = challengeList,
                 prevKey = null,
                 nextKey = nextKey
             )
@@ -51,6 +54,9 @@ class ChallengeListPagingSource @Inject constructor(
             Log.d("test123", "HttpException: ${exception.localizedMessage}")
             Log.d("test123", "HttpException: ${exception.stackTrace.contentToString()}")
             Log.d("test123", "HttpException: ${exception.cause}")
+            LoadResult.Error(exception)
+        } catch (exception: Exception) {
+            Log.d("test123", "Exception: ${exception.message}")
             LoadResult.Error(exception)
         }
     }

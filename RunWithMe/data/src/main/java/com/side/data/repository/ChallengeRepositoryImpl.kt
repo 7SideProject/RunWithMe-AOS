@@ -4,23 +4,32 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.map
+import com.google.gson.Gson
 import com.side.data.api.ChallengeApi
-import com.side.data.datasource.ChallengeRemoteDataSource
+import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
-import com.side.data.mapper.mapperToChallenge
-import com.side.data.model.response.ChallengeResponse
+import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.emitResultTypeError
+import com.side.data.util.emitResultTypeFail
+import com.side.data.util.emitResultTypeLoading
+import com.side.data.util.emitResultTypeSuccess
+import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeRepository
+import com.side.domain.repository.JoinResponse
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ChallengeRepositoryImpl @Inject constructor(
-    private val challengeRemoteDataSource: ChallengeRemoteDataSource,
-    private val challengeApi: ChallengeApi
+    private val challengeApi: ChallengeApi,
+    private val challengeRemoteDataSource: ChallengeRemoteDataSource
 ) : ChallengeRepository {
     override fun getChallengeList(
         size: Int
@@ -36,5 +45,41 @@ class ChallengeRepositoryImpl @Inject constructor(
             ), pagingSourceFactory = pagingSourceFactory
         ).flow
 
+    }
+
+    override fun createChallenge(
+        challenge: Challenge,
+        imgFile: MultipartBody.Part?
+    ): Flow<JoinResponse> = flow {
+        emitResultTypeLoading()
+
+        val json = Gson().toJson(challenge)
+        val challengeRequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        challengeRemoteDataSource.createChallenge(challengeRequestBody, imgFile).collect {
+
+            when(it.code){
+
+                ResponseCodeStatus.CREATE_CHALLENGE_SUCCESS.code -> {
+                    emitResultTypeSuccess(
+                        it.changeMessageAndData(
+                            it.message,
+                            it.data
+                        )
+                    )
+                }
+
+                /** 실패 다른 경우들 처리해야함**/
+                ResponseCodeStatus.CREATE_CHALLENGE_FAIL.code -> {
+                    emitResultTypeFail(it.changeMessageAndData(
+                        it.message,
+                        it.data
+                    ))
+                }
+            }
+
+        }
+    }.catch {
+        emitResultTypeError(it)
     }
 }

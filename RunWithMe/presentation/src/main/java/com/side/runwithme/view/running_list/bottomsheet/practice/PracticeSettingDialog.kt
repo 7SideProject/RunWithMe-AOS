@@ -36,12 +36,12 @@ class PracticeSettingDialog(private val listener: PracticeSettingClickListener):
             }
             radioGroupPurpose.setOnCheckedChangeListener { _, checkId ->
                 when (checkId) {
-                    R.id.radio_btn_time -> {
+                    R.id.rb_time -> {
                         tvGoalAmount.text = "30"
                         tvGoalType.text = "분"
                         currentType = GOAL_TYPE_TIME
                     }
-                    R.id.radio_btn_distance -> {
+                    R.id.rb_distance -> {
                         tvGoalAmount.text = "3"
                         tvGoalType.text = "km"
                         currentType = GOAL_TYPE_DISTANCE
