@@ -20,7 +20,7 @@ class RunningListViewModel @Inject constructor(
     val myChallengeList get() = _myChallengeList.asStateFlow()
 
     private val _ttsClickFlag: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val ttsClickFlag get() = _ttsClickFlag.asStateFlow()
+    val ttsClickFlag = _ttsClickFlag.asStateFlow()
 
     fun getMyChallenges() {
 
@@ -34,7 +34,7 @@ class RunningListViewModel @Inject constructor(
 
     }
 
-    fun clickTTsBtn(){
+    fun onClickTTsBtn(){
         _ttsClickFlag.value = !_ttsClickFlag.value
         settingTTSOption()
     }

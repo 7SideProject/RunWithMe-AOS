@@ -101,7 +101,7 @@
                 android:layout_marginStart="@dimen/parent_horizontal_margin"
                 android:background="@drawable/btn_circle_main_color"
                 android:padding="@dimen/padding_regular"
-                btnTTS="@{runningListVM.ttsClickFlag}"
+                android:onClick="@{()->runningListVM.onClickTTsBtn()}"
                 app:layout_constraintBottom_toBottomOf="@+id/lottie_start_btn"
                 app:layout_constraintStart_toEndOf="@+id/lottie_start_btn"
                 app:layout_constraintTop_toTopOf="@+id/lottie_start_btn"
