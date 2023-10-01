@@ -20,14 +20,6 @@ enum class SERVICE_ACTION {
  */
 const val TIMER_UPDATE_INTERVAL = 50L
 
-/**
- * 목표 타입
- */
-enum class GOAL_TYPE {
-    TIME, DISTANCE
-}
-const val GOAL_TYPE_TIME = "time"
-const val GOAL_TYPE_DISTANCE = "distance"
 
 /**
  * Tracking 옵션

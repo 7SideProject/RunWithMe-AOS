@@ -24,13 +24,13 @@ interface DataStoreDataSource {
 
     suspend fun saveRunningGoalAmount(goalAmount: Long)
 
-    suspend fun saveRunningGoalType(goalType: String)
+    suspend fun saveRunningGoalType(goalType: Int)
 
     fun getRunningChallengeSeq(): Flow<Int>
 
     fun getRunningGoalAmount(): Flow<Long>
 
-    fun getRunningGoalType(): Flow<String>
+    fun getRunningGoalType(): Flow<Int>
     suspend fun saveTTSOption(option: Boolean)
 
     fun getTTSOption(): Flow<Boolean>

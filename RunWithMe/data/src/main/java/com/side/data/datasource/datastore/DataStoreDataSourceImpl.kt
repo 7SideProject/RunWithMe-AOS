@@ -67,7 +67,7 @@ class DataStoreDataSourceImpl @Inject constructor(
         dataStore.saveValue(GOAL_AMOUNT, goalAmount)
     }
 
-    override suspend fun saveRunningGoalType(goalType: String) {
+    override suspend fun saveRunningGoalType(goalType: Int) {
         dataStore.saveValue(GOAL_TYPE, goalType)
     }
 
@@ -79,8 +79,8 @@ class DataStoreDataSourceImpl @Inject constructor(
         emit(dataStore.getValue(GOAL_AMOUNT, DATASTORE_KEY.TYPE_LONG).first().toString().toLong())
     }
 
-    override fun getRunningGoalType(): Flow<String> = flow {
-        emit(dataStore.getValue(GOAL_TYPE, DATASTORE_KEY.TYPE_STRING).first().toString())
+    override fun getRunningGoalType(): Flow<Int> = flow {
+        emit(dataStore.getValue(GOAL_TYPE, DATASTORE_KEY.TYPE_STRING).first().toString().toInt())
     }
 
     override suspend fun saveTTSOption(option: Boolean) {

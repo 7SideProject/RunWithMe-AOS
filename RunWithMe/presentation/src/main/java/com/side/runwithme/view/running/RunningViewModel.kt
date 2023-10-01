@@ -17,7 +17,7 @@ import com.side.domain.usecase.running.PostRunRecordUseCase
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
 import com.side.domain.utils.onSuccess
-import com.side.runwithme.util.GOAL_TYPE_TIME
+import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import com.side.runwithme.util.getMutableStateFlow
@@ -55,7 +55,7 @@ class RunningViewModel @Inject constructor(
     val goalAmount
         get() = _goalAmount.asStateFlow()
 
-    private var _goalType = stateHandler.getMutableStateFlow<String>("goalType", GOAL_TYPE_TIME)
+    private var _goalType = stateHandler.getMutableStateFlow<Int>("goalType", GOAL_TYPE.TIME)
     val goalType
         get() = _goalType.asStateFlow()
 
@@ -68,13 +68,13 @@ class RunningViewModel @Inject constructor(
                 }.onFailure {
                     _weight.value = 65
                 }.onError {
-                    Log.d("test123", "getMyWeight: $it")
+                    Log.d("test123", "getMyWeight error:  $it")
                 }
             }
         }
     }
 
-    fun saveChallengeInfo(challengeSeq: Int, goalType: String, goalAmount: Long) {
+    fun saveChallengeInfo(challengeSeq: Int, goalType: Int, goalAmount: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             saveRunningChallengeSeqUseCase(challengeSeq)
             saveRunningChallengeGoalAmountUseCase(goalAmount)

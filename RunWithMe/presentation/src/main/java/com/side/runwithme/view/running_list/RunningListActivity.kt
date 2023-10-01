@@ -68,9 +68,9 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
                 val bottomSheet = RunningListBottomSheet(intentToRunningActivityClickListener, practiceSettingClickListener)
                 bottomSheet.show(supportFragmentManager, bottomSheet.tag)
             }
-            btnTts.setOnClickListener {
-                runningListViewModel.clickTTsBtn()
-            }
+//            btnTts.setOnClickListener {
+//                runningListViewModel.clickTTsBtn()
+//            }
         }
     }
 
@@ -79,13 +79,14 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
             /** 러닝 가능한 지 확인 **/
             val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
             intent.putExtra("challengeSeq", challengeSeq)
+            /** goalType, goalAmount 넘겨야함 **/
             startActivity(intent)
             finish()
         }
     }
 
     private val practiceSettingClickListener = object : PracticeSettingClickListener {
-        override fun onItemClick(type: String, amount: Int) {
+        override fun onItemClick(type: Int, amount: Int) {
             val intent = Intent(this@RunningListActivity, RunningActivity::class.java)
             intent.apply {
                 putExtra("challengeSeq", -1)

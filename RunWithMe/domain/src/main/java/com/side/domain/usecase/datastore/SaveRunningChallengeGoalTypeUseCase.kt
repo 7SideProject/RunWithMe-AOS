@@ -8,5 +8,5 @@ import javax.inject.Singleton
 class SaveRunningChallengeGoalTypeUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ){
-    operator suspend fun invoke(goalType: String) = dataStoreRepository.saveRunningGoalType(goalType)
+    operator suspend fun invoke(goalType: Int) = dataStoreRepository.saveRunningGoalType(goalType)
 }
