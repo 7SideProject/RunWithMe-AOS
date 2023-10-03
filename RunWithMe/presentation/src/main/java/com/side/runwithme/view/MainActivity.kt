@@ -21,7 +21,6 @@ import com.side.runwithme.databinding.ActivityMainBinding
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_ISRUNNING
 import com.side.runwithme.view.running.RunningActivity
-import com.side.runwithme.view.running_list.RunningListActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,7 +50,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
     private fun initClickListener(){
         binding.apply {
             floatingActionButton.setOnClickListener {
-                startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
+//                startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
+                navController.navigate(R.id.action_HomeFragment_to_runningListFragment)
             }
         }
     }

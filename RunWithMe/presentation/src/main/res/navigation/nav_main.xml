@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_MyPageFragment"
             app:destination="@id/MyPageFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_runningListFragment"
+            app:destination="@id/runningListFragment" />
 
     </fragment>
     <fragment
@@ -67,5 +70,9 @@
         android:id="@+id/MyPageFragment"
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
         android:label="MyPageFragment" />
+    <fragment
+        android:id="@+id/runningListFragment"
+        android:name="com.side.runwithme.view.running_list.RunningListFragment"
+        android:label="RunningListFragment" />
 
 </navigation>
