@@ -37,6 +37,14 @@ inline fun <T> Flow<T>.asResult(crossinline action: suspend (value: T) -> Result
     emitResultTypeError(it)
 }
 
+inline fun <T, R> Flow<T>.asResultOtherType(crossinline action: suspend (value: T) -> ResultType<R>): Flow<ResultType<R>> = this.transform {
+    emit(action(it))
+}.onStart {
+    emitResultTypeLoading()
+}.catch {
+    emitResultTypeError(it)
+}
+
 // datasource에서 사용하려 했지만 datasource 함수를 suspend로 모두 변경해야해서 생략 (datasource는 변경할만큼 귀찮은 코드가 아닌듯)
 //inline suspend fun <T> BaseResponse<T>.asResult(): Flow<BaseResponse<T>> =
 //    flow {
