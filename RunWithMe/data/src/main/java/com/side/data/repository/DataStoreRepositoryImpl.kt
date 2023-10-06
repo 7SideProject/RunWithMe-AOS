@@ -1,8 +1,8 @@
 package com.side.data.repository
 
-import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.util.asResult
+import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
@@ -25,48 +25,25 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun saveUser(user: User) = dataStoreDataSource.saveUser(user)
 
-    override fun getUserEmail(): Flow<ResultType<String>> = flow<ResultType<String>> {
-        emitResultTypeLoading()
-        dataStoreDataSource.getUserID().collect {
-            if(it.isBlank()){
-                emitResultTypeFail(it)
-            }else {
-                emitResultTypeSuccess(it)
-            }
+    override fun getUserEmail(): Flow<ResultType<String>> = dataStoreDataSource.getUserID().asResult {
+        if(it.isBlank()){
+            ResultType.Fail(it)
+        }else{
+            ResultType.Success(it)
         }
-    }.catch {
-        emitResultTypeError(it)
     }
 
-    override fun getUserSeq(): Flow<ResultType<Long>> = flow {
-        emitResultTypeLoading()
-        dataStoreDataSource.getUserSeq().collect {
-            if(it.isBlank()){
-                emitResultTypeFail(0L)
-            }else {
-                emitResultTypeSuccess(it.toLong())
-            }
+
+    override fun getUserSeq(): Flow<ResultType<Long>> = dataStoreDataSource.getUserSeq().asResultOtherType {
+        if(it.isBlank()){
+            ResultType.Fail(0L)
+        }else{
+            ResultType.Success(it.toLong())
         }
-    }.catch {
-        emitResultTypeError(it)
     }
 
-//    override fun getUserWeight(): Flow<ResultType<Int>> = flow {
-//        emitResultTypeLoading()
-//        dataStoreDataSource.getUserWeight().collect {
-//            if(it == 0){
-//                emitResultTypeFail(0)
-//            }else {
-//                emitResultTypeSuccess(it)
-//            }
-//        }
-//    }.catch {
-//        emitResultTypeError(it)
-//    }
 
-
-    override fun getUserWeight(): Flow<ResultType<Int>> =
-        dataStoreDataSource.getUserWeight().asResult {
+    override fun getUserWeight(): Flow<ResultType<Int>> = dataStoreDataSource.getUserWeight().asResult {
             if(it == 0){
                 ResultType.Fail(0)
             }else {
