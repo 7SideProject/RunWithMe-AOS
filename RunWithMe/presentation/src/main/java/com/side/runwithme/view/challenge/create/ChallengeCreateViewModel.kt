@@ -149,7 +149,7 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun setGoalType(type: Int){
+    fun setGoalType(type: GOAL_TYPE){
         goalType.value = type
     }
 

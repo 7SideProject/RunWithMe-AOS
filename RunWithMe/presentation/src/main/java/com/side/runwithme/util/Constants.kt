@@ -34,19 +34,12 @@ const val NOTIFICATION_ID = 1 // 채널 ID는 0이면 안됨
 
 /** 경로 표시 옵션 **/
 
-class DRAWING_POLYLINE_FAST {
-    companion object{
-        const val SHORT = 150L
-        const val MIDDLE = 70L
-        const val LONG = 7L
-    }
+
+enum class DRAWING_POLYLINE_FAST(val time: Long) {
+    SHORT(150L), MIDDLE(70L), LONG(7L)
 }
 
-class GOAL_TYPE {
-    companion object{
-        const val TIME = 0
-        const val DISTANCE = 1
-    }
-
-    
+enum class GOAL_TYPE {
+    TIME, DISTANCE
 }
+

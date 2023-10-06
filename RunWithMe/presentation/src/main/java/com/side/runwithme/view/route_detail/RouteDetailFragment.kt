@@ -95,7 +95,7 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
                             DRAWING_POLYLINE_FAST.LONG
                         }
 
-                        delay(delayTime)
+                        delay(delayTime.time)
                     }
 
                 }

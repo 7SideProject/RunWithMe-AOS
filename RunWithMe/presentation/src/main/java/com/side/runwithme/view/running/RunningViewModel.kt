@@ -55,7 +55,7 @@ class RunningViewModel @Inject constructor(
     val goalAmount
         get() = _goalAmount.asStateFlow()
 
-    private var _goalType = stateHandler.getMutableStateFlow<Int>("goalType", GOAL_TYPE.TIME)
+    private var _goalType = stateHandler.getMutableStateFlow<GOAL_TYPE>("goalType", GOAL_TYPE.TIME)
     val goalType
         get() = _goalType.asStateFlow()
 
@@ -88,7 +88,11 @@ class RunningViewModel @Inject constructor(
                 it.onSuccess {
                     _challengeSeq.value = it.challengeSeq
                     _goalAmount.value = it.goalAmount
-                    _goalType.value = it.goalType
+                    if(it.goalType == GOAL_TYPE.TIME.ordinal) {
+                        _goalType.value = GOAL_TYPE.TIME
+                    }else{
+                        _goalType.value = GOAL_TYPE.DISTANCE
+                    }
                 }.onFailure {
                     _postRunRecordEventFlow.emit(Event.GetDataStoreValuesError())
                 }.onError {

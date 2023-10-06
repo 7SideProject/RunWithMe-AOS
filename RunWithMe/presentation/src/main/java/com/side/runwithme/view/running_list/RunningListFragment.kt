@@ -15,6 +15,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentRunningListBinding
+import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
 import com.side.runwithme.view.running.RunningActivity
 import com.side.runwithme.view.running_list.bottomsheet.RunningListBottomSheet
@@ -93,11 +94,11 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
     }
 
     private val practiceSettingClickListener = object : PracticeSettingClickListener {
-        override fun onItemClick(type: Int, amount: Int) {
+        override fun onItemClick(type: GOAL_TYPE, amount: Int) {
             val intent = Intent(requireContext(), RunningActivity::class.java)
             intent.apply {
                 putExtra("challengeSeq", -1)
-                putExtra("goalType", type)
+                putExtra("goalType", type.ordinal)
                 putExtra("goalAmount", amount)
             }
             startActivity(intent)
