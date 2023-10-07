@@ -32,7 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="240dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/img_crew"
+                    tools:src="@drawable/img_crew"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
