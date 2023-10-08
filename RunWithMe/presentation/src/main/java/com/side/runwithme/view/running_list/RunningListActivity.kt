@@ -101,6 +101,7 @@ class RunningListActivity : BaseActivity<ActivityRunningListBinding>(R.layout.ac
         mapFragment.getMapAsync(this)
 
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+
     }
 
     override fun onMapReady(naverMap: NaverMap) {

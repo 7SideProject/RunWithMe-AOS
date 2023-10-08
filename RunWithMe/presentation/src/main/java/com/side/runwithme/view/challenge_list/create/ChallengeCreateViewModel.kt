@@ -258,8 +258,8 @@ class ChallengeCreateViewModel @Inject constructor(
             goalDays = goalDays.value.toInt(),
             goalType = goalType,
             goalAmount = goalAmount,
-            timeStart = dateStart.value,
-            timeEnd = dateEnd.value,
+            dateStart = dateStart.value,
+            dateEnd = dateEnd.value,
             maxMember = maxMember.value.toInt(),
             cost = cost.value.toInt(),
             password = password.value
