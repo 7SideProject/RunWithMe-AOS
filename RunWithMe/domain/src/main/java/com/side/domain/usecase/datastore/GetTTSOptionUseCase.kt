@@ -5,8 +5,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SaveRunningChallengeGoalTypeUseCase @Inject constructor(
+class GetTTSOptionUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ){
-    operator suspend fun invoke(goalType: Int) = dataStoreRepository.saveRunningGoalType(goalType)
+    operator fun invoke() = dataStoreRepository.getTTSOption()
 }

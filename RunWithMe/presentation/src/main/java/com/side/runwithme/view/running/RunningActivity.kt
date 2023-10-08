@@ -94,7 +94,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     override fun init() {
         val intent = intent
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
-        val type = intent.getStringExtra("goalType") ?: ""
+        val type = intent.getIntExtra("goalType", -1)
         val goal = intent.getIntExtra("goalAmount", 0) * 1000L
 
         initMapView()
@@ -106,7 +106,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
 
-            if(challengeSeq == 0 || type.isEmpty() || goal == 0L){
+            if(challengeSeq == 0 || type == -1 || goal == 0L){
                 startError()
             }
 
@@ -163,7 +163,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
-                runningViewModel.saveChallengeInfo(0, "", 0L)
+                runningViewModel.saveChallengeInfo(0, -1, 0L)
 
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
@@ -200,13 +200,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             ibStart.setOnClickListener {
                 runningBtnUI()
 
-                sendCommandToService(ACTION_RESUME_SERVICE)
+                sendCommandToService(SERVICE_ACTION.RESUME.name)
             }
 
             ibPause.setOnClickListener {
                 pauseBtnUI()
 
-                sendCommandToService(ACTION_PAUSE_SERVICE)
+                sendCommandToService(SERVICE_ACTION.PAUSE.name)
             }
 
             ibStop.setOnClickListener {
@@ -273,7 +273,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeTimeText(formattedTime)
 
             // 프로그래스바 진행도 변경
-            if (it > 0 && runningViewModel.goalType.value == GOAL_TYPE_TIME) {
+            if (it > 0 && runningViewModel.goalType.value == GOAL_TYPE.TIME) {
                 binding.progressBarGoal.progress =
                     if ((it / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount.value / 100)).toInt()
             }
@@ -286,7 +286,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             changeCalorie(sumDistance)
 
             // 프로그래스바 진행도 변경
-            if (sumDistance > 0 && runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
+            if (sumDistance > 0 && runningViewModel.goalType.value == GOAL_TYPE.DISTANCE) {
                 binding.progressBarGoal.progress =
                     if ((sumDistance / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (sumDistance / (runningViewModel.goalAmount.value / 100)).toInt()
             }
@@ -338,10 +338,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private suspend fun startRun() {
-        sendCommandToService(ACTION_SHOW_RUNNING_ACTIVITY)
+        sendCommandToService(SERVICE_ACTION.FIRST_SHOW.name)
         delay(3000L)
 
-        sendCommandToService(ACTION_START_SERVICE)
+        sendCommandToService(SERVICE_ACTION.START.name)
 
         bindService()
 
@@ -386,13 +386,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private suspend fun saveRunRecord() {
         var completed = "N"
         /** goalAmount하고 sumDistance, runningTime의 단위 맞춰야함 **/
-        if(runningViewModel.goalType.value == GOAL_TYPE_DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
+        if(runningViewModel.goalType.value == GOAL_TYPE.DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
             completed = "Y"
         }
 
         val runningTime = (currentTimeInMillis / 1000).toInt()
 
-        if(runningViewModel.goalType.value == GOAL_TYPE_TIME && runningViewModel.goalAmount.value <= runningTime){
+        if(runningViewModel.goalType.value == GOAL_TYPE.TIME && runningViewModel.goalAmount.value <= runningTime){
             completed = "Y"
         }
 
@@ -469,7 +469,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun stopService(){
         unbindService(serviceConnection)
-        sendCommandToService(ACTION_STOP_SERVICE)
+        sendCommandToService(SERVICE_ACTION.STOP.name)
     }
 
 
@@ -483,7 +483,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvTime.text = time
 
-            if (runningViewModel.goalType.value == GOAL_TYPE_TIME) {
+            if (runningViewModel.goalType.value == GOAL_TYPE.TIME) {
                 /** goal amount 변경 **/
             }
         }
@@ -493,7 +493,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         binding.apply {
             tvDistance.text = TrackingUtility.getFormattedDistance(sumDistance)
 
-            if (runningViewModel.goalType.value == GOAL_TYPE_DISTANCE) {
+            if (runningViewModel.goalType.value == GOAL_TYPE.DISTANCE) {
                 /** goal amount 변경 **/
             }
         }

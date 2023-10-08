@@ -16,7 +16,8 @@ object preferencesKeys {
     val WEIGHT = intPreferencesKey("weight")
     val CHALLENG_SEQ = intPreferencesKey("challeng_seq")
     val GOAL_AMOUNT = longPreferencesKey("goal_amount")
-    val GOAL_TYPE = stringPreferencesKey("goal_type")
+    val GOAL_TYPE = intPreferencesKey("goal_type")
+    val TTS_OPTION = booleanPreferencesKey("tts_option")
 }
 
 

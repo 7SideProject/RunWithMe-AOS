@@ -11,23 +11,15 @@ const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
 
-const val ACTION_START_OR_RESUME_SERVICE = "action_start_or_resume_service"
-const val ACTION_RESUME_SERVICE = "action_resume_service"
-const val ACTION_START_SERVICE = "action_start_service"
-const val ACTION_STOP_SERVICE = "action_stop_service"
-const val ACTION_PAUSE_SERVICE = "action_pause_service"
-const val ACTION_SHOW_RUNNING_ACTIVITY = "ACTION_SHOW_RUNNING_ACTIVITY"
+enum class SERVICE_ACTION(val message: String) {
+    START("러닝을 시작합니다."), RESUME("러닝을 다시 시작합니다."), STOP("러닝이 종료되었습니다."), PAUSE("러닝이 일시중지 되었습니다."), FIRST_SHOW("")
+}
 
 /**
  * 타이머 갱신 주기
  */
 const val TIMER_UPDATE_INTERVAL = 50L
 
-/**
- * 목표 타입
- */
-const val GOAL_TYPE_TIME = "time"
-const val GOAL_TYPE_DISTANCE = "distance"
 
 /**
  * Tracking 옵션
@@ -42,19 +34,11 @@ const val NOTIFICATION_ID = 1 // 채널 ID는 0이면 안됨
 
 /** 경로 표시 옵션 **/
 
-class DRAWING_POLYLINE_FAST {
-    companion object{
-        const val SHORT = 150L
-        const val MIDDLE = 70L
-        const val LONG = 7L
-    }
+
+enum class DRAWING_POLYLINE_FAST(val time: Long) {
+    SHORT(150L), MIDDLE(70L), LONG(7L)
 }
 
-class GOAL_TYPE {
-    companion object{
-        const val TIME = 0
-        const val DISTANCE = 1
-    }
-
-    
+enum class GOAL_TYPE {
+    TIME, DISTANCE
 }
