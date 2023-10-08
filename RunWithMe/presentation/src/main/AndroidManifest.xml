@@ -44,9 +44,6 @@
             android:name=".view.running_result.RunningResultActivity"
             android:exported="false" />
         <activity
-            android:name=".view.running_list.RunningListActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.running.RunningActivity"
             android:exported="false" />
         <activity
