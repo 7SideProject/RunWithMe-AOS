@@ -19,10 +19,12 @@ class PracticeSettingDialog(private val listener: PracticeSettingClickListener):
         binding.apply {
             btnUp.setOnClickListener {
                 val currentValue = tvGoalAmount.text.toString().toInt()
-                if(currentType == GOAL_TYPE.TIME && currentValue < 600){
-                    tvGoalAmount.text = (currentValue + 10).toString()
-                }else if(currentType == GOAL_TYPE.DISTANCE && currentValue < 60){
-                    tvGoalAmount.text = (currentValue + 1).toString()
+                if(currentType == GOAL_TYPE.TIME){
+                    val timeMax = 600
+                    tvGoalAmount.text = (currentValue + 10).coerceAtMost(timeMax).toString()
+                }else if(currentType == GOAL_TYPE.DISTANCE){
+                    val distanceMax = 60
+                    tvGoalAmount.text = (currentValue + 1).coerceAtMost(distanceMax).toString()
                 }
             }
             btnDown.setOnClickListener {
