@@ -472,22 +472,22 @@ class RunningService : LifecycleService() {
                     _isFirstRun = false
                     _startTime = System.currentTimeMillis()
                     _startDay = LocalDate.now().toString()
-                    ttsSpeakAndVibrate("러닝을 시작합니다.")
+                    ttsSpeakAndVibrate(SERVICE_ACTION.START.message)
                 }
                 // 재개 되었을 때
                 SERVICE_ACTION.RESUME.name -> {
                     startTimer()
                     _startTime = System.currentTimeMillis()
-                    ttsSpeakAndVibrate("러닝을 다시 시작합니다.")
+                    ttsSpeakAndVibrate(SERVICE_ACTION.RESUME.message)
                 }
                 // 일시정지 되었을 때
                 SERVICE_ACTION.PAUSE.name -> {
-                    ttsSpeakAndVibrate("러닝이 일시 중지되었습니다.")
+                    ttsSpeakAndVibrate(SERVICE_ACTION.PAUSE.message)
                     pauseService()
                 }
                 // 종료 되었을 때
                 SERVICE_ACTION.STOP.name -> {
-                    ttsSpeakAndVibrate("러닝이 종료되었습니다.")
+                    ttsSpeakAndVibrate(SERVICE_ACTION.STOP.message)
                     killService()
                 }
                 // 처음 화면 켰을 때

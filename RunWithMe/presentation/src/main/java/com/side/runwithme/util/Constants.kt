@@ -11,8 +11,8 @@ const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
 
-enum class SERVICE_ACTION {
-    START, RESUME, STOP, PAUSE, FIRST_SHOW
+enum class SERVICE_ACTION(val message: String) {
+    START("러닝을 시작합니다."), RESUME("러닝을 다시 시작합니다."), STOP("러닝이 종료되었습니다."), PAUSE("러닝이 일시중지 되었습니다."), FIRST_SHOW("")
 }
 
 /**
@@ -42,4 +42,3 @@ enum class DRAWING_POLYLINE_FAST(val time: Long) {
 enum class GOAL_TYPE {
     TIME, DISTANCE
 }
-
