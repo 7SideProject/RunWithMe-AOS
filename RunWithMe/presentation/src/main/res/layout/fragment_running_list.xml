@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.running_list.RunningListActivity">
+        tools:context=".view.running_list.RunningListFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_map"
@@ -25,7 +25,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".view.running.list.RunningListActivity"
+            tools:context=".view.running.list.RunningListFragment"
             tools:visibility="visible">
 
             <fragment
@@ -54,18 +54,28 @@
                 app:lottie_fileName="start_button.json"
                 app:lottie_loop="true" />
 
+            <ImageView
+                android:id="@+id/iv_back_button"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/baseline_arrow_back_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
             <TextView
                 android:id="@+id/tv_one"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/parent_margin"
+                android:layout_marginStart="@dimen/parent_margin"
                 android:fontFamily="@font/noto_sans_bold"
                 android:gravity="center"
                 android:text="안녕하세요 "
                 android:textColor="@color/main_black"
-                android:textSize="@dimen/fontsize_h4"
+                android:textSize="@dimen/fontsize_h5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/iv_back_button"/>
 
             <TextView
                 android:id="@+id/tv_nick_name"
@@ -74,7 +84,7 @@
                 android:fontFamily="@font/noto_sans_bold"
                 android:gravity="center"
                 tools:text="도널드!"
-                android:textSize="@dimen/fontsize_h4"
+                android:textSize="@dimen/fontsize_h5"
                 android:textColor="@color/main_blue"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_one"
                 app:layout_constraintStart_toEndOf="@+id/tv_one"
@@ -90,7 +100,7 @@
                 android:gravity="center"
                 android:text="오늘도 달려볼까요?"
                 android:textColor="@color/main_black"
-                android:textSize="@dimen/fontsize_h4"
+                android:textSize="@dimen/fontsize_h5"
                 app:layout_constraintStart_toStartOf="@+id/tv_one"
                 app:layout_constraintTop_toBottomOf="@+id/tv_one" />
 

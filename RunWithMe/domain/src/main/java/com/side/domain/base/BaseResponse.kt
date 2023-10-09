@@ -1,7 +1,5 @@
 package com.side.domain.base
 
-import com.google.gson.annotations.SerializedName
-
 data class BaseResponse<out T>(
     val code: Int,
     val message: String,

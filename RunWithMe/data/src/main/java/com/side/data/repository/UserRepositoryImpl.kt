@@ -61,6 +61,7 @@ class UserRepositoryImpl @Inject constructor(
         emit(ResultType.Loading)
         userRemoteDataSource.join(user.mapperToJoinRequest()).collect {
             when (it.code) {
+
                 ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                     emitResultTypeSuccess(
                         it.changeData(
@@ -99,6 +100,7 @@ class UserRepositoryImpl @Inject constructor(
             Log.d("test123", "loginWithEmail: ${it.data}")
 
             when (it.code) {
+
                 ResponseCodeStatus.LOGIN_SUCCESS.code -> {
                     val userResponse = (it.data as EmailLoginResponse).mapperToUser()
 
@@ -134,7 +136,6 @@ class UserRepositoryImpl @Inject constructor(
                     emitResultTypeFail(
                         it.changeData(null)
                     )
-
                 }
             }
         }

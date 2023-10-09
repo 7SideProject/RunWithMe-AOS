@@ -17,16 +17,20 @@ interface DataStoreRepository {
 
     suspend fun saveToken(jwt: String, refreshToken: String)
 
-    fun getJWT(): Flow<String>
+//    fun getJWT(): Flow<String>
 
-    fun getRefreshToken(): Flow<String>
+//    fun getRefreshToken(): Flow<String>
 
     suspend fun saveRunningChallengeSeq(challengeSeq: Int)
 
     suspend fun saveRunningGoalAmount(goalAmount: Long)
 
-    suspend fun saveRunningGoalType(goalType: String)
+    suspend fun saveRunningGoalType(goalType: Int)
 
     fun getRunningChallengInfo() : Flow<ResultType<RunningInfo>>
+
+    suspend fun saveTTSOption(option: Boolean)
+
+    fun getTTSOption(): Flow<Boolean>
 
 }
