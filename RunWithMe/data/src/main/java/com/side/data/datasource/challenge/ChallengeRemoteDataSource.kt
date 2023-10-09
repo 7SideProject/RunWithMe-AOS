@@ -18,4 +18,6 @@ interface ChallengeRemoteDataSource {
     fun getRecruitingChallengeList(
         cursor:Long, size: Int
     ): Flow<BaseResponse<List<Challenge>>>
+
+    fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<BaseResponse<String>>
 }

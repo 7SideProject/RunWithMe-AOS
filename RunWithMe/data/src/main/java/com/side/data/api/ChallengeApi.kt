@@ -25,4 +25,6 @@ interface ChallengeApi {
     @POST("challenge")
     suspend fun createChallenge(@Part("challengeCreateDto") challengeCreateDto: RequestBody, @Part image: MultipartBody.Part?): BaseResponse<Any?>
 
+    @GET("challenge/{challengeSeq}/is")
+    suspend fun isChallengeAlreadyJoin(@Part("challengeSeq") challengeSeq: Long): BaseResponse<String>
 }
