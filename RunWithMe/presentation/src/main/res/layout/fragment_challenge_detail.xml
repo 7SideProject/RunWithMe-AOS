@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="challengeDetailVM"
+            type="com.side.runwithme.view.challenge_list.detail.ChallengeDetailViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -42,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_regular"
                     android:layout_marginTop="@dimen/margin_regular"
+                    android:text="@{challengeDetailVM.challenge.name}"
                     app:layout_constraintStart_toStartOf="@id/iv_challenge_detail"
                     app:layout_constraintTop_toBottomOf="@id/iv_challenge_detail"
                     tools:text="크루 이름" />
@@ -52,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_regular"
+                    android:text="@{challengeDetailVM.managerName}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_challegne_name"
                     tools:text="크루장 이름" />
@@ -63,6 +71,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/fontsize_h5"
                     android:textStyle="bold"
+                    android:text="@{challengeDetailVM.challenge.description}"
                     app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
                     app:layout_constraintTop_toBottomOf="@id/tv_manager_name"
                     tools:text="크루 설명" />
@@ -74,6 +83,7 @@
                     android:layout_marginTop="@dimen/margin_small"
                     android:background="@drawable/border_text_box_gray"
                     android:gravity="center"
+                    android:text="@{challengeDetailVM.challenge.getGoalTypeNaming()}"
                     app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
                     app:layout_constraintTop_toBottomOf="@id/tv_description"
                     tools:text="거리" />
@@ -85,6 +95,7 @@
                     android:layout_marginStart="@dimen/margin_regular"
                     android:background="@drawable/border_text_box_gray"
                     android:gravity="center"
+                    goalDays="@{challengeDetailVM.challenge.goalDays}"
                     app:layout_constraintStart_toEndOf="@id/tv_goal_type"
                     app:layout_constraintTop_toTopOf="@id/tv_goal_type"
                     tools:text="주 4회" />
@@ -103,6 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    runningTerm="@{challengeDetailVM.challenge}"
                     app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
                     app:layout_constraintTop_toTopOf="@id/tv_term_header"
                     tools:text="2022-08-18 ~ 2022-08-24" />
@@ -120,6 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:text="@{challengeDetailVM.challenge.getGoalAmountWithUnit()}"
                     app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
                     app:layout_constraintTop_toTopOf="@id/tv_goal_header"
                     tools:text="3km" />
@@ -262,10 +275,12 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_running"
-            style="@style/StrongButton"
+            tools:style="@style/StrongButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/running"
+            tools:text="러닝"
+            android:onClick="@{()->challengeDetailVM.onClickButton()}"
+            challengeState="@{challengeDetailVM.challengeState}"
             app:layout_constraintBottom_toBottomOf="parent" />
 
 

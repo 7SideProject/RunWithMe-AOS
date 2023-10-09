@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_challengeListFragment_to_challengeCreateStep1Fragment"
             app:destination="@id/challengeCreateStep1Fragment" />
+        <action
+            android:id="@+id/action_challengeListFragment_to_challengeDetailFragment"
+            app:destination="@id/challengeDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/challengeSearchFragment"
@@ -74,5 +77,20 @@
         android:id="@+id/runningListFragment"
         android:name="com.side.runwithme.view.running_list.RunningListFragment"
         android:label="RunningListFragment" />
+    <fragment
+        android:id="@+id/challengeDetailFragment"
+        android:name="com.side.runwithme.view.challenge_list.detail.ChallengeDetailFragment"
+        android:label="ChallengeDetailFragment" >
+        <argument
+            android:name="challenge"
+            app:argType="com.side.runwithme.model.ChallengeParcelable"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment"
+            app:popUpTo="@id/HomeFragment"
+            />
+    </fragment>
 
 </navigation>
