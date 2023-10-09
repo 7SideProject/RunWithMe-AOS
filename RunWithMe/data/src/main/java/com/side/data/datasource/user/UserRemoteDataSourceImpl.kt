@@ -7,6 +7,7 @@ import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.JoinResponse
+import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +24,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
         emit(userApi.login(loginRequest.code, loginRequest.state))
     }
 
-    override fun join(joinRequest: JoinRequest): Flow<BaseResponse<JoinResponse>> = flow {
+    override fun join(joinRequest: JoinRequest): Flow<BaseResponse<UserResponse>> = flow {
         emit(userApi.join(joinRequest))
     }
 
@@ -31,5 +32,9 @@ class UserRemoteDataSourceImpl @Inject constructor(
         flow {
             emit(loginApi.loginWithEmail(emailLoginRequest))
         }
+
+    override fun getUserProfile(userSeq: Long): Flow<BaseResponse<UserResponse>> = flow {
+        emit(userApi.getUserProfile(userSeq))
+    }
 
 }
