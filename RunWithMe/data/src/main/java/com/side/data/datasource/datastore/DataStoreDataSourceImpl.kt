@@ -6,9 +6,9 @@ import com.side.data.util.DATASTORE_KEY
 import com.side.data.util.getDecryptStringValue
 import com.side.data.util.getValue
 import com.side.data.util.preferencesKeys.CHALLENG_SEQ
+import com.side.data.util.preferencesKeys.EMAIL
 import com.side.data.util.preferencesKeys.GOAL_AMOUNT
 import com.side.data.util.preferencesKeys.GOAL_TYPE
-import com.side.data.util.preferencesKeys.ID
 import com.side.data.util.preferencesKeys.JWT
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
@@ -29,13 +29,13 @@ class DataStoreDataSourceImpl @Inject constructor(
 ): DataStoreDataSource {
 
     override suspend fun saveUser(user: User) {
-        dataStore.saveEncryptStringValue(ID, user.id)
+        dataStore.saveEncryptStringValue(EMAIL, user.email)
         dataStore.saveEncryptStringValue(SEQ, user.seq.toString())
         dataStore.saveValue(WEIGHT, user.weight)
     }
 
-    override fun getUserID(): Flow<String> = flow {
-        emit(dataStore.getDecryptStringValue(ID).first().toString())
+    override fun getUserEmail(): Flow<String> = flow {
+        emit(dataStore.getDecryptStringValue(EMAIL).first().toString())
     }
 
     override fun getUserSeq(): Flow<String> = flow {

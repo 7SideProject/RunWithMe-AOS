@@ -25,7 +25,7 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun saveUser(user: User) = dataStoreDataSource.saveUser(user)
 
-    override fun getUserEmail(): Flow<ResultType<String>> = dataStoreDataSource.getUserID().asResult {
+    override fun getUserEmail(): Flow<ResultType<String>> = dataStoreDataSource.getUserEmail().asResult {
         if(it.isBlank()){
             ResultType.Fail(it)
         }else{
