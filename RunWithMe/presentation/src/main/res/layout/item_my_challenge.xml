@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="challenge"
+            type="com.side.domain.model.Challenge" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:fontFamily="@font/noto_sans_bold"
-                    android:text="감크루"
+                    android:text="@{challenge.name}"
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h4"
                     app:layout_constraintStart_toEndOf="@id/iv_challenge"
@@ -67,6 +69,7 @@
                     android:gravity="center"
                     android:textColor="@color/main_grey"
                     android:textSize="@dimen/fontsize_caption"
+                    runningTermByChallenge="@{challenge}"
                     app:layout_constraintStart_toEndOf="@id/iv_challenge"
                     app:layout_constraintTop_toTopOf="@id/iv_challenge"
                     tools:text="2022/07/21 ~ 2022/08/21" />

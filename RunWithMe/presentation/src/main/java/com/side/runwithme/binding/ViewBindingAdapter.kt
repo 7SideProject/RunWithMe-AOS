@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
+import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.BASE_URL
@@ -30,6 +31,11 @@ fun TextView.setRunningResultDay(day: String) {
 
 @BindingAdapter("runningTerm")
 fun TextView.setRunningTerm(challenge: ChallengeParcelable?){
+    this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
+}
+
+@BindingAdapter("runningTermByChallenge")
+fun TextView.setRunningTerm(challenge: Challenge?){
     this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
 }
 
