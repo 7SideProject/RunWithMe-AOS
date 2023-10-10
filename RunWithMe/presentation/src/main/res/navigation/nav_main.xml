@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_HomeFragment_to_runningListFragment"
             app:destination="@id/runningListFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_myChallengeFragment"
+            app:destination="@id/myChallengeFragment" />
 
     </fragment>
     <fragment
@@ -91,6 +94,14 @@
             app:destination="@id/HomeFragment"
             app:popUpTo="@id/HomeFragment"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/myChallengeFragment"
+        android:name="com.side.runwithme.view.my_challenge.MyChallengeFragment"
+        android:label="MyChallengeFragment" >
+        <action
+            android:id="@+id/action_myChallengeFragment_to_challengeDetailFragment"
+            app:destination="@id/challengeDetailFragment" />
     </fragment>
 
 </navigation>

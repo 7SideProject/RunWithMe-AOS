@@ -31,7 +31,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         moveChallengeList()
                     }
 
-
+                    HomeViewModel.MoveEvent.MyChallengeListAction -> {
+                        moveMyChallengeList()
+                    }
                 }
             }
         }
@@ -42,11 +44,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         findNavController().navigate(R.id.action_homeFragment_to_challengeListFragment)
     }
 
+    private fun moveMyChallengeList(){
+        findNavController().navigate(R.id.action_HomeFragment_to_myChallengeFragment)
+    }
+
     private fun initClickListener() {
         binding.apply {
             /** CardView에는 onClick binding이 작동하지 않는 현상 발생 **/
             cvChallenge.setOnClickListener {
                 homeViewModel.onClickChallengeList()
+            }
+
+            cvMyRunning.setOnClickListener {
+                homeViewModel.onClickMyChallengeList()
             }
         }
     }

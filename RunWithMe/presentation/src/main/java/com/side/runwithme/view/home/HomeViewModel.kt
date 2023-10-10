@@ -31,9 +31,14 @@ class HomeViewModel(): MoveEventViewModel<HomeViewModel.MoveEvent>() {
         emitMoveEventFlow(MoveEvent.ChallengeListAction)
     }
 
+    fun onClickMyChallengeList(){
+        emitMoveEventFlow(MoveEvent.MyChallengeListAction)
+    }
 
-    sealed class MoveEvent {
-        object ChallengeListAction : MoveEvent()
+
+    sealed interface MoveEvent {
+        object ChallengeListAction : MoveEvent
+        object MyChallengeListAction : MoveEvent
 
     }
 
