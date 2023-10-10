@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.Binder
 import android.os.Build
@@ -530,7 +531,12 @@ class RunningService : LifecycleService() {
             createNotificationChannel(notificationManager)
         }
 
-        startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            startForeground(NOTIFICATION_ID, baseNotificationBuilder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+        }else {
+            startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
+        }
 
         // 초가 흐를 때마다 알림창의 시간 갱신
         timeRunInSeconds.observe(this) {
