@@ -19,4 +19,8 @@ interface ChallengeRepository {
     fun createChallenge(challenge: Challenge, imgFile: MultipartBody.Part?): Flow<JoinResponse>
 
     fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>>
+
+    fun getMyChallengeList(
+        size: Int
+    ): Flow<PagingChallengeResponse>
 }

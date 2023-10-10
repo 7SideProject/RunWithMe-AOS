@@ -36,4 +36,11 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<BaseResponse<String>> = flow {
         emit(challengeApi.isChallengeAlreadyJoin(challengeSeq))
     }
+
+    override fun getMyChallengeList(
+        cursorSeq: Long,
+        size: Int
+    ): Flow<BaseResponse<List<Challenge>>> = flow {
+        emit(challengeApi.getMyChallengeList(cursorSeq, size))
+    }
 }

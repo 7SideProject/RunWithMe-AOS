@@ -10,6 +10,7 @@ import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Query
 
 interface ChallengeRemoteDataSource {
 
@@ -20,4 +21,6 @@ interface ChallengeRemoteDataSource {
     ): Flow<BaseResponse<List<Challenge>>>
 
     fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<BaseResponse<String>>
+
+    fun getMyChallengeList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<Challenge>>>
 }

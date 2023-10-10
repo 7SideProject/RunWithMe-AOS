@@ -27,4 +27,7 @@ interface ChallengeApi {
 
     @GET("challenge/{challengeSeq}/is")
     suspend fun isChallengeAlreadyJoin(@Part("challengeSeq") challengeSeq: Long): BaseResponse<String>
+
+    @GET("challenge/my")
+    suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
 }

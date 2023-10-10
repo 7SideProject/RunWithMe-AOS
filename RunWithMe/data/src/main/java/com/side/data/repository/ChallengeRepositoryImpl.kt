@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
+import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
@@ -124,4 +125,29 @@ class ChallengeRepositoryImpl @Inject constructor(
                 }
             }
         }
+
+    override fun getMyChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
+        emitResultTypeLoading()
+
+        val pagingSourceFactory =
+            {
+                MyChallengeListPagingSource(
+                    size,
+                    challengeRemoteDataSource = challengeRemoteDataSource
+                )
+            }
+        Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow.collect {
+
+            emitResultTypeSuccess(it)
+        }
+
+    }.catch {
+        emitResultTypeError(it)
+    }
 }
