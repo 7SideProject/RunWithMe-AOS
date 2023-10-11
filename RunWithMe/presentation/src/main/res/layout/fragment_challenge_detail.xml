@@ -59,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_regular"
-                    android:text="@{challengeDetailVM.managerName}"
+                    android:text="@{challengeDetailVM.challenge.managerName}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_challegne_name"
                     tools:text="크루장 이름" />

@@ -36,6 +36,7 @@
     <string name="id">아이디</string>
     <string name="phone">핸드폰 번호</string>
     <string name="verify_number">인증 번호</string>
+    <string name="entry_fee">참가비</string>
     <string name="password">비밀번호</string>
     <string name="password_confirm">비밀번호 확인</string>
     <string name="wrong_password">입력하신 비밀번호가 일치하지 않습니다.</string>
@@ -88,8 +89,9 @@
     <string name="running_result_day">%s 년 %d 월 %d 일 러닝</string>
 
     <string name="challenge_period">%d ~ %d</string>
+    <string name="challenge_member_limit">%d / %d</string>
     <string name="challenge_cycle">주 %d회</string>
-    <string name="challenge_distance">주 %d회</string>
+    <string name="challenge_cost">%dP</string>
 
     <string name="cumulative_record">누적 기록</string>
     <string name="total_distance">총 거리</string>
