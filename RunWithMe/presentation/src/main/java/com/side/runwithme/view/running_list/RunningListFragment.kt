@@ -117,6 +117,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
             }
         mapFragment.getMapAsync(this)
 
+
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
 
@@ -129,15 +130,6 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        // fragment가 destroy될 때 메모리에서 해제될테지만
-        // 명시적으로 설정하여 확실하게 해제 해주기 위해
-        naverMap = null
-        locationSource = null
     }
 
 }
