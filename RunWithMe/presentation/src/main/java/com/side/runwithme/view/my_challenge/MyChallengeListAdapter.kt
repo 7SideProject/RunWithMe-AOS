@@ -26,7 +26,7 @@ class MyChallengeListAdapter(private val myChallengeListAdapterClickListener: My
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemMyChallengeBinding.inflate(LayoutInflater.from(parent.context), false)
+        val binding = ItemMyChallengeBinding.inflate(LayoutInflater.from(parent.context), parent,false)
         return ViewHolder(binding)
     }
 
