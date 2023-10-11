@@ -253,6 +253,7 @@ class ChallengeCreateViewModel @Inject constructor(
             seq = 0,
             managerSeq = 0,
             name = challengeName.value,
+            managerName = "",
             description = challengeDescription.value,
             imgSeq = 0,
             goalDays = goalDays.value.toInt(),
@@ -260,6 +261,7 @@ class ChallengeCreateViewModel @Inject constructor(
             goalAmount = goalAmount,
             dateStart = dateStart.value,
             dateEnd = dateEnd.value,
+            nowMember = 0,
             maxMember = maxMember.value.toInt(),
             cost = cost.value.toInt(),
             password = password.value

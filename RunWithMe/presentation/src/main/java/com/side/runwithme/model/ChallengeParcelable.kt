@@ -8,6 +8,7 @@ import java.lang.Math.round
 data class ChallengeParcelable(
     val seq : Long,
     val managerSeq: Long,
+    val managerName: String,
     val name: String,
     val description: String,
     val imgSeq: Long,
@@ -16,6 +17,7 @@ data class ChallengeParcelable(
     val goalAmount: Long,
     val dateStart : String,
     val dateEnd: String,
+    val nowMember: Int,
     val maxMember: Int,
     val cost: Int,
     val password: String? = null
@@ -30,7 +32,7 @@ data class ChallengeParcelable(
 
     fun getGoalAmountWithUnit() : String =
         if(goalType == "distance"){
-            "${round((1F * goalAmount / 1000) / 100) / 100}km"
+            "${goalAmount / 1000}km"
         }else {
             "${goalAmount / 60}분"
         }
