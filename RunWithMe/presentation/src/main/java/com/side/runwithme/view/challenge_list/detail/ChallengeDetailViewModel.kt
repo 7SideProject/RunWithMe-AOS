@@ -36,9 +36,6 @@ class ChallengeDetailViewModel @Inject constructor(
     private val _challenge = MutableStateFlow<ChallengeParcelable?>(null)
     val challenge = _challenge.asStateFlow()
 
-    private val _managerName = MutableStateFlow<String>("")
-    val managerName = _managerName.asStateFlow()
-
     private val isJoin = MutableStateFlow<Boolean>(false)
 
     val challengeState = combine(isJoin, challenge){ isJoin, challenge ->
@@ -76,7 +73,7 @@ class ChallengeDetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getUserProfileUseCase(challenge.value!!.managerSeq).collect {
                 it.onSuccess {
-                    _managerName.value = it.data?.nickname ?: ""
+                    _challenge.value = _challenge.value!!.copy(managerName = it.data?.nickname ?: "")
                 }.onFailure {
 
                 }.onError {
