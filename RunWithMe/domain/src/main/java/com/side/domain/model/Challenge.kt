@@ -11,8 +11,8 @@ data class Challenge(
     val goalDays: Int,
     val goalType: String,
     val goalAmount: Long,
-    val timeStart : String,
-    val timeEnd: String,
+    val dateStart : String,
+    val dateEnd: String,
     val maxMember: Int,
     val cost: Int,
     val password: String? = null
