@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/challengeCreateStep1Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep1Fragment"
+        android:name="com.side.runwithme.view.challenge_list.create.ChallengeCreateStep1Fragment"
         android:label="ChallengeCreateStep1Fragment"
         tools:layout="@layout/fragment_challenge_create1">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeCreateStep2Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep2Fragment"
+        android:name="com.side.runwithme.view.challenge_list.create.ChallengeCreateStep2Fragment"
         android:label="ChallengeCreateStep2Fragment" >
         <action
             android:id="@+id/action_challengeCreateStep2Fragment_to_challengeCreateStep3Fragment"
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeCreateStep3Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep3Fragment"
+        android:name="com.side.runwithme.view.challenge_list.create.ChallengeCreateStep3Fragment"
         android:label="ChallengeCreateStep3Fragment" >
         <action
             android:id="@+id/action_challengeCreateStep3Fragment_to_challengeCreateStep4Fragment"
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeCreateStep4Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep4Fragment"
+        android:name="com.side.runwithme.view.challenge_list.create.ChallengeCreateStep4Fragment"
         android:label="ChallengeCreateStep4Fragment" >
         <action
             android:id="@+id/action_challengeCreateStep4Fragment_to_challengeCreateStep5Fragment"
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeCreateStep5Fragment"
-        android:name="com.side.runwithme.view.challenge.create.ChallengeCreateStep5Fragment"
+        android:name="com.side.runwithme.view.challenge_list.create.ChallengeCreateStep5Fragment"
         android:label="ChallengeCreateStep5Fragment" >
 
     </fragment>

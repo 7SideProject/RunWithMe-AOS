@@ -34,4 +34,5 @@
     <dimen name="complete_stamp_width">180dp</dimen>
     <dimen name="complete_stamp_height">100dp</dimen>
     <dimen name="runrecord_img_height">400dp</dimen>
+    <dimen name="challenge_detail_img_height">240dp</dimen>
 </resources>

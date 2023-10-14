@@ -95,7 +95,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val intent = intent
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
         val type = intent.getIntExtra("goalType", -1)
-        val goal = intent.getIntExtra("goalAmount", 0) * 1000L
+        val goal = intent.getLongExtra("goalAmount", 0)
 
         initMapView()
 

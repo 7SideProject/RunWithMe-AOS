@@ -8,7 +8,7 @@ interface DataStoreDataSource {
 
     suspend fun saveUser(user: User)
 
-    fun getUserID(): Flow<String>
+    fun getUserEmail(): Flow<String>
 
     fun getUserSeq(): Flow<String>
 

@@ -22,11 +22,14 @@
         <action
             android:id="@+id/action_HomeFragment_to_runningListFragment"
             app:destination="@id/runningListFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_myChallengeFragment"
+            app:destination="@id/myChallengeFragment" />
 
     </fragment>
     <fragment
         android:id="@+id/challengeListFragment"
-        android:name="com.side.runwithme.view.challenge.ChallengeListFragment"
+        android:name="com.side.runwithme.view.challenge_list.ChallengeListFragment"
         android:label="ChallengeListFragment">
         <action
             android:id="@+id/action_challengeListFragment_to_challengeSearchFragment"
@@ -34,10 +37,13 @@
         <action
             android:id="@+id/action_challengeListFragment_to_challengeCreateStep1Fragment"
             app:destination="@id/challengeCreateStep1Fragment" />
+        <action
+            android:id="@+id/action_challengeListFragment_to_challengeDetailFragment"
+            app:destination="@id/challengeDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/challengeSearchFragment"
-        android:name="com.side.runwithme.view.challenge.ChallengeSearchFragment"
+        android:name="com.side.runwithme.view.challenge_list.search.ChallengeSearchFragment"
         android:label="ChallengeSearchFragment" />
     <fragment
         android:id="@+id/recommendFragment"
@@ -74,5 +80,28 @@
         android:id="@+id/runningListFragment"
         android:name="com.side.runwithme.view.running_list.RunningListFragment"
         android:label="RunningListFragment" />
+    <fragment
+        android:id="@+id/challengeDetailFragment"
+        android:name="com.side.runwithme.view.challenge_list.detail.ChallengeDetailFragment"
+        android:label="ChallengeDetailFragment" >
+        <argument
+            android:name="challenge"
+            app:argType="com.side.runwithme.model.ChallengeParcelable"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment"
+            app:popUpTo="@id/HomeFragment"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/myChallengeFragment"
+        android:name="com.side.runwithme.view.my_challenge.MyChallengeFragment"
+        android:label="MyChallengeFragment" >
+        <action
+            android:id="@+id/action_myChallengeFragment_to_challengeDetailFragment"
+            app:destination="@id/challengeDetailFragment" />
+    </fragment>
 
 </navigation>

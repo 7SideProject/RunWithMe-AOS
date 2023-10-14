@@ -115,13 +115,12 @@ class JoinViewModel @Inject constructor(
 
         val user = User(
             seq = 0L,
-            id = id.value,
+            email = id.value,
             password = password.value,
             nickname = nickname.value,
             height = height.value,
             weight = weight.value,
-            point = 0,
-            profileImgSeq = 0L
+            point = 0
         )
 
         viewModelScope.launch(Dispatchers.IO) {

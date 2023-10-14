@@ -1,5 +1,10 @@
 package com.side.data.model.response
 
 data class UserResponse(
-    val userName: String
+    val seq: Long,
+    val email: String,
+    val nickname: String,
+    val height: Int,
+    val weight: Int,
+    val point: Int
 )

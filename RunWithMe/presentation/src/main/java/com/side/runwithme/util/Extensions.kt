@@ -8,20 +8,16 @@ import android.graphics.Point
 import android.os.Build
 import android.view.WindowInsets
 import android.view.WindowManager
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import decrypt
-import encrypt
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 fun getDeviceSize(activity: Activity): Point {
     val windowManager = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -86,3 +82,9 @@ fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
     }
 }
 
+fun LocalDate.onlyDateFormatter(): String {
+
+    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    return this.format(dateFormat)
+}

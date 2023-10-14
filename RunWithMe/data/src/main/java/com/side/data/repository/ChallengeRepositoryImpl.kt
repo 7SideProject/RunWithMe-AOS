@@ -1,22 +1,26 @@
 package com.side.data.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.google.gson.Gson
-import com.side.data.api.ChallengeApi
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
+import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.asResult
+import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
+import com.side.domain.base.BaseResponse
+import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeRepository
 import com.side.domain.repository.JoinResponse
+import com.side.domain.repository.PagingChallengeResponse
+import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -28,23 +32,32 @@ import javax.inject.Singleton
 
 @Singleton
 class ChallengeRepositoryImpl @Inject constructor(
-    private val challengeApi: ChallengeApi,
     private val challengeRemoteDataSource: ChallengeRemoteDataSource
 ) : ChallengeRepository {
-    override fun getChallengeList(
-        size: Int
-        ): Flow<PagingData<Challenge>> {
-        Log.d("test123", "ChallengeRepositoryImpl: ")
+
+    override fun getRecruitingChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
+        emitResultTypeLoading()
+
         val pagingSourceFactory =
-            { ChallengeListPagingSource(size, challengeApi = challengeApi) }
-        return Pager(
+            {
+                ChallengeListPagingSource(
+                    size,
+                    challengeRemoteDataSource = challengeRemoteDataSource
+                )
+            }
+        Pager(
             config = PagingConfig(
                 pageSize = size,
                 enablePlaceholders = false,
                 maxSize = size * 3
             ), pagingSourceFactory = pagingSourceFactory
-        ).flow
+        ).flow.collect {
 
+            emitResultTypeSuccess(it)
+        }
+
+    }.catch {
+        emitResultTypeError(it)
     }
 
     override fun createChallenge(
@@ -54,11 +67,12 @@ class ChallengeRepositoryImpl @Inject constructor(
         emitResultTypeLoading()
 
         val json = Gson().toJson(challenge)
-        val challengeRequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val challengeRequestBody =
+            json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
         challengeRemoteDataSource.createChallenge(challengeRequestBody, imgFile).collect {
 
-            when(it.code){
+            when (it.code) {
 
                 ResponseCodeStatus.CREATE_CHALLENGE_SUCCESS.code -> {
                     emitResultTypeSuccess(
@@ -71,14 +85,68 @@ class ChallengeRepositoryImpl @Inject constructor(
 
                 /** 실패 다른 경우들 처리해야함**/
                 ResponseCodeStatus.CREATE_CHALLENGE_FAIL.code -> {
-                    emitResultTypeFail(it.changeMessageAndData(
-                        it.message,
-                        it.data
-                    ))
+                    emitResultTypeFail(
+                        it.changeMessageAndData(
+                            it.message,
+                            it.data
+                        )
+                    )
                 }
             }
 
         }
+    }.catch {
+        emitResultTypeError(it)
+    }
+
+    override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>> =
+        challengeRemoteDataSource.isChallengeAlreadyJoin(challengeSeq).asResultOtherType {
+            when(it.code){
+                ResponseCodeStatus.CHECK_IN_CHALLENGE_SUCCESS.code -> {
+                    ResultType.Success(
+                        it.changeMessageAndData(
+                            ResponseCodeStatus.CHECK_IN_CHALLENGE_SUCCESS.message,
+                            true
+                        )
+                    )
+                }
+                ResponseCodeStatus.CHECK_IN_CHALLENGE_FAIL.code -> {
+                    ResultType.Success(
+                        it.changeMessageAndData(
+                            ResponseCodeStatus.CHECK_IN_CHALLENGE_FAIL.message,
+                            false
+                        )
+                    )
+                }
+                else -> {
+                    ResultType.Fail(
+                        it.changeData(false)
+                    )
+                }
+            }
+        }
+
+    override fun getMyChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
+        emitResultTypeLoading()
+
+        val pagingSourceFactory =
+            {
+                MyChallengeListPagingSource(
+                    size,
+                    challengeRemoteDataSource = challengeRemoteDataSource
+                )
+            }
+        Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow.collect {
+
+            emitResultTypeSuccess(it)
+        }
+
     }.catch {
         emitResultTypeError(it)
     }

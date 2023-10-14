@@ -6,18 +6,21 @@ import com.side.domain.model.Challenge
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.http.Body
-import retrofit2.http.Part
 
 typealias JoinResponse = ResultType<BaseResponse<Any?>>
+typealias PagingChallengeResponse = ResultType<PagingData<Challenge>>
 
 interface ChallengeRepository {
 
-    fun getChallengeList(
-        size: Int,
-
-    ): Flow<PagingData<Challenge>>
+    fun getRecruitingChallengeList(
+        size: Int
+    ): Flow<PagingChallengeResponse>
 
     fun createChallenge(challenge: Challenge, imgFile: MultipartBody.Part?): Flow<JoinResponse>
 
+    fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>>
+
+    fun getMyChallengeList(
+        size: Int
+    ): Flow<PagingChallengeResponse>
 }

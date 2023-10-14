@@ -39,6 +39,12 @@ enum class DRAWING_POLYLINE_FAST(val time: Long) {
     SHORT(150L), MIDDLE(70L), LONG(7L)
 }
 
-enum class GOAL_TYPE {
-    TIME, DISTANCE
+enum class GOAL_TYPE(val apiName: String) {
+    TIME("time"), DISTANCE("distance")
+}
+
+
+// Challenge 상태 (챌린지 시작, 시작 안했지만 가입 되어있음, 시작 안했지만 가입 안함, 챌린지 끝남)
+enum class CHALLENGE_STATE {
+    START, NOT_START_AND_ALEADY_JOIN, NOT_START_AND_NOT_JOIN, END, NOTHING
 }

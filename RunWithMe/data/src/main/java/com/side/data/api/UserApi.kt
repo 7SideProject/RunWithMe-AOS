@@ -4,6 +4,7 @@ import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.JoinResponse
+import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
 import retrofit2.http.Body
@@ -19,7 +20,7 @@ interface UserApi {
     ): BaseResponse<User>
 
     @POST("users/join")
-    suspend fun join(@Body request: JoinRequest): BaseResponse<JoinResponse>
+    suspend fun join(@Body request: JoinRequest): BaseResponse<UserResponse>
 
 //    @POST("users/login")
 //    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse?>
@@ -27,4 +28,6 @@ interface UserApi {
 //    @POST("/token")
 //    suspend fun refreshingToken(@Body refreshToken: String)
 
+    @GET("users/{userSeq}")
+    suspend fun getUserProfile(@Query("userSeq") userSeq: Long): BaseResponse<UserResponse>
 }

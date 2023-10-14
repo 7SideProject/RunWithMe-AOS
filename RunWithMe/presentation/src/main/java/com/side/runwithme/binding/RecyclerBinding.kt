@@ -1,14 +1,14 @@
 package com.side.runwithme.binding
 
-import android.util.Log
 import androidx.databinding.BindingAdapter
+import androidx.paging.PagingData
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.domain.utils.ResultType
-import com.side.runwithme.view.challenge.ChallengeListAdapter
+import com.side.runwithme.view.challenge_list.ChallengeListAdapter
 import com.side.runwithme.view.running_list.RunningListAdapter
-import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @BindingAdapter("submitList")
@@ -28,6 +28,7 @@ fun bindSubmitList(view: RecyclerView, result: List<*>?) {
         is RunningListAdapter -> {
             (view.adapter as ListAdapter<Any, *>).submitList(result!! as List<Challenge>)
         }
+
     }
 
 }
