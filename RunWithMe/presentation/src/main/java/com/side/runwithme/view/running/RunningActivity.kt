@@ -71,7 +71,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private lateinit var locationSource: FusedLocationSource
     private var naverMap: NaverMap? = null
 
-    private var naverLatLng = mutableListOf<LatLng>()
+    private var naverLatLng = listOf<LatLng>()
 
     private lateinit var runningService: RunningService
 
@@ -255,7 +255,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // 좌표 observe
         runningService.pathPoints.observe(this) {
             if (it.isNotEmpty()) {
-                naverLatLng = it
+                naverLatLng = it.mapperToListNaverLatLng()
 
                 val isOkToDrawPolyline = it.size >= 2
                 if (isOkToDrawPolyline && naverMap != null) {
@@ -587,6 +587,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 }.create()
             builder.show()
         }
+    }
+
+    private fun List<Location>.mapperToListNaverLatLng(): List<LatLng> = this.map {
+        LatLng(it.latitude, it.longitude)
     }
 
 }

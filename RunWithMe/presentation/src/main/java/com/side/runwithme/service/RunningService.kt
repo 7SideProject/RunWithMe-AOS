@@ -40,7 +40,7 @@ import java.time.LocalDate
 import java.util.Locale
 import javax.inject.Inject
 
-typealias PolyLine = MutableList<LatLng>
+typealias PolyLine = MutableList<Location>
 
 const val SERVICE_NOTSTART = 0
 const val SERVICE_ISRUNNING = 1
@@ -93,8 +93,8 @@ class RunningService : LifecycleService() {
     private var pauseLast = false
     var stopRunningBeforeRegister = false // 정지 버튼을 누르고 서버에 기록 등록하기 전 상태 (오류 시 다시 등록하기 위함)
 
-    private var pauseLatLng = LatLng(0.0, 0.0)
-    private var stopLastLatLng = LatLng(0.0, 0.0)
+    private var pauseLatLng : Location? = null
+    private var stopLastLatLng : Location? = null
 
     private val _isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
     val isRunning: LiveData<Boolean> get() = _isRunning
@@ -213,17 +213,18 @@ class RunningService : LifecycleService() {
             return
         }
 
-        val result = FloatArray(1)
-        Location.distanceBetween(
-            pauseLatLng.latitude,
-            pauseLatLng.longitude,
-            stopLastLatLng.latitude,
-            stopLastLatLng.longitude,
-            result
-        )
+//        val result = FloatArray(1)
+//        Location.distanceBetween(
+//            pauseLatLng?.latitude,
+//            pauseLatLng.longitude,
+//            stopLastLatLng.latitude,
+//            stopLastLatLng.longitude,
+//            result
+//        )
+        val distance = pauseLatLng!!.distanceTo(stopLastLatLng!!)
 
         // 이동이 없어 중지 상태일 때, 9m 이동하면 다시 시작 시킴
-        val isMoving = result[0] > 9f && ((System.currentTimeMillis() - _startTime) > 3000L)
+        val isMoving = distance > 9f && ((System.currentTimeMillis() - _startTime) > 3000L)
         val isResume = !isRunning.value!! and pauseLast
 
         if (isMoving && isResume) { // 재시작
@@ -296,7 +297,7 @@ class RunningService : LifecycleService() {
             if (isFirstRun) {
                 result?.locations?.let { locations ->
                     for (location in locations) {
-                        pauseLatLng = LatLng(location.latitude, location.longitude)
+                        pauseLatLng = location
                     }
                 }
             }
@@ -313,7 +314,7 @@ class RunningService : LifecycleService() {
             // 일시 정지했을 때
             result?.locations?.let { locations ->
                 for (location in locations) {
-                    stopLastLatLng = LatLng(location.latitude, location.longitude)
+                    stopLastLatLng = location
                     resumeRunning()
                 }
             }
@@ -324,9 +325,11 @@ class RunningService : LifecycleService() {
     //위치 정보 추가
     private fun addPathPoint(location: Location?) {
         location?.let {
-            val pos = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
-                add(pos)
+                // GPS가 튀어 정확하지 않거나 비정상적인 빠르기는 거리에 계산되지 않도록
+                if(!isWrongGps()) return
+
+                add(location)
                 _pathPoints.postValue(this)
                 distancePolyline()
 
@@ -336,6 +339,21 @@ class RunningService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun isWrongGps(): Boolean {
+        val polylines = pathPoints.value!!
+        val preLastLatLng = polylines.get(polylines.size - 2) // 마지막 전 경로
+        val lastLatLng = polylines.last() // 마지막 경로
+
+        val distance = lastLatLng.distanceTo(preLastLatLng)
+
+        // 4초 동안 80m 이상 이동한 경우 = GPS 튀는 현상, 비정상적인 빠르기
+        if(distance > 80){
+            return false
+        }
+
+        return true
     }
 
     // 경로 최적화 알고리즘
@@ -348,22 +366,23 @@ class RunningService : LifecycleService() {
         val third = polyLine!!.get(polyLine.size - 2)
 
 
-        val result = FloatArray(1)
-        Location.distanceBetween(
-            second.latitude,
-            second.longitude,
-            third.latitude,
-            third.longitude,
-            result
-        )
+//        val result = FloatArray(1)
+//        Location.distanceBetween(
+//            second.latitude,
+//            second.longitude,
+//            third.latitude,
+//            third.longitude,
+//            result
+//        )
 
-        val lastDistance = result[0]
+        val lastDistance = second.distanceTo(third)
 
         // 10미터 미만으로 너무 가까운 점이면 삭제
         if (lastDistance < 10) {
             polyLine.removeAt(polyLine.size - 3)
             return
         }
+
 
         // 100미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
         if (lastDistance >= 100) return
@@ -398,7 +417,7 @@ class RunningService : LifecycleService() {
     private class Vector(var x: Double, var y: Double)
 
     // 두 좌표를 위도에 따른 경도의 거리를 적용해서 최대한 오차없는 평면벡터화 한 것
-    private fun getVector(point1: LatLng, point2: LatLng): Vector {
+    private fun getVector(point1: Location, point2: Location): Vector {
         return Vector(
             (point2.latitude - point1.latitude) / Math.cos(deg2rad(point2.latitude)),
             point2.longitude - point1.longitude
@@ -425,19 +444,20 @@ class RunningService : LifecycleService() {
             val lastLatLng = polylines.last() // 마지막 경로
 
             // 이동거리 계산
-            val result = FloatArray(1)
-            Location.distanceBetween(
-                preLastLatLng.latitude,
-                preLastLatLng.longitude,
-                lastLatLng.latitude,
-                lastLatLng.longitude,
-                result
-            )
+//            val result = FloatArray(1)
+//            Location.distanceBetween(
+//                preLastLatLng.latitude,
+//                preLastLatLng.longitude,
+//                lastLatLng.latitude,
+//                lastLatLng.longitude,
+//                result
+//            )
+            val distance = lastLatLng.distanceTo(preLastLatLng)
 
-            _sumDistance.postValue(sumDistance.value!!.plus(result[0]))
+            _sumDistance.postValue(sumDistance.value!!.plus(distance))
 
             // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
-            val isNotMoving = result[0] < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
+            val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
             if (isNotMoving) {
                 showToast("이동이 없어 러닝이 일시 중지되었습니다.")
                 ttsSpeakAndVibrate("이동이 없어 러닝이 일시 중지되었습니다.")
@@ -447,7 +467,7 @@ class RunningService : LifecycleService() {
             }
 
             // 4초 이상 이동했는데 이동거리가 52m 이상인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
-            val isFastMoving = result[0] > 55f && (System.currentTimeMillis() - startTime) > 3000L
+            val isFastMoving = distance > 55f && (System.currentTimeMillis() - startTime) > 3000L
             if (isFastMoving) {
                 showToast("비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.")
                 ttsSpeakAndVibrate("비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.")
@@ -611,5 +631,12 @@ class RunningService : LifecycleService() {
         }
 
         super.onDestroy()
+    }
+
+    private fun Location.convertLatLng(): LatLng = this.run {
+        return LatLng(
+            this.latitude,
+            this.longitude
+        )
     }
 }
