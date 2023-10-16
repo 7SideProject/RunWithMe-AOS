@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="myChallengeVM"
+            type="com.side.runwithme.view.my_challenge.MyChallengeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

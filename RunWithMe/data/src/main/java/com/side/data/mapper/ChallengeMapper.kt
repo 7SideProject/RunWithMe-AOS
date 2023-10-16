@@ -7,6 +7,7 @@ fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
     Challenge(
         seq = this.seq,
         managerSeq = this.managerSeq,
+        managerName = this.managerName,
         name = this.name,
         description = this.description,
         imgSeq = this.imgSeq,
@@ -15,10 +16,10 @@ fun ChallengeResponse.mapperToChallenge(): Challenge = this.run {
         goalAmount = this.goalAmount,
         dateStart = this.dateStart,
         dateEnd = this.dateEnd,
+        nowMember = this.nowMember,
         maxMember = this.maxMember,
         cost = this.cost,
         password = this.password
-
     )
 }
 

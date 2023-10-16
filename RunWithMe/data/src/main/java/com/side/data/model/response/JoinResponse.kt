@@ -6,7 +6,5 @@ data class JoinResponse(
     val nickname: String,
     val height: Int,
     val weight: Int,
-    val point: Int,
-    val profileImgSeq: Long
-
+    val point: Int
 )

@@ -11,21 +11,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginHorizontal="@dimen/margin_regular"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_height="wrap_content">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_challenge_list_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_regular"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_challenge_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/challenge_period(challenge.dateStart, challenge.dateEnd)}"
+                runningTermByChallenge="@{challenge}"
                 android:textSize="@dimen/fontsize_caption"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +50,7 @@
                 android:id="@+id/tv_challenge_founder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{challenge.name}"
+                android:text="@{challenge.managerName}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/tv_challenge_name"
@@ -75,7 +77,7 @@
                 android:background="@drawable/tv_round"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="10dp"
-                android:text="@{challenge.goalType}"
+                android:text="@{challenge.getGoalTypeNaming()}"
                 tools:text="거리" />
 
             <TextView
@@ -90,13 +92,14 @@
                 tools:text="주 1회" />
 
             <TextView
-                android:id="@+id/tv_distance"
+                android:id="@+id/tv_goal_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tv_round"
+                android:text="@{challenge.getGoalAmountWithUnit()}"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="10dp"
-                android:text="@{@string/challenge_distance(challenge.goalAmount)}"
+
                 tools:text="12km" />
 
         </LinearLayout>
@@ -134,6 +137,7 @@
                     android:includeFontPadding="false"
                     android:textSize="@dimen/fontsize_h5"
                     android:textStyle="bold"
+                    android:text="@{@string/challenge_member_limit(challenge.nowMember, challenge.maxMember)}"
                     tools:text="3 / 15" />
             </LinearLayout>
 
@@ -151,7 +155,7 @@
                     android:layout_weight="1"
                     android:gravity="start"
                     android:includeFontPadding="false"
-                    android:text="참가비"
+                    android:text="@string/entry_fee"
                     android:textSize="@dimen/fontsize_h5" />
 
                 <TextView
@@ -163,11 +167,23 @@
                     android:includeFontPadding="false"
                     android:textSize="@dimen/fontsize_h5"
                     android:textStyle="bold"
+                    android:text="@{@string/challenge_cost(challenge.cost)}"
                     tools:text="0 P" />
+
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintTop_toBottomOf="@id/cl_challenge_info"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

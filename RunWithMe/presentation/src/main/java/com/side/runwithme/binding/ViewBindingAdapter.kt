@@ -5,14 +5,18 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
+import com.side.domain.model.Challenge
 import com.side.runwithme.R
+import com.side.runwithme.model.ChallengeParcelable
+import com.side.runwithme.util.BASE_URL
 import com.side.runwithme.util.costFormatter
 import java.lang.Math.round
 
 
 @BindingAdapter("runningResultDay")
 fun TextView.setRunningResultDay(day: String) {
-    if(day.isNullOrBlank()){
+    if (day.isNullOrBlank()) {
         this.text = ""
         return
     }
@@ -25,9 +29,19 @@ fun TextView.setRunningResultDay(day: String) {
     this.text = resources.getString(R.string.running_result_day, year, month, day)
 }
 
+@BindingAdapter("runningTerm")
+fun TextView.setRunningTerm(challenge: ChallengeParcelable?){
+    this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
+}
+
+@BindingAdapter("runningTermByChallenge")
+fun TextView.setRunningTerm(challenge: Challenge?){
+    this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
+}
+
 @BindingAdapter("runningDistance")
 fun TextView.setRunnignDistance(distance: Int) {
-    this.text = "${round( (1F * distance / 1000) / 100 ) / 100} km"
+    this.text = "${round((1F * distance / 1000) / 100) / 100} km"
 }
 
 @BindingAdapter("runningTime")
@@ -50,7 +64,7 @@ fun TextView.setRunningTime(time: Int) {
 
 @BindingAdapter("runningAvgSpeed")
 fun TextView.setRunningAvgSpeed(avgSpeed: Double) {
-    if(avgSpeed < 1){
+    if (avgSpeed < 1) {
         this.text = "0.0 km/h"
         return
     }
@@ -63,8 +77,8 @@ fun TextView.setRunningStartToEndTime(startTime: String, endTime: String) {
     this.text = "${getTime(startTime)} ~ ${getTime(endTime)}"
 }
 
-fun getTime(time: String): String{
-    if(time.isBlank()) return ""
+fun getTime(time: String): String {
+    if (time.isBlank()) return ""
 
     val split = time.split(" ")
     val time = split.get(1).split(":")
@@ -87,11 +101,17 @@ fun ImageView.setRunningResultCompleted(completed: String) {
 }
 
 @BindingAdapter("runningCalorie")
-fun TextView.setRunningCalorie(calorie: Int){
+fun TextView.setRunningCalorie(calorie: Int) {
     this.text = "$calorie kcal"
 }
 
 @BindingAdapter("costFormat")
-fun AppCompatButton.setCostFormat (cost: String){
+fun AppCompatButton.setCostFormat(cost: String) {
     this.setText(costFormatter(cost))
+}
+
+@BindingAdapter("imageSeq")
+fun ImageView.setImageBySeq(imgSeq: Long) {
+    Glide.with(this.context).load(BASE_URL + "/image/${imgSeq}").fitCenter()
+        .override(Target.SIZE_ORIGINAL, R.dimen.challenge_detail_img_height).into(this)
 }
