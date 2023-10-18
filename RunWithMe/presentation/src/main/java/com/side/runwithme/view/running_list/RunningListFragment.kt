@@ -14,6 +14,7 @@ import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
+import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentRunningListBinding
 import com.side.runwithme.util.GOAL_TYPE
@@ -82,15 +83,26 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
     }
 
     private val intentToRunningActivityClickListener = object : IntentToRunningActivityClickListener {
-        override fun onItemClick(challengeSeq: Long) {
+        override fun onItemClick(challenge: Challenge) {
             /** 러닝 가능한 지 확인 **/
             val intent = Intent(requireContext(), RunningActivity::class.java)
-            intent.putExtra("challengeSeq", challengeSeq)
-            /** goalType, goalAmount 넘겨야함 **/
+            val goalType = if(challenge.goalType == GOAL_TYPE.TIME.apiName){
+                GOAL_TYPE.TIME.ordinal
+            }else {
+                GOAL_TYPE.DISTANCE.ordinal
+            }
+            intent.apply {
+                putExtra("challengeSeq", challenge.seq)
+                putExtra("goalType", goalType)
+                putExtra("goalAmount", challenge.goalAmount)
+            }
             startActivity(intent)
 
-            // home 화면으로 돌아가기
-            findNavController().popBackStack()
+            lifecycleScope.launch {
+                delay(300L)
+                // home 화면으로 돌아가기
+                findNavController().popBackStack()
+            }
         }
     }
 

@@ -31,7 +31,6 @@ class MyChallengeViewModel @Inject constructor(
             getMyChallengeListUseCase(size).collectLatest {
                 it.onSuccess {
                     _myChallenges.value = it
-                    Log.d("test123", "getMyChallengeList: ${it.toString()}")
                 }.onError {
                     Log.e("test123", "getMyChallengeList: ", it)
                 }
