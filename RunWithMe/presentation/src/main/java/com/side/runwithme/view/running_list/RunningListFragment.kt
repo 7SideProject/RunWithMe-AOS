@@ -2,6 +2,7 @@ package com.side.runwithme.view.running_list
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -94,7 +95,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
     }
 
     private val practiceSettingClickListener = object : PracticeSettingClickListener {
-        override fun onItemClick(type: GOAL_TYPE, amount: Int) {
+        override fun onItemClick(type: GOAL_TYPE, amount: Long) {
             val intent = Intent(requireContext(), RunningActivity::class.java)
             intent.apply {
                 putExtra("challengeSeq", -1)

@@ -50,7 +50,7 @@ class PracticeSettingDialog(private val listener: PracticeSettingClickListener):
                 }
             }
             btnOk.setOnClickListener {
-                var currentValue = tvGoalAmount.text.toString().toInt()
+                var currentValue = tvGoalAmount.text.toString().toLong()
                 if(currentType == GOAL_TYPE.TIME){
                     currentValue *= 60
                 }else{
