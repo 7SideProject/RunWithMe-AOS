@@ -93,8 +93,8 @@ class RunningService : LifecycleService() {
     private var pauseLast = false
     var stopRunningBeforeRegister = false // 정지 버튼을 누르고 서버에 기록 등록하기 전 상태 (오류 시 다시 등록하기 위함)
 
-    private var pauseLatLng : Location? = null
-    private var stopLastLatLng : Location? = null
+    private var pauseLatLng: Location? = null
+    private var stopLastLatLng: Location? = null
 
     private val _isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
     val isRunning: LiveData<Boolean> get() = _isRunning
@@ -107,6 +107,9 @@ class RunningService : LifecycleService() {
 
     private val _sumDistance = MutableLiveData<Float>(0f)
     val sumDistance: LiveData<Float> get() = _sumDistance
+
+    private val _errorEvent = MutableLiveData<Boolean>(false)
+    val errorEvent: LiveData<Boolean> get() = _errorEvent
 
     inner class LocalBinder : Binder() {
         fun getService(): RunningService = this@RunningService
@@ -132,19 +135,14 @@ class RunningService : LifecycleService() {
     }
 
     private fun initTextToSpeech() {
-        // minSdk가 24라 확인할 필요 없음
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//            showToast("음성 안내를 지원하지 않는 버전입니다.")
-//            return
-//        }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            if(getTTSOptionUseCase().first()){
+            if (getTTSOptionUseCase().first()) {
                 tts = TextToSpeech(this@RunningService) {
                     if (it == TextToSpeech.SUCCESS) {
                         val result = tts?.setLanguage(Locale.KOREAN)
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                            showToast("음성 안내를 지원하지 않는 언어입니다.")
+                            showToast(resources.getString(R.string.not_supported_tts_language))
                             return@TextToSpeech
                         }
                     } else {
@@ -160,33 +158,35 @@ class RunningService : LifecycleService() {
     private fun ttsSpeakAndVibrate(strTTS: String) {
         vibrate() // 1초간 진동
 
-        if(tts == null){
+        if (tts == null) {
             return
         }
         tts?.speak(strTTS, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
-    private fun vibrate(){
+    private fun vibrate() {
         // minSdk가 24라 확인할 필요 없음
 //        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
 //            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 //        }
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             val vibrator = getSystemService(Vibrator::class.java)
             vibrator.vibrate(1000L)
-        }else {
-            val vibrator = (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        } else {
+            val vibrator =
+                (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
             val pattern = VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE)
             vibrator.vibrate(pattern)
         }
     }
 
-    private fun distanceTTS(){
+    private fun distanceTTS() {
         var count = 1
-        sumDistance.observe(this){
-            if(it / 1000 > count){
-                ttsSpeakAndVibrate("${(it / 1000).toInt()} km 를 돌파했습니다. ${getTTSTime(timeRunInMillis.value!!)} 가 경과했습니다.")
+        sumDistance.observe(this) {
+            val currentKM = it / 1000
+            if (currentKM > count) {
+                ttsSpeakAndVibrate("${currentKM.toInt()} km 를 돌파했습니다. ${getTTSTime(timeRunInMillis.value!!)} 가 경과했습니다.")
                 count++
             }
         }
@@ -228,8 +228,8 @@ class RunningService : LifecycleService() {
         val isResume = !isRunning.value!! and pauseLast
 
         if (isMoving && isResume) { // 재시작
-            showToast("이동이 감지되어 러닝을 다시 시작합니다.")
-            ttsSpeakAndVibrate("이동이 감지되어 러닝을 다시 시작합니다.")
+            showToast(resources.getString(R.string.running_resume_when_moving))
+            ttsSpeakAndVibrate(resources.getString(R.string.running_resume_when_moving))
             startTimer()
             _startTime = System.currentTimeMillis()
             pauseLast = false
@@ -286,6 +286,13 @@ class RunningService : LifecycleService() {
                 Looper.getMainLooper()
             )
         }
+
+        // Tracking 권한이 없을 때 Service, RunningActivity 종료
+        if (!TrackingUtility.hasLocationPermissions(this)) {
+            ttsSpeakAndVibrate(resources.getString(R.string.not_supported_location))
+            _errorEvent.postValue(true)
+            killService()
+        }
     }
 
 
@@ -327,29 +334,33 @@ class RunningService : LifecycleService() {
         location?.let {
             pathPoints.value?.apply {
                 // GPS가 튀어 정확하지 않거나 비정상적인 빠르기는 거리에 계산되지 않도록
-                if(!isWrongGps()) return
+                if (!isWrongGps(it)) return
 
-                add(location)
+
+                add(it)
                 _pathPoints.postValue(this)
                 distancePolyline()
 
                 // 경로 최적화
-                if (pathPoints.value!!.size >= 4) {
+                if (pathPoints.value!!.size >= 3) {
                     optimizationPolyLine()
                 }
             }
         }
     }
 
-    private fun isWrongGps(): Boolean {
+    private fun isWrongGps(willLatLng: Location): Boolean {
         val polylines = pathPoints.value!!
-        val preLastLatLng = polylines.get(polylines.size - 2) // 마지막 전 경로
-        val lastLatLng = polylines.last() // 마지막 경로
+        if (polylines.size < 2) return true
 
-        val distance = lastLatLng.distanceTo(preLastLatLng)
+        val lastLatLng = polylines.last() // 마지막 좌표
 
-        // 4초 동안 80m 이상 이동한 경우 = GPS 튀는 현상, 비정상적인 빠르기
-        if(distance > 80){
+        val distance = lastLatLng.distanceTo(willLatLng) // 추가할 좌표와의 거리 비교
+
+        // 4초 동안 120m 이상 이동한 경우 = GPS 튀는 현상
+        // GPS가 튀고 난 후 새로 추가될 때는 8초 동안 120m 이상 이동한 경우로 측정됨 (시속 42km 이기 때문에 비정상적으로 판단)
+        // 비정상적인 빠르기
+        if (distance > 120) {
             return false
         }
 
@@ -357,54 +368,43 @@ class RunningService : LifecycleService() {
     }
 
     // 경로 최적화 알고리즘
-    // 좌표 4개 이상일 때 이전 3개의 좌표를 비교하여
+    // 좌표 3개 이상일 때 마지막 3개의 좌표를 비교하여
     // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
     private fun optimizationPolyLine() {
         val polyLine = pathPoints.value
-        val first = polyLine!!.get(polyLine.size - 4)
-        val second = polyLine!!.get(polyLine.size - 3)
-        val third = polyLine!!.get(polyLine.size - 2)
-
-
-//        val result = FloatArray(1)
-//        Location.distanceBetween(
-//            second.latitude,
-//            second.longitude,
-//            third.latitude,
-//            third.longitude,
-//            result
-//        )
+        val first = polyLine!!.get(polyLine.size - 3)
+        val second = polyLine!!.get(polyLine.size - 2)
+        val third = polyLine!!.last()
 
         val lastDistance = second.distanceTo(third)
 
         // 10미터 미만으로 너무 가까운 점이면 삭제
         if (lastDistance < 10) {
-            polyLine.removeAt(polyLine.size - 3)
+            polyLine.remove(second)
             return
         }
 
-
-        // 100미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
-        if (lastDistance >= 100) return
+        // 300미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
+        if (lastDistance >= 300) return
 
         // 적당한 거리라면 각도 비교
-        val v1: Vector = getVector(first, second) // 기존 벡터
-        val v2: Vector = getVector(second, third) // 비교할 벡터
+        val v1Bearing = first.bearingTo(second)
+        val v2Bearing = second.bearingTo(third)
+        val diffBearing = Math.abs(Math.abs(v1Bearing) - Math.abs(v2Bearing))
+        val checkBearing: Float = if(lastDistance < 30){
+            7F
+        }else if(lastDistance < 50){
+            4F
+        }else if(lastDistance < 100){
+            2F
+        }else{
+            1F
+        }
 
-        val cosine = getVectorDotProduct(v1, v2) / (getVectorDistance(v1) * getVectorDistance(v2))
-
-        // 거리가 가까울 땐 +- 5도 (거의 직선인 경우 삭제)
-        if (lastDistance < 50) {
-            if (cosine > Math.cos(deg2rad(20.0))) {
-                polyLine.removeAt(polyLine.size - 3)
-                return
-            }
-        } else { // 거리가 멀어지면 여유범위 줄이기
-            if (cosine > Math.cos(deg2rad(10.0))) {
-                polyLine.removeAt(polyLine.size - 3)
-                return
-            }
-
+        // lastDistance에 따라서 각도 차이(diffBearing)이 checkBearing보다 낮거나 같은 경우 좌표 삭제(거의 직선인 경우)
+        if(diffBearing <= checkBearing){
+            polyLine.remove(second)
+            return
         }
 
     }
@@ -435,6 +435,8 @@ class RunningService : LifecycleService() {
     }
 
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
+    var notMovingCount = 0
+    var tooFastCount = 0
     private fun distancePolyline() {
         val polylines = pathPoints.value!!
         val possiblePolyline = polylines.isNotEmpty() && polylines.size >= 2
@@ -456,35 +458,46 @@ class RunningService : LifecycleService() {
 
             _sumDistance.postValue(sumDistance.value!!.plus(distance))
 
-            // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
+            // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
             val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
             if (isNotMoving) {
-                showToast("이동이 없어 러닝이 일시 중지되었습니다.")
-                ttsSpeakAndVibrate("이동이 없어 러닝이 일시 중지되었습니다.")
-                pauseLatLng = lastLatLng
-                pauseLast = true
-                pauseService()
+                notMovingCount += 1
+
+                if (notMovingCount >= 2) {
+                    notMovingCount = 0
+                    showToast(resources.getString(R.string.running_pause_not_moving))
+                    ttsSpeakAndVibrate(resources.getString(R.string.running_pause_not_moving))
+                    pauseLatLng = lastLatLng
+                    pauseLast = true
+                    pauseService()
+                }
+            } else {
+                notMovingCount = 0
             }
 
-            // 4초 이상 이동했는데 이동거리가 52m 이상인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
+            // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
             val isFastMoving = distance > 55f && (System.currentTimeMillis() - startTime) > 3000L
             if (isFastMoving) {
-                showToast("비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.")
-                ttsSpeakAndVibrate("비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.")
-                pauseService()
+                tooFastCount += 1
+
+                if (tooFastCount >= 2) {
+                    tooFastCount = 0
+                    showToast(resources.getString(R.string.running_pause_too_fast))
+                    ttsSpeakAndVibrate(resources.getString(R.string.running_pause_too_fast))
+                    pauseService()
+                }
+            } else {
+                tooFastCount = 0
             }
+
         }
     }
 
     // 서비스가 호출 되었을 때
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // service 재시작시
-        if (intent == null) {
-            return START_STICKY
-        }
 
-        intent.let {
+        intent?.let {
             when (it.action) {
                 // 시작 되었을 때
                 SERVICE_ACTION.START.name -> {
@@ -535,9 +548,7 @@ class RunningService : LifecycleService() {
         pauseLast = false
         _isFirstRun = true
 
-        postInitialValues()
-        /** stopForeground 빼고 해보기 **/
-//        stopForeground(STOP_FOREGROUND_REMOVE)
+//        postInitialValues()
         stopSelf()
     }
 
@@ -552,9 +563,11 @@ class RunningService : LifecycleService() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            startForeground(NOTIFICATION_ID, baseNotificationBuilder.build(),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
-        }else {
+            startForeground(
+                NOTIFICATION_ID, baseNotificationBuilder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            )
+        } else {
             startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
         }
 

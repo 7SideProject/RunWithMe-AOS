@@ -260,7 +260,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 val isOkToDrawPolyline = it.size >= 2
                 if (isOkToDrawPolyline && naverMap != null) {
                     drawPolyline()
-//                    moveLatLngBounds()
+                    moveMyLocation()
                     naverMap?.moveCamera(CameraUpdate.zoomTo(16.0))
                 }
             }
@@ -301,6 +301,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
         }
 
+        // Tracking을 하지 못해 에러 발생
+        runningService.errorEvent.observe(this) {
+            if(it){
+                showToast(resources.getString(R.string.not_supported_location))
+                finish()
+            }
+        }
 
     }
 
@@ -467,6 +474,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap?.moveCamera(CameraUpdate.fitBounds(bounds, 200))
     }
 
+    private fun moveMyLocation() {
+        naverMap?.moveCamera(CameraUpdate.scrollTo(naverLatLng.last()))
+    }
+
     private fun stopService(){
         unbindService(serviceConnection)
         sendCommandToService(SERVICE_ACTION.STOP.name)
@@ -533,7 +544,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         naverMap.moveCamera(CameraUpdate.zoomTo(16.0))
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
-        naverMap.isLiteModeEnabled = true
             // 현위치 버튼 활성화
         naverMap.uiSettings.isLocationButtonEnabled = true
 
