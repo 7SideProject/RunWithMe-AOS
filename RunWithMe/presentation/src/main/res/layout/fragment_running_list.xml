@@ -109,6 +109,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="@dimen/parent_horizontal_margin"
+                btnTTS="@{runningListVM.ttsClickFlag}"
                 android:background="@drawable/btn_circle_main_color"
                 android:padding="@dimen/padding_regular"
                 android:onClick="@{()->runningListVM.onClickTTsBtn()}"
