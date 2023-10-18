@@ -118,6 +118,7 @@
     <string name="running_pause_too_fast">비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.</string>
     <string name="not_supported_tts_language">음성 안내를 지원하지 않는 언어입니다.</string>
     <string name="not_supported_location">위치 권한이 허용되지 않았습니다.</string>
+    <string name="running_error_not_found">알 수 없는 오류입니다. 다시 러닝을 시작해주세요.</string>
 
 
 

@@ -107,7 +107,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         if (RunningService.serviceState == SERVICE_NOTSTART) {
 
             if(challengeSeq == 0 || type == -1 || goal == 0L){
-                startError()
+                startError(resources.getString(R.string.running_error_not_found))
             }
 
             runningViewModel.saveChallengeInfo(challengeSeq, type, goal)
@@ -135,8 +135,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-    private fun startError(){
-        showToast("알 수 없는 오류입니다. 다시 러닝을 시작해주세요.")
+    private fun startError(message: String){
+        showToast(message)
         startActivity(Intent(this@RunningActivity, MainActivity::class.java))
         finish()
     }
@@ -187,7 +187,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             is RunningViewModel.Event.GetDataStoreValuesError -> {
                 val isOver1Minute = currentTimeInMillis > 60000L
                 if(isOver1Minute) { // 1분
-                    startError()
+                    startError(resources.getString(R.string.running_error_not_found))
                 }else{
                     runningViewModel.getChallnegeInfo()
                 }
@@ -304,8 +304,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         // Tracking을 하지 못해 에러 발생
         runningService.errorEvent.observe(this) {
             if(it){
-                showToast(resources.getString(R.string.not_supported_location))
-                finish()
+                startError(resources.getString(R.string.not_supported_location))
             }
         }
 
