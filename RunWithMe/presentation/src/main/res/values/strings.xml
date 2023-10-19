@@ -112,6 +112,8 @@
     <string name="running">러닝</string>
     <string name="challenge_join">러닝</string>
     <string name="challenge_quit">탈퇴</string>
+    <string name="running_pause">일시정지</string>
+    <string name="running_resume">다시 시작하기</string>
 
     <string name="running_pause_not_moving">이동이 없어 러닝이 일시 중지되었습니다.</string>
     <string name="running_resume_when_moving">이동이 감지되어 러닝을 다시 시작합니다.</string>

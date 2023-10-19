@@ -79,6 +79,8 @@ class RunningService : LifecycleService() {
     private var totalTime = 0L // 정지 시 저장되는 시간
     private var timeStarted = 0L // 측정 시작된 시간
     private var lastSecondTimestamp = 0L // 1초 단위 체크를 위함
+    private var notMovingCount = 0 // 움직이지 않을 때마다 count, 연속 2번 count되면 pause
+    private var tooFastCount = 0 // 속도가 너무 빠른 비정상 움직임 경우 count, 연속 2번 count되면 pause
 
     // 러닝을 시작하거나 다시 시작한 시간
     private var _startTime = 0L
@@ -146,7 +148,7 @@ class RunningService : LifecycleService() {
                             return@TextToSpeech
                         }
                     } else {
-                        Log.e("tes t123", "initTextToSpeech Initialize Failed")
+                        Log.e("test123", "initTextToSpeech Initialize Failed")
                     }
                 }
             }
@@ -185,7 +187,7 @@ class RunningService : LifecycleService() {
         var count = 1
         sumDistance.observe(this) {
             val currentKM = it / 1000
-            if (currentKM > count) {
+            if (currentKM >= count) {
                 ttsSpeakAndVibrate("${currentKM.toInt()} km 를 돌파했습니다. ${getTTSTime(timeRunInMillis.value!!)} 가 경과했습니다.")
                 count++
             }
@@ -213,18 +215,10 @@ class RunningService : LifecycleService() {
             return
         }
 
-//        val result = FloatArray(1)
-//        Location.distanceBetween(
-//            pauseLatLng?.latitude,
-//            pauseLatLng.longitude,
-//            stopLastLatLng.latitude,
-//            stopLastLatLng.longitude,
-//            result
-//        )
         val distance = pauseLatLng!!.distanceTo(stopLastLatLng!!)
 
-        // 이동이 없어 중지 상태일 때, 9m 이동하면 다시 시작 시킴
-        val isMoving = distance > 9f && ((System.currentTimeMillis() - _startTime) > 3000L)
+        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
+        val isMoving = distance > 8f && ((System.currentTimeMillis() - _startTime) > 3000L)
         val isResume = !isRunning.value!! and pauseLast
 
         if (isMoving && isResume) { // 재시작
@@ -336,15 +330,14 @@ class RunningService : LifecycleService() {
                 // GPS가 튀어 정확하지 않거나 비정상적인 빠르기는 거리에 계산되지 않도록
                 if (!isWrongGps(it)) return
 
-
+                // 경로 최적화
+                if (pathPoints.value!!.size >= 2) {
+                    optimizationPolyLine(it)
+                }
                 add(it)
                 _pathPoints.postValue(this)
                 distancePolyline()
 
-                // 경로 최적화
-                if (pathPoints.value!!.size >= 3) {
-                    optimizationPolyLine()
-                }
             }
         }
     }
@@ -368,75 +361,48 @@ class RunningService : LifecycleService() {
     }
 
     // 경로 최적화 알고리즘
-    // 좌표 3개 이상일 때 마지막 3개의 좌표를 비교하여
+    // 좌표 2개 이상일 때 추가할 좌표와 마지막 2개의 좌표를 비교하여
     // 거리가 가깝거나 가는 방향에서 각도가 완만한 경우 좌표 삭제
-    private fun optimizationPolyLine() {
+    private fun optimizationPolyLine(next: Location) {
         val polyLine = pathPoints.value
-        val first = polyLine!!.get(polyLine.size - 3)
-        val second = polyLine!!.get(polyLine.size - 2)
-        val third = polyLine!!.last()
+        val secondFromLast = polyLine!!.get(polyLine.size - 2)
+        val last = polyLine!!.last()
 
-        val lastDistance = second.distanceTo(third)
+        val lastToNextDistance = last.distanceTo(next)
 
         // 10미터 미만으로 너무 가까운 점이면 삭제
-        if (lastDistance < 10) {
-            polyLine.remove(second)
+        if (lastToNextDistance < 10) {
+            polyLine.remove(last)
             return
         }
 
-        // 300미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
-        if (lastDistance >= 300) return
+        // 200미터 이상으로 너무 먼 점이면 각도 상관없이 무조건 저장
+        if (lastToNextDistance >= 200) return
 
         // 적당한 거리라면 각도 비교
-        val v1Bearing = first.bearingTo(second)
-        val v2Bearing = second.bearingTo(third)
+        val v1Bearing = secondFromLast.bearingTo(last)
+        val v2Bearing = last.bearingTo(next)
         val diffBearing = Math.abs(Math.abs(v1Bearing) - Math.abs(v2Bearing))
-        val checkBearing: Float = if(lastDistance < 30){
-            7F
-        }else if(lastDistance < 50){
+        val checkBearing: Float = if(lastToNextDistance < 30){
+            5F
+        }else if(lastToNextDistance < 50){
             4F
-        }else if(lastDistance < 100){
-            2F
+        }else if(lastToNextDistance < 100){
+            3F
         }else{
-            1F
+            2F
         }
 
         // lastDistance에 따라서 각도 차이(diffBearing)이 checkBearing보다 낮거나 같은 경우 좌표 삭제(거의 직선인 경우)
         if(diffBearing <= checkBearing){
-            polyLine.remove(second)
+            polyLine.remove(last)
             return
         }
 
     }
 
-    // This function converts decimal degrees to radians
-    private fun deg2rad(deg: Double): Double {
-        return deg * Math.PI / 180.0
-    }
-
-    private class Vector(var x: Double, var y: Double)
-
-    // 두 좌표를 위도에 따른 경도의 거리를 적용해서 최대한 오차없는 평면벡터화 한 것
-    private fun getVector(point1: Location, point2: Location): Vector {
-        return Vector(
-            (point2.latitude - point1.latitude) / Math.cos(deg2rad(point2.latitude)),
-            point2.longitude - point1.longitude
-        )
-    }
-
-    // 벡터의 크기
-    private fun getVectorDistance(v: Vector): Double {
-        return Math.sqrt(v.x * v.x + v.y * v.y)
-    }
-
-    // 벡터의 내적
-    private fun getVectorDotProduct(v1: Vector, v2: Vector): Double {
-        return v1.x * v2.x + v1.y * v2.y
-    }
 
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
-    var notMovingCount = 0
-    var tooFastCount = 0
     private fun distancePolyline() {
         val polylines = pathPoints.value!!
         val possiblePolyline = polylines.isNotEmpty() && polylines.size >= 2
@@ -445,15 +411,6 @@ class RunningService : LifecycleService() {
             val preLastLatLng = polylines.get(polylines.size - 2) // 마지막 전 경로
             val lastLatLng = polylines.last() // 마지막 경로
 
-            // 이동거리 계산
-//            val result = FloatArray(1)
-//            Location.distanceBetween(
-//                preLastLatLng.latitude,
-//                preLastLatLng.longitude,
-//                lastLatLng.latitude,
-//                lastLatLng.longitude,
-//                result
-//            )
             val distance = lastLatLng.distanceTo(preLastLatLng)
 
             _sumDistance.postValue(sumDistance.value!!.plus(distance))
@@ -476,7 +433,7 @@ class RunningService : LifecycleService() {
             }
 
             // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
-            val isFastMoving = distance > 55f && (System.currentTimeMillis() - startTime) > 3000L
+            val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
             if (isFastMoving) {
                 tooFastCount += 1
 
@@ -596,7 +553,7 @@ class RunningService : LifecycleService() {
 
     // 알림창 버튼 생성, 액션 추가
     private fun updateNotificationTrackingState(isTracking: Boolean) {
-        val notificationActionText = if (isTracking) "일시정지" else "다시 시작하기"
+        val notificationActionText = if (isTracking) resources.getString(R.string.running_pause) else resources.getString(R.string.running_resume)
         // 정지 or 시작 버튼 클릭 시 그에 맞는 액션 전달
         val pendingIntent = if (isTracking) {
             val pauseIntent = Intent(this, RunningService::class.java).apply {
