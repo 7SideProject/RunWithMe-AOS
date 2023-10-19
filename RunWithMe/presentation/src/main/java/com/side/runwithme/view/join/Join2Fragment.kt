@@ -1,13 +1,14 @@
 package com.side.runwithme.view.join
 
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentJoin2Binding
+import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.flow.collectLatest
+
 
 class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2) {
 
@@ -27,36 +28,19 @@ class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2
     private fun initViewModelCallbacks(){
         joinViewModel.apply {
             repeatOnStarted {
-                password_confirm.collectLatest {
-                    if(it.equals(password.value)){
-                        completePassword()
-                        binding.tvAlertPassword.visibility = View.GONE
-                    }else{
-                        initCompletePassword()
-                        if(password.value.isBlank()) {
-                            binding.tvAlertPassword.visibility = View.GONE
-                        }else{
-                            binding.tvAlertPassword.visibility = View.VISIBLE
+                join2EventFlow.collectLatest {
+                    when(it){
+                        PasswordVerificationType.NOT_EQUAL_ERROR -> {
+                            showToast(resources.getString(R.string.not_equal_password))
+                        }
+                        PasswordVerificationType.LENGTH_ERROR ->{
+                            showToast(resources.getString(R.string.not_length_password))
+                        }
+                        PasswordVerificationType.SUCCESS ->{
+                            findNavController().navigate(R.id.action_join2Fragment_to_join3Fragment)
                         }
                     }
                 }
-            }
-
-            repeatOnStarted {
-                idConfirmEventFlow.collectLatest {
-                    handleEvent(it)
-                }
-            }
-        }
-    }
-
-    private fun handleEvent(event: JoinViewModel.Event) {
-        when (event) {
-            is JoinViewModel.Event.Success -> {
-                findNavController().navigate(R.id.action_join2Fragment_to_join3Fragment)
-            }
-            is JoinViewModel.Event.Fail -> {
-                showToast(event.message)
             }
         }
     }
@@ -67,8 +51,7 @@ class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2
                 findNavController().popBackStack()
             }
             btnNext.setOnClickListener {
-                //이메일 중복 검증
-                joinViewModel.checkIdIsDuplicate()
+                joinViewModel.clickJoin2NextButton()
             }
         }
     }
