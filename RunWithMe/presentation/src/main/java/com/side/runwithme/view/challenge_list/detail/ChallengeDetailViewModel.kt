@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
+import com.side.domain.usecase.challenge.JoinChallengeUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class ChallengeDetailViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val isChallengeAlreadyJoinUseCase: IsChallengeAlreadyJoinUseCase,
+    private val joinChallengeUseCase: JoinChallengeUseCase
 ) : ViewModel() {
 
     private val _challenge = MutableStateFlow<ChallengeParcelable?>(null)
@@ -123,11 +126,22 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
 
-    /** api 구현해야함 **/
-    private fun joinChallenge(){
+    private fun joinChallenge(password: String? = null){
         // join api 성공 시 ChallengeState AleadyJoin으로 변경
+        viewModelScope.launch(Dispatchers.IO) {
+            joinChallengeUseCase(challenge.value!!.seq, password).collectLatest {
+                it.onSuccess {
+                    isJoin.value = true
+                }.onFailure {
+                    /** 실패 처리 해야함 **/
+                }.onError {
+
+                }
+            }
+        }
     }
 
+    /** api 구현해야함 **/
     private fun quitChallenge(){
         // quit api 성공 시 ChallengeState Not_Join으로 변경
     }

@@ -18,7 +18,8 @@ import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeRepository
-import com.side.domain.repository.JoinResponse
+import com.side.domain.repository.ChallengeCreateResponse
+import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.PagingChallengeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +64,7 @@ class ChallengeRepositoryImpl @Inject constructor(
     override fun createChallenge(
         challenge: Challenge,
         imgFile: MultipartBody.Part?
-    ): Flow<JoinResponse> = flow {
+    ): Flow<ChallengeCreateResponse> = flow {
         emitResultTypeLoading()
 
         val json = Gson().toJson(challenge)
@@ -101,7 +102,7 @@ class ChallengeRepositoryImpl @Inject constructor(
 
     override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>> =
         challengeRemoteDataSource.isChallengeAlreadyJoin(challengeSeq).asResultOtherType {
-            when(it.code){
+            when (it.code) {
                 ResponseCodeStatus.CHECK_IN_CHALLENGE_SUCCESS.code -> {
                     ResultType.Success(
                         it.changeMessageAndData(
@@ -110,6 +111,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+
                 ResponseCodeStatus.CHECK_IN_CHALLENGE_FAIL.code -> {
                     ResultType.Success(
                         it.changeMessageAndData(
@@ -118,6 +120,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+
                 else -> {
                     ResultType.Fail(
                         it.changeData(false)
@@ -150,4 +153,31 @@ class ChallengeRepositoryImpl @Inject constructor(
     }.catch {
         emitResultTypeError(it)
     }
+
+    override fun joinChallenge(challengeSeq: Long, password: String?): Flow<JoinChallengeResponse> =
+        challengeRemoteDataSource.joinChallenge(challengeSeq, password).asResult {
+            when(it.code) {
+                ResponseCodeStatus.JOIN_CHALLENGE_SUCCESS.code -> {
+                    ResultType.Success(
+                        it.changeMessageAndData(
+                            ResponseCodeStatus.JOIN_CHALLENGE_SUCCESS.message,
+                            it.data
+                        )
+                    )
+                }
+                ResponseCodeStatus.JOIN_CHALLENGE_FAIL.code -> {
+                    ResultType.Fail(
+                        it.changeMessageAndData(
+                            ResponseCodeStatus.JOIN_CHALLENGE_FAIL.message,
+                            it.data
+                        )
+                    )
+                }
+                else -> {
+                    ResultType.Fail(
+                        it
+                    )
+                }
+            }
+        }
 }
