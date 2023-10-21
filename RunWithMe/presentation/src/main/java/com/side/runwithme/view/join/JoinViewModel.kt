@@ -59,6 +59,8 @@ class JoinViewModel @Inject constructor(
     private val _idIsDuplicateEventFlow = MutableEventFlow<Int>()
     val idIsDuplicateEventFlow get() = _idIsDuplicateEventFlow.asEventFlow()
 
+    private val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
+
     fun setHeight(height: Int){
         this._height.update { height }
     }
@@ -119,8 +121,6 @@ class JoinViewModel @Inject constructor(
 
     //한글, 영문, 숫자로만 2자~8자까지 입력 가능
     fun matchesNickNameRule(nickName: String): Boolean{
-        val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
-
         if(nickName.length in 2..8 && pattern.matches(nickName)){
             return true
         }

@@ -13,9 +13,14 @@ import javax.mail.util.ByteArrayDataSource
 
 class GMailSender(val user: String, val password: String): javax.mail.Authenticator() {
     private val mailHost = "smtp.gmail.com"
-    private var session: Session
-    private lateinit var emailCode: String
+    private lateinit var session: Session
+    private var emailCode: String = ""
+    private val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+
     init {
+        initProps()
+    }
+    private fun initProps(){
         val props = Properties()
         props.setProperty("mail.transport.protocol", "smtp")
         props.setProperty("mail.host", mailHost)
@@ -30,6 +35,8 @@ class GMailSender(val user: String, val password: String): javax.mail.Authentica
         session = Session.getDefaultInstance(props, this)
     }
 
+
+
     //생성된 이메일 인증코드 반환
     fun getEmailCode(): String {
         return emailCode
@@ -37,7 +44,6 @@ class GMailSender(val user: String, val password: String): javax.mail.Authentica
 
     //이메일 인증코드 생성
     fun createEmailCode() {
-        val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         emailCode = (1..6)
             .map { charset.random() }
             .joinToString("")
