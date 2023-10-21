@@ -5,12 +5,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentJoin1Binding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -47,18 +46,16 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
 
             btnSendNumber.setOnClickListener {
 //                joinViewModel.checkIdIsDuplicate()
-                binding.apply {
-                    if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
-                        verifyDelayTime = System.currentTimeMillis()
-                        layoutVerify.visibility = View.VISIBLE
-                        hideKeyboard(etJoinEmail)
-                        CoroutineScope(Dispatchers.IO).launch {
-                            mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
-                        }
-                        showToast(resources.getString(R.string.message_send_mail))
-                    } else {
-                        showToast(resources.getString(R.string.message_delay_send_mail))
+                if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
+                    verifyDelayTime = System.currentTimeMillis()
+                    layoutVerify.visibility = View.VISIBLE
+                    hideKeyboard(etJoinEmail)
+                    lifecycleScope.launch {
+                        mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
                     }
+                    showToast(resources.getString(R.string.message_send_mail))
+                } else {
+                    showToast(resources.getString(R.string.message_delay_send_mail))
                 }
             }
 
