@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.GetRecruitingChallengeListUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

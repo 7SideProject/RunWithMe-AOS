@@ -3,12 +3,9 @@ package com.side.runwithme.view.running_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.GetMyChallengeListUseCase
 import com.side.domain.usecase.datastore.SaveTTSOptionUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

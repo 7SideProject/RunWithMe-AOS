@@ -17,7 +17,7 @@ class RunningListAdapter(private val listener: IntentToRunningActivityClickListe
         fun bind(challenge: Challenge, listener: IntentToRunningActivityClickListener){
             binding.challenge = challenge
             binding.root.setOnClickListener {
-                listener.onItemClick(challenge.seq)
+                listener.onItemClick(challenge)
             }
         }
     }
