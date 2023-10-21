@@ -32,6 +32,7 @@
     <string name="height_unit">cm</string>
     <string name="goal">목표</string>
     <string name="nickname">닉네임</string>
+    <string name="nickname_hint">ex) 런위드미</string>
     <string name="email">이메일</string>
     <string name="id">아이디</string>
     <string name="phone">핸드폰 번호</string>
@@ -39,7 +40,9 @@
     <string name="entry_fee">참가비</string>
     <string name="password">비밀번호</string>
     <string name="password_confirm">비밀번호 확인</string>
-    <string name="wrong_password">입력하신 비밀번호가 일치하지 않습니다.</string>
+    <string name="not_equal_password">입력하신 비밀번호가 일치하지 않습니다.</string>
+    <string name="not_length_password">비밀번호는 8 ~ 16자 이상이어야 합니다.</string>
+    <string name="not_matches_nickname_rule">"닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다."</string>
 
 
     <string name="ok">확인</string>
@@ -109,8 +112,21 @@
     <string name="verify">인증</string>
     <string name="send_verify_number">인증 번호 전송</string>
 
+
     <string name="running">러닝</string>
     <string name="challenge_join">러닝</string>
     <string name="challenge_quit">탈퇴</string>
+
+    <string name="email_hint">이메일 형태로 입력해주세요.</string>
+
+    <string name="verify_mail_title">[RunWithMe] 회원가입 인증번호 안내</string>
+    <string name="message_no_network">인터넷 연결을 확인해주십시오.</string>
+    <string name="message_invalid">이메일 형식이 잘못되었습니다.</string>
+    <string name="message_send_mail">인증번호가 전송되었습니다.</string>
+    <string name="message_not_equal_verify">인증번호가 일치하지 않습니다.</string>
+    <string name="message_delay_send_mail">이미 인증번호가 전송되었습니다. 잠시 후 다시 시도하세요.</string>
+
+    <string name="message_back_btn">뒤로가기 버튼을 한번 더 누르면 회원가입이 종료됩니다.</string>
+
 
 </resources>
