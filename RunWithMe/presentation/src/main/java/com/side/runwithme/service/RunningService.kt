@@ -330,13 +330,15 @@ class RunningService : LifecycleService() {
                 // GPS가 튀어 정확하지 않거나 비정상적인 빠르기는 거리에 계산되지 않도록
                 if (!isWrongGps(it)) return
 
+                // 거리는 모두 계산
+                distancePolyline(it)
+
                 // 경로 최적화
                 if (pathPoints.value!!.size >= 2) {
                     optimizationPolyLine(it)
                 }
                 add(it)
                 _pathPoints.postValue(this)
-                distancePolyline()
 
             }
         }
@@ -403,50 +405,56 @@ class RunningService : LifecycleService() {
 
 
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
-    private fun distancePolyline() {
+    private fun distancePolyline(next: Location) {
         val polylines = pathPoints.value!!
-        val possiblePolyline = polylines.isNotEmpty() && polylines.size >= 2
+        val possiblePolyline = polylines.isNotEmpty()
 
         if (possiblePolyline) {
-            val preLastLatLng = polylines.get(polylines.size - 2) // 마지막 전 경로
             val lastLatLng = polylines.last() // 마지막 경로
 
-            val distance = lastLatLng.distanceTo(preLastLatLng)
-
+            val distance = lastLatLng.distanceTo(next)
             _sumDistance.postValue(sumDistance.value!!.plus(distance))
 
-            // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
-            val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
-            if (isNotMoving) {
-                notMovingCount += 1
+            checkNotMoving(distance, lastLatLng)
 
-                if (notMovingCount >= 2) {
-                    notMovingCount = 0
-                    showToast(resources.getString(R.string.running_pause_not_moving))
-                    ttsSpeakAndVibrate(resources.getString(R.string.running_pause_not_moving))
-                    pauseLatLng = lastLatLng
-                    pauseLast = true
-                    pauseService()
-                }
-            } else {
+            checkFastMoving(distance)
+
+        }
+    }
+
+    // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
+    private fun checkNotMoving(distance: Float, lastLatLng: Location){
+        val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
+        if (isNotMoving) {
+            notMovingCount += 1
+
+            if (notMovingCount >= 2) {
                 notMovingCount = 0
+                showToast(resources.getString(R.string.running_pause_not_moving))
+                ttsSpeakAndVibrate(resources.getString(R.string.running_pause_not_moving))
+                pauseLatLng = lastLatLng
+                pauseLast = true
+                pauseService()
             }
+        } else {
+            notMovingCount = 0
+        }
+    }
 
-            // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
-            val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
-            if (isFastMoving) {
-                tooFastCount += 1
+    // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
+    private fun checkFastMoving(distance: Float){
+        val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
+        if (isFastMoving) {
+            tooFastCount += 1
 
-                if (tooFastCount >= 2) {
-                    tooFastCount = 0
-                    showToast(resources.getString(R.string.running_pause_too_fast))
-                    ttsSpeakAndVibrate(resources.getString(R.string.running_pause_too_fast))
-                    pauseService()
-                }
-            } else {
+            if (tooFastCount >= 2) {
                 tooFastCount = 0
+                showToast(resources.getString(R.string.running_pause_too_fast))
+                ttsSpeakAndVibrate(resources.getString(R.string.running_pause_too_fast))
+                pauseService()
             }
-
+        } else {
+            tooFastCount = 0
         }
     }
 
