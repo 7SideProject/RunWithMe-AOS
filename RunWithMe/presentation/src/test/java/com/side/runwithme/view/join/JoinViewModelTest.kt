@@ -1,24 +1,17 @@
 package com.side.runwithme.view.join
 
 import androidx.test.filters.SmallTest
-import androidx.test.runner.AndroidJUnitRunner
 import com.side.domain.usecase.user.JoinUseCase
-import com.side.runwithme.view.login.LoginViewModel
 import io.mockk.mockk
 import com.google.common.truth.Truth.assertThat
 import com.side.runwithme.util.MainDispatcherRule
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @SmallTest
 class JoinViewModelTest {
@@ -51,7 +44,7 @@ class JoinViewModelTest {
 
 
         // Then
-        assertThat(event).isInstanceOf(JoinViewModel.Event.Fail::class.java)
+        assertThat(event).isInstanceOf(JoinViewModel.JoinEvent.Fail::class.java)
     }
 
     @Test
@@ -71,7 +64,7 @@ class JoinViewModelTest {
 
 
         // Then
-        assertThat(event).isInstanceOf(JoinViewModel.Event.Fail::class.java)
+        assertThat(event).isInstanceOf(JoinViewModel.JoinEvent.Fail::class.java)
     }
 
     @Test

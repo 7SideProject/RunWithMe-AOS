@@ -1,12 +1,15 @@
 package com.side.runwithme.view.join
 
 import android.util.Log
-import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.model.User
+import com.side.domain.usecase.user.GetCheckIdIsDuplicateUseCase
 import com.side.domain.usecase.user.JoinUseCase
-import com.side.domain.utils.ResultType
+import com.side.domain.utils.onError
+import com.side.domain.utils.onFailure
+import com.side.domain.utils.onSuccess
+import com.side.runwithme.R
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.asEventFlow
@@ -26,7 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JoinViewModel @Inject constructor(
-    private val joinUseCase: JoinUseCase
+    private val joinUseCase: JoinUseCase,
+    private val getCheckIdIsDuplicateUseCase: GetCheckIdIsDuplicateUseCase
 ) : ViewModel() {
 
     val id: MutableStateFlow<String> = MutableStateFlow("")
@@ -50,13 +54,13 @@ class JoinViewModel @Inject constructor(
             height != 0 && weight != 0 && nickname.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
-    private val _joinEventFlow = MutableEventFlow<Event>()
-    val joinEventFlow get() = _joinEventFlow.asEventFlow()
+    private val _joinJoinEventFlow = MutableEventFlow<JoinEvent>()
+    val joinEventFlow get() = _joinJoinEventFlow.asEventFlow()
 
     private val _join2EventFlow = MutableEventFlow<PasswordVerificationType>()
     val join2EventFlow get() = _join2EventFlow.asEventFlow()
 
-    private val _idIsDuplicateEventFlow = MutableEventFlow<Int>()
+    private val _idIsDuplicateEventFlow = MutableEventFlow<IdCheckEvent>()
     val idIsDuplicateEventFlow get() = _idIsDuplicateEventFlow.asEventFlow()
 
     private val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
@@ -78,7 +82,7 @@ class JoinViewModel @Inject constructor(
     fun join() {
         if(!matchesNickNameRule(nickname.value)){
             viewModelScope.launch {
-                _joinEventFlow.emit(Event.Fail("닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다."))
+                _joinJoinEventFlow.emit(JoinEvent.Fail(R.string.message_invalid_nickname))
             }
             return
         }
@@ -96,18 +100,12 @@ class JoinViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             joinUseCase(user).collectLatest {
-                when (it) {
-                    is ResultType.Success -> {
-                        _joinEventFlow.emit(Event.Success(it.data.message))
-                    }
-                    is ResultType.Fail -> {
-                        _joinEventFlow.emit(Event.Fail(it.data.message))
-                    }
-                    is ResultType.Error -> {
-                        Log.d("joinError", "${it.exception.message} ")
-                    }else->{
-
-                    }
+                it.onSuccess {
+                    _joinJoinEventFlow.emit(JoinEvent.Success(R.string.message_success_join))
+                }.onFailure {
+                    _joinJoinEventFlow.emit(JoinEvent.Fail(R.string.message_fail_join))
+                }.onError {error ->
+                    Log.d("joinError", "${error.message} ")
                 }
             }
         }
@@ -115,7 +113,20 @@ class JoinViewModel @Inject constructor(
 
     fun checkIdIsDuplicate(){
         viewModelScope.launch(Dispatchers.IO) {
-
+            getCheckIdIsDuplicateUseCase(id.value).collectLatest {
+                it.onSuccess {success->
+                    // 중복시 true, 중복아니면 false
+                    if(success.data.isDuplicated){
+                        _idIsDuplicateEventFlow.emit(IdCheckEvent.Fail(R.string.message_duplicate_id))
+                    }else{
+                        _idIsDuplicateEventFlow.emit(IdCheckEvent.Success())
+                    }
+                }.onFailure {fail ->
+                    Log.d("checkIdError", fail.message)
+                }.onError {error->
+                    Log.d("checkIdError", "${error.message}")
+                }
+            }
         }
     }
 
@@ -128,8 +139,13 @@ class JoinViewModel @Inject constructor(
         return false
     }
 
-    sealed class Event {
-        data class Success(val message: String) : Event()
-        data class Fail(val message: String) : Event()
+    sealed class JoinEvent {
+        data class Success(val message: Int) : JoinEvent()
+        data class Fail(val message: Int) : JoinEvent()
+    }
+
+    sealed class IdCheckEvent {
+        data class Success(val check: Boolean = true) : IdCheckEvent()
+        data class Fail(val message: Int) : IdCheckEvent()
     }
 }
