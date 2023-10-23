@@ -1,6 +1,7 @@
 package com.side.runwithme.view.join
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -10,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentJoin1Binding
+import com.side.runwithme.util.repeatOnStarted
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -27,7 +31,7 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
 
         initClickListener()
 
-//        initViewModelCallbacks()
+        initViewModelCallbacks()
     }
 
     private fun initClickListener() {
@@ -45,12 +49,11 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
             }
 
             btnSendNumber.setOnClickListener {
-//                joinViewModel.checkIdIsDuplicate()
                 if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
                     verifyDelayTime = System.currentTimeMillis()
                     layoutVerify.visibility = View.VISIBLE
                     hideKeyboard(etJoinEmail)
-                    lifecycleScope.launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
                     }
                     showToast(resources.getString(R.string.message_send_mail))
@@ -61,7 +64,7 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
 
             btnVerify.setOnClickListener {
                 if(etJoinVerifyNumber.text.toString() == mailSender.getEmailCode()){
-                    findNavController().navigate(R.id.action_join1Fragment_to_join2Fragment)
+                    joinViewModel.checkIdIsDuplicate()
                 }else{
                     showToast(resources.getString(R.string.message_not_equal_verify))
                 }
@@ -69,24 +72,20 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
         }
     }
 
-    // TODO : 아이디 검증 추후 추가
-//    private fun initViewModelCallbacks(){
-//        var verifyDelayTime = 0L
-//
-//        binding.apply {
-//            if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
-//                verifyDelayTime = System.currentTimeMillis()
-//                layoutVerify.visibility = View.VISIBLE
-//                hideKeyboard(etJoinEmail)
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
-//                }
-//                showToast(resources.getString(R.string.message_send_mail))
-//            } else {
-//                showToast(resources.getString(R.string.message_delay_send_mail))
-//            }
-//        }
-//    }
+    private fun initViewModelCallbacks(){
+        repeatOnStarted {
+            joinViewModel.idIsDuplicateEventFlow.collectLatest {
+                    when(it){
+                        is JoinViewModel.IdCheckEvent.Success -> {
+                            findNavController().navigate(R.id.action_join1Fragment_to_join2Fragment)
+                        }
+                        is JoinViewModel.IdCheckEvent.Fail-> {
+                            showToast(resources.getString(it.message))
+                        }
+                    }
+                }
+        }
+    }
 
     private fun hideKeyboard(editText: EditText){
         val manager: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
