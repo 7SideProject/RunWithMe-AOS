@@ -48,3 +48,4 @@ enum class GOAL_TYPE(val apiName: String) {
 enum class CHALLENGE_STATE {
     START, NOT_START_AND_ALEADY_JOIN, NOT_START_AND_NOT_JOIN, END, NOTHING
 }
+

@@ -6,7 +6,6 @@ import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.EmailLoginResponse
-import com.side.data.model.response.JoinResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
