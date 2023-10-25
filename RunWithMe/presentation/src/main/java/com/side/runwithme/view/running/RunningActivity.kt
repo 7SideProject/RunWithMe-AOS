@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -165,10 +166,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
                     putParcelableArrayListExtra("coordinates", coordinates)
-                    putExtra("challengeSeq", runningViewModel.challengeSeq.value)
+//                    putExtra("challengeSeq", runningViewModel.challengeSeq.value)
+                    putExtra("challengeName", runningViewModel.challengeName.value)
                     putExtra("imgByteArray", imgByteArray)
                 }
-//                RunningResultActivity.imgByteArray = imgByteArray
 
                 startActivity(intent)
                 finish()
@@ -361,7 +362,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             }
 
             runningService.stopRunningBeforeRegister = true
-            Log.d("test123", "stoprun: challengeSeq : ${runningViewModel.challengeSeq.value}")
 
             if(runningViewModel.challengeSeq.value == -1){ // 연습러닝
                 runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
@@ -387,7 +387,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         delay(500L)
     }
 
-    private suspend fun saveRunRecord() {
+    private fun saveRunRecord() {
         var completed = "N"
         /** goalAmount하고 sumDistance, runningTime의 단위 맞춰야함 **/
         if(runningViewModel.goalType.value == GOAL_TYPE.DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
@@ -417,7 +417,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             userName = "",
             userSeq = 0,
             challengeName = runningViewModel.challengeName.value,
-            challengeSeq = 0
+            challengeSeq = runningViewModel.challengeSeq.value
         )
     }
 
@@ -430,8 +430,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         naverMap?.takeSnapshot {
             // image 생성
-            imgFile = createMultiPart(it)
             imgByteArray = createByteArray(it)
+            imgFile = createMultiPart(imgByteArray)
         }
     }
 
@@ -441,9 +441,8 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         return outputStream.toByteArray()
     }
 
-    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
-        val imageByteArray = createByteArray(bitmap)
-        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageByteArray)
+    private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
+        val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("imgFile", "running", requestFile)
     }
 
@@ -567,13 +566,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val builder = AlertDialog.Builder(this@RunningActivity)
-            builder.setTitle("달리기를 종료할까요? 나가시면 기록이 저장되지 않습니다.")
+            builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
                 .setPositiveButton("네"){ _,_ ->
-//                    stopRun()
-                    /** 한번 더 다이얼로그 띄워서 물어야함 **/
-                    RunningService.serviceState = SERVICE_NOTSTART
-                    startActivity(Intent(this@RunningActivity, MainActivity::class.java))
-                    finish()
+                    stopRun()
+                    /** 한번 더 다이얼로그 띄워서 물어야함 or 꾹 누르기 **/
                 }
                 .setNegativeButton("아니오"){_,_ ->
                     // 다시 시작
