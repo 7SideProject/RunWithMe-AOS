@@ -20,4 +20,6 @@ interface UserRemoteDataSource {
     fun getUserProfile(userSeq: Long): Flow<BaseResponse<UserResponse>>
 
     fun checkIdIsDuplicate(email: String): Flow<BaseResponse<DuplicateCheckResponse>>
+
+    fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>>
 }

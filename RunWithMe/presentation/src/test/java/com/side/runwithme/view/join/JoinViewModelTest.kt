@@ -33,7 +33,7 @@ class JoinViewModelTest {
         // Given
         joinViewModel.nickname.value = "***"
 
-        val eventFlow = joinViewModel.joinEventFlow
+        val eventFlow = joinViewModel.join3EventFlow
             .flowOn(Dispatchers.Default) // 특정 스레드에서 Flow 실행
 
 
@@ -53,7 +53,7 @@ class JoinViewModelTest {
         // Given
         joinViewModel.nickname.value = ""
 
-        val eventFlow = joinViewModel.joinEventFlow
+        val eventFlow = joinViewModel.join3EventFlow
             .flowOn(Dispatchers.Default) // 특정 스레드에서 Flow 실행
 
 

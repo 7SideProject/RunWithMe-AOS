@@ -123,6 +123,7 @@
     <string name="message_no_network">인터넷 연결을 확인해주십시오.</string>
     <string name="message_invalid_id">이메일 형식이 잘못되었습니다.</string>
     <string name="message_duplicate_id">이미 가입된 이메일입니다.</string>
+    <string name="message_duplicate_nickname">이미 사용중인 닉네임입니다.</string>
     <string name="message_send_mail">인증번호가 전송되었습니다.</string>
     <string name="message_not_equal_verify">인증번호가 일치하지 않습니다.</string>
     <string name="message_delay_send_mail">이미 인증번호가 전송되었습니다. 잠시 후 다시 시도하세요.</string>

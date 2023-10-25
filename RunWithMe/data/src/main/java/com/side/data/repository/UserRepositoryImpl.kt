@@ -158,4 +158,17 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override fun checkNicknameIsDuplicate(nickname: String): Flow<DuplicateCheckResponse>
+            = userRemoteDataSource.checkNicknameIsDuplicate(nickname).asResultOtherType {
+        when(it.code){
+            ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                ResultType.Success(it.changeData(it.data.mapperToDuplicateCheck()))
+            }
+            else -> {
+                ResultType.Fail(it.changeData(it.data.mapperToDuplicateCheck()))
+            }
+        }
+    }
+
 }
