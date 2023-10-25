@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.model.User
 import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
+import com.side.domain.usecase.user.CheckNicknameIsDuplicateUseCase
 import com.side.domain.usecase.user.JoinUseCase
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
@@ -30,7 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class JoinViewModel @Inject constructor(
     private val joinUseCase: JoinUseCase,
-    private val checkIdIsDuplicateUseCase: CheckIdIsDuplicateUseCase
+    private val checkIdIsDuplicateUseCase: CheckIdIsDuplicateUseCase,
+    private val checkNicknameIsDuplicateUseCase: CheckNicknameIsDuplicateUseCase
 ) : ViewModel() {
 
     val id: MutableStateFlow<String> = MutableStateFlow("")
@@ -54,8 +56,8 @@ class JoinViewModel @Inject constructor(
             height != 0 && weight != 0 && nickname.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
-    private val _joinJoinEventFlow = MutableEventFlow<JoinEvent>()
-    val joinEventFlow get() = _joinJoinEventFlow.asEventFlow()
+    private val _join3EventFlow = MutableEventFlow<JoinEvent>()
+    val join3EventFlow get() = _join3EventFlow.asEventFlow()
 
     private val _join2EventFlow = MutableEventFlow<PasswordVerificationType>()
     val join2EventFlow get() = _join2EventFlow.asEventFlow()
@@ -79,15 +81,17 @@ class JoinViewModel @Inject constructor(
         }
     }
 
-    fun join() {
+    fun joinInvalidCheck() {
         if(!matchesNickNameRule(nickname.value)){
             viewModelScope.launch {
-                _joinJoinEventFlow.emit(JoinEvent.Fail(R.string.message_invalid_nickname))
+                _join3EventFlow.emit(JoinEvent.Fail(R.string.message_invalid_nickname))
             }
-            return
+        }else{
+            checkNicknameIsDuplicate()
         }
+    }
 
-
+    fun join() {
         val user = User(
             seq = 0L,
             email = id.value,
@@ -101,10 +105,10 @@ class JoinViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             joinUseCase(user).collectLatest {
                 it.onSuccess {
-                    _joinJoinEventFlow.emit(JoinEvent.Success(R.string.message_success_join))
+                    _join3EventFlow.emit(JoinEvent.Success(R.string.message_success_join))
                 }.onFailure {
-                    _joinJoinEventFlow.emit(JoinEvent.Fail(R.string.message_fail_join))
-                }.onError {error ->
+                    _join3EventFlow.emit(JoinEvent.Fail(R.string.message_fail_join))
+                }.onError { error ->
                     Log.d("joinError", "${error.message} ")
                 }
             }
@@ -130,6 +134,25 @@ class JoinViewModel @Inject constructor(
         }
     }
 
+    private fun checkNicknameIsDuplicate(){
+        viewModelScope.launch(Dispatchers.IO) {
+            checkNicknameIsDuplicateUseCase(nickname.value).collectLatest {
+                it.onSuccess {success->
+                    // 중복시 true, 중복아니면 false
+                    if(success.data.isDuplicated){
+                        _join3EventFlow.emit(JoinEvent.Fail(R.string.message_duplicate_nickname))
+                    }else{
+                        _join3EventFlow.emit(JoinEvent.Check())
+                    }
+                }.onFailure {fail ->
+                    Log.d("checkNickNameError", fail.message)
+                }.onError {error->
+                    Log.d("checkNickNameError", "${error.message}")
+                }
+            }
+        }
+    }
+
     //한글, 영문, 숫자로만 2자~8자까지 입력 가능
     fun matchesNickNameRule(nickName: String): Boolean{
         if(nickName.length in 2..8 && pattern.matches(nickName)){
@@ -141,6 +164,7 @@ class JoinViewModel @Inject constructor(
 
     sealed class JoinEvent {
         data class Success(val message: Int) : JoinEvent()
+        data class Check(val check: Boolean = true): JoinEvent()
         data class Fail(val message: Int) : JoinEvent()
     }
 

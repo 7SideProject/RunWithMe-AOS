@@ -33,7 +33,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
     private fun initClickListener() {
         binding.apply {
             btnJoin.setOnClickListener {
-                joinViewModel.join()
+                joinViewModel.joinInvalidCheck()
             }
             toolbar.setBackButtonClickEvent {
                 findNavController().popBackStack()
@@ -127,7 +127,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
 
     private fun initViewModelCallBack() {
         repeatOnStarted {
-            joinViewModel.joinEventFlow.collectLatest { event ->
+            joinViewModel.join3EventFlow.collectLatest { event ->
                 handleEvent(event)
             }
         }
@@ -138,6 +138,9 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
             is JoinViewModel.JoinEvent.Success -> {
                 showToast(resources.getString(joinEvent.message))
                 requireActivity().finish()
+            }
+            is JoinViewModel.JoinEvent.Check ->{
+                joinViewModel.join()
             }
             is JoinViewModel.JoinEvent.Fail -> {
                 showToast(resources.getString(joinEvent.message))
