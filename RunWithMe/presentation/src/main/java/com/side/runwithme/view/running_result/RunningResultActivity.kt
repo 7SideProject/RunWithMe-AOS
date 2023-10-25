@@ -61,10 +61,10 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
 
         runningResultViewModel.apply {
             if(runRecord != null) {
-                putRunRecord(runRecord.mapperToRunRecord())
+                putRunRecord(runRecord)
             }
             if(!coordinates.isNullOrEmpty()) {
-                putCoordinates(coordinates.mapperToCoordinate())
+                putCoordinates(coordinates.toTypedArray())
             }
         }
 

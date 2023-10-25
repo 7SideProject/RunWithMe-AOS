@@ -3,6 +3,8 @@ package com.side.runwithme.view.running_result
 import androidx.lifecycle.ViewModel
 import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
+import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.RunRecordParcelable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +15,7 @@ class RunningResultViewModel @Inject constructor(
 
 ): ViewModel(){
 
-    private val _runRecord = MutableStateFlow<RunRecord>(RunRecord(
+    private val _runRecord = MutableStateFlow<RunRecordParcelable>(RunRecordParcelable(
         runRecordSeq = 0,
         runImageSeq = 0,
         runningDay = "",
@@ -36,10 +38,10 @@ class RunningResultViewModel @Inject constructor(
     private val _imgByteArray = MutableStateFlow<ByteArray>(ByteArray(0))
     val imgByteArray get() = _imgByteArray.asStateFlow()
 
-    private val _coordinates = MutableStateFlow<List<Coordinate>>(listOf())
+    private val _coordinates = MutableStateFlow<Array<Coordinates>>(arrayOf())
     val coordinates get() = _coordinates.asStateFlow()
 
-    fun putRunRecord(runRecord: RunRecord){
+    fun putRunRecord(runRecord: RunRecordParcelable){
         _runRecord.value = runRecord
     }
 
@@ -51,7 +53,7 @@ class RunningResultViewModel @Inject constructor(
         _imgByteArray.value = imgByteArray
     }
 
-    fun putCoordinates(coordinates: List<Coordinate>){
+    fun putCoordinates(coordinates: Array<Coordinates>){
         _coordinates.value = coordinates
     }
 }
