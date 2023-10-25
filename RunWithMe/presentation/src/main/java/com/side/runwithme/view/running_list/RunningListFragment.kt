@@ -92,6 +92,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
                 GOAL_TYPE.DISTANCE.ordinal
             }
             intent.apply {
+                putExtra("challengeName", challenge.name)
                 putExtra("challengeSeq", challenge.seq)
                 putExtra("goalType", goalType)
                 putExtra("goalAmount", challenge.goalAmount)
@@ -110,6 +111,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         override fun onItemClick(type: GOAL_TYPE, amount: Long) {
             val intent = Intent(requireContext(), RunningActivity::class.java)
             intent.apply {
+                putExtra("challengeName", resources.getString(R.string.practice_running))
                 putExtra("challengeSeq", -1)
                 putExtra("goalType", type.ordinal)
                 putExtra("goalAmount", amount)
