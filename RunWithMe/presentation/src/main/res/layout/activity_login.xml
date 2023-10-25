@@ -31,10 +31,9 @@
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:background="@color/white"
-            android:hint="이메일"
+            android:hint="@string/email"
             android:text="@={loginVM.email}"
             android:inputType="textEmailAddress"
-            android:layout_marginTop="32dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +44,7 @@
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:background="@color/white"
-            android:hint="비밀번호"
+            android:hint="@string/password"
             android:text="@={loginVM.password}"
             android:inputType="textPassword"
             android:layout_marginTop="@dimen/margin_regular"
@@ -56,36 +55,48 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_login"
-            style="@style/StrongButton"
+            style="@style/StrongSmallButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="로그인"
-            android:layout_marginTop="@dimen/margin_large"
+            android:text="@string/login"
+            android:layout_marginTop="@dimen/margin_regular"
             app:layout_constraintEnd_toEndOf="@id/et_password"
             app:layout_constraintStart_toStartOf="@id/et_password"
             app:layout_constraintTop_toBottomOf="@id/et_password" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_join"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/WeakSmallButton"
+            android:text="@string/join"
+            android:layout_marginTop="@dimen/margin_regular"
+            android:background="@drawable/border_text_box_gray"
+            app:layout_constraintStart_toStartOf="@id/btn_login"
+            app:layout_constraintEnd_toEndOf="@id/btn_login"
+            app:layout_constraintTop_toBottomOf="@id/btn_login"/>
+
         <TextView
-            android:id="@+id/tv_join"
+            android:id="@+id/tv_find_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="회원가입"
+            android:text="@string/find_password"
+            android:textColor="@color/sub_white"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/margin_regular"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_login"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_join"/>
 
         <ImageView
             android:id="@+id/btn_login_kakao"
             android:layout_width="340dp"
             android:layout_height="wrap_content"
             android:src="@drawable/kakao_login_large_wide"
-            app:layout_constraintTop_toBottomOf="@id/btn_login"
+            app:layout_constraintTop_toBottomOf="@id/tv_find_password"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.8" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
