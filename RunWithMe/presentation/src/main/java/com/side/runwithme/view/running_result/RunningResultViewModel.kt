@@ -35,25 +35,28 @@ class RunningResultViewModel @Inject constructor(
     ))
     val runRecord get() = _runRecord.asStateFlow()
 
-    private val _imgByteArray = MutableStateFlow<ByteArray>(ByteArray(0))
+    private val _imgByteArray = MutableStateFlow<ByteArray?>(null)
     val imgByteArray get() = _imgByteArray.asStateFlow()
 
     private val _coordinates = MutableStateFlow<Array<Coordinates>>(arrayOf())
     val coordinates get() = _coordinates.asStateFlow()
+
+    private val _challengeName = MutableStateFlow<String>("")
+    val challengeName = _challengeName.asStateFlow()
 
     fun putRunRecord(runRecord: RunRecordParcelable){
         _runRecord.value = runRecord
     }
 
     fun putImgByteArray(imgByteArray: ByteArray?){
-        if(imgByteArray == null){
-            return
-        }
-
         _imgByteArray.value = imgByteArray
     }
 
     fun putCoordinates(coordinates: Array<Coordinates>){
         _coordinates.value = coordinates
+    }
+
+    fun putChallengeName(challengeName: String){
+        _challengeName.value = challengeName
     }
 }
