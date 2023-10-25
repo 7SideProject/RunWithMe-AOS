@@ -31,4 +31,7 @@ interface UserApi {
 
     @GET("users/duplicate-email")
     suspend fun checkIdIsDuplicate(@Query("email") email: String): BaseResponse<DuplicateCheckResponse>
+
+    @GET("users/duplicate-nickname")
+    suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
 }
