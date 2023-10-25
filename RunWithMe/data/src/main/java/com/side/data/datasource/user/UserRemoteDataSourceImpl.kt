@@ -37,7 +37,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
         emit(userApi.getUserProfile(userSeq))
     }
 
-    override fun getCheckIdIsDuplicate(email: String): Flow<BaseResponse<DuplicateCheckResponse>> = flow {
-        emit(userApi.getCheckIdIsDuplicate(email))
+    override fun checkIdIsDuplicate(email: String): Flow<BaseResponse<DuplicateCheckResponse>> = flow {
+        emit(userApi.checkIdIsDuplicate(email))
     }
 }

@@ -5,8 +5,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetCheckIdIsDuplicateUseCase @Inject constructor(
+class CheckIdIsDuplicateUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(email: String) = userRepository.getCheckIdIsDuplicate(email)
+    operator fun invoke(email: String) = userRepository.checkIdIsDuplicate(email)
 }

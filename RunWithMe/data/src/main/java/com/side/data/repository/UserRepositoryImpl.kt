@@ -146,8 +146,8 @@ class UserRepositoryImpl @Inject constructor(
         dataStoreDataSource.saveUser(user)
     }
 
-    override fun getCheckIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
-        = userRemoteDataSource.getCheckIdIsDuplicate(email).asResultOtherType {
+    override fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
+        = userRemoteDataSource.checkIdIsDuplicate(email).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(it.changeData(it.data.mapperToDuplicateCheck()))

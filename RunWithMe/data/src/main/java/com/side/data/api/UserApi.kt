@@ -30,5 +30,5 @@ interface UserApi {
     suspend fun getUserProfile(@Query("userSeq") userSeq: Long): BaseResponse<UserResponse>
 
     @GET("users/duplicate-email")
-    suspend fun getCheckIdIsDuplicate(@Query("email") email: String): BaseResponse<DuplicateCheckResponse>
+    suspend fun checkIdIsDuplicate(@Query("email") email: String): BaseResponse<DuplicateCheckResponse>
 }

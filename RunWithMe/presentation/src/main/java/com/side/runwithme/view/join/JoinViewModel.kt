@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.model.User
-import com.side.domain.usecase.user.GetCheckIdIsDuplicateUseCase
+import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
 import com.side.domain.usecase.user.JoinUseCase
 import com.side.domain.utils.onError
 import com.side.domain.utils.onFailure
@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class JoinViewModel @Inject constructor(
     private val joinUseCase: JoinUseCase,
-    private val getCheckIdIsDuplicateUseCase: GetCheckIdIsDuplicateUseCase
+    private val checkIdIsDuplicateUseCase: CheckIdIsDuplicateUseCase
 ) : ViewModel() {
 
     val id: MutableStateFlow<String> = MutableStateFlow("")
@@ -113,7 +113,7 @@ class JoinViewModel @Inject constructor(
 
     fun checkIdIsDuplicate(){
         viewModelScope.launch(Dispatchers.IO) {
-            getCheckIdIsDuplicateUseCase(id.value).collectLatest {
+            checkIdIsDuplicateUseCase(id.value).collectLatest {
                 it.onSuccess {success->
                     // 중복시 true, 중복아니면 false
                     if(success.data.isDuplicated){

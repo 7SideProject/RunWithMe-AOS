@@ -17,5 +17,5 @@ interface UserRepository {
 
     fun getUserProfile(userSeq: Long): Flow<UserResponse>
 
-    fun getCheckIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
+    fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
 }
