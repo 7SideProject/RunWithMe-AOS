@@ -36,7 +36,7 @@ class RunningViewModel @Inject constructor(
     private val saveRunningChallengeGoalTypeUseCase: SaveRunningChallengeGoalTypeUseCase,
     private val saveRunningChallengeNameUseCase: SaveRunningChallengeNameUseCase,
     private val getRunningInfoUseCase: GetRunningInfoUseCase
-): ViewModel(){
+) : ViewModel() {
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
     val postRunRecordEventFlow = _postRunRecordEventFlow.asEventFlow()
@@ -54,7 +54,7 @@ class RunningViewModel @Inject constructor(
     val goalAmount = _goalAmount.asStateFlow()
 
     private var _goalType = stateHandler.getMutableStateFlow<GOAL_TYPE>("goalType", GOAL_TYPE.TIME)
-    val goalType= _goalType.asStateFlow()
+    val goalType = _goalType.asStateFlow()
 
 
     fun getMyWeight() {
@@ -71,7 +71,12 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun saveChallengeInfo(challengeSeq: Int, goalType: Int, goalAmount: Long, challengeName: String) {
+    fun saveChallengeInfo(
+        challengeSeq: Int,
+        goalType: Int,
+        goalAmount: Long,
+        challengeName: String
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             saveRunningChallengeSeqUseCase(challengeSeq)
             saveRunningChallengeGoalAmountUseCase(goalAmount)
@@ -80,16 +85,16 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun getChallnegeInfo(){
+    fun getChallnegeInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             getRunningInfoUseCase().collect {
                 it.onSuccess {
                     _challengeSeq.value = it.challengeSeq
                     _challengeName.value = it.challengeName
                     _goalAmount.value = it.goalAmount
-                    if(it.goalType == GOAL_TYPE.TIME.ordinal) {
+                    if (it.goalType == GOAL_TYPE.TIME.ordinal) {
                         _goalType.value = GOAL_TYPE.TIME
-                    }else{
+                    } else {
                         _goalType.value = GOAL_TYPE.DISTANCE
                     }
                 }.onFailure {
@@ -101,18 +106,34 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray){
+    fun checkIsOver10Seconds(runRecord: RunRecord): Boolean {
+        if (runRecord.runningTime <= 10) {
+            return false;
+        }
+
+        return true;
+    }
+
+    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray) {
+        if (!checkIsOver10Seconds(runRecord)) {
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Success())
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            insertPracticeRunRecordUseCase(PracticeRunRecord(
-                seq = 0,
-                image = imgByteArray,
-                startTime = runRecord.runningStartTime,
-                endTime = runRecord.runningEndTime,
-                runningTime = runRecord.runningTime,
-                runningDistance = runRecord.runningDistance,
-                avgSpeed = runRecord.runningAvgSpeed,
-                calorie = runRecord.runningCalorieBurned
-            )).collect {
+            insertPracticeRunRecordUseCase(
+                PracticeRunRecord(
+                    seq = 0,
+                    image = imgByteArray,
+                    startTime = runRecord.runningStartTime,
+                    endTime = runRecord.runningEndTime,
+                    runningTime = runRecord.runningTime,
+                    runningDistance = runRecord.runningDistance,
+                    avgSpeed = runRecord.runningAvgSpeed,
+                    calorie = runRecord.runningCalorieBurned
+                )
+            ).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
@@ -127,7 +148,13 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postChallengeRunRecord(allRunRecord: AllRunRecord){
+    fun postChallengeRunRecord(allRunRecord: AllRunRecord) {
+        if (!checkIsOver10Seconds(allRunRecord.runRecord)) {
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Success())
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
                 it.onSuccess {
@@ -148,7 +175,7 @@ class RunningViewModel @Inject constructor(
         class Success : Event()
         class Fail : Event()
         class ServerError : Event()
-        class Error: Event()
+        class Error : Event()
         class GetDataStoreValuesError : Event()
     }
 
