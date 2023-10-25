@@ -1,9 +1,7 @@
 package com.side.data.api
 
-import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
-import com.side.data.model.response.EmailLoginResponse
-import com.side.data.model.response.JoinResponse
+import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
@@ -30,4 +28,7 @@ interface UserApi {
 
     @GET("users/{userSeq}")
     suspend fun getUserProfile(@Query("userSeq") userSeq: Long): BaseResponse<UserResponse>
+
+    @GET("users/duplicate-email")
+    suspend fun checkIdIsDuplicate(@Query("email") email: String): BaseResponse<DuplicateCheckResponse>
 }

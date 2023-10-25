@@ -5,6 +5,7 @@ import com.side.data.api.UserApi
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
+import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
@@ -36,4 +37,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
         emit(userApi.getUserProfile(userSeq))
     }
 
+    override fun checkIdIsDuplicate(email: String): Flow<BaseResponse<DuplicateCheckResponse>> = flow {
+        emit(userApi.checkIdIsDuplicate(email))
+    }
 }
