@@ -26,11 +26,15 @@ interface DataStoreDataSource {
 
     suspend fun saveRunningGoalType(goalType: Int)
 
+    suspend fun saveRunningChallengeName(challengeName: String)
+
     fun getRunningChallengeSeq(): Flow<Int>
 
     fun getRunningGoalAmount(): Flow<Long>
 
     fun getRunningGoalType(): Flow<Int>
+
+    fun getRunningChallengeName(): Flow<String>
     suspend fun saveTTSOption(option: Boolean)
 
     fun getTTSOption(): Flow<Boolean>
