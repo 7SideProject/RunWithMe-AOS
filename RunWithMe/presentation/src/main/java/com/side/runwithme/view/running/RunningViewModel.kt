@@ -11,6 +11,7 @@ import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalTypeUseCase
+import com.side.domain.usecase.datastore.SaveRunningChallengeNameUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
@@ -33,27 +34,27 @@ class RunningViewModel @Inject constructor(
     private val saveRunningChallengeSeqUseCase: SaveRunningChallengeSeqUseCase,
     private val saveRunningChallengeGoalAmountUseCase: SaveRunningChallengeGoalAmountUseCase,
     private val saveRunningChallengeGoalTypeUseCase: SaveRunningChallengeGoalTypeUseCase,
+    private val saveRunningChallengeNameUseCase: SaveRunningChallengeNameUseCase,
     private val getRunningInfoUseCase: GetRunningInfoUseCase
 ): ViewModel(){
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
-    val postRunRecordEventFlow get() = _postRunRecordEventFlow.asEventFlow()
+    val postRunRecordEventFlow = _postRunRecordEventFlow.asEventFlow()
 
     private val _weight = stateHandler.getMutableStateFlow("weight", 65)
-    val weight: StateFlow<Int>
-        get() = _weight.asStateFlow()
+    val weight: StateFlow<Int> = _weight.asStateFlow()
 
     private val _challengeSeq = stateHandler.getMutableStateFlow("challengeSeq", 0)
-    val challengeSeq: StateFlow<Int>
-        get() = _challengeSeq.asStateFlow()
+    val challengeSeq: StateFlow<Int> = _challengeSeq.asStateFlow()
+
+    private val _challengeName = stateHandler.getMutableStateFlow("challengeName", "")
+    val challengeName = _challengeName.asStateFlow()
 
     private var _goalAmount = stateHandler.getMutableStateFlow<Long>("goalAmount", 60000L)
-    val goalAmount
-        get() = _goalAmount.asStateFlow()
+    val goalAmount = _goalAmount.asStateFlow()
 
     private var _goalType = stateHandler.getMutableStateFlow<GOAL_TYPE>("goalType", GOAL_TYPE.TIME)
-    val goalType
-        get() = _goalType.asStateFlow()
+    val goalType= _goalType.asStateFlow()
 
 
     fun getMyWeight() {
@@ -70,11 +71,12 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun saveChallengeInfo(challengeSeq: Int, goalType: Int, goalAmount: Long) {
+    fun saveChallengeInfo(challengeSeq: Int, goalType: Int, goalAmount: Long, challengeName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             saveRunningChallengeSeqUseCase(challengeSeq)
             saveRunningChallengeGoalAmountUseCase(goalAmount)
             saveRunningChallengeGoalTypeUseCase(goalType)
+            saveRunningChallengeNameUseCase(challengeName)
         }
     }
 
@@ -83,6 +85,7 @@ class RunningViewModel @Inject constructor(
             getRunningInfoUseCase().collect {
                 it.onSuccess {
                     _challengeSeq.value = it.challengeSeq
+                    _challengeName.value = it.challengeName
                     _goalAmount.value = it.goalAmount
                     if(it.goalType == GOAL_TYPE.TIME.ordinal) {
                         _goalType.value = GOAL_TYPE.TIME

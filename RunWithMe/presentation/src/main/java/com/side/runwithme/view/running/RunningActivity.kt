@@ -24,27 +24,22 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.domain.model.AllRunRecord
-import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
-import com.side.runwithme.mapper.mapperToCoordinateList
-import com.side.runwithme.mapper.mapperToCoordinates
+import com.side.runwithme.mapper.mapperToCoordinate
+import com.side.runwithme.mapper.mapperToCoordinatesList
 import com.side.runwithme.mapper.mapperToRunRecordParcelable
-import com.side.runwithme.service.PolyLine
+import com.side.runwithme.model.Coordinates
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
 import com.side.runwithme.util.*
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.loading.LoadingDialog
-import com.side.runwithme.view.login.LoginViewModel
 import com.side.runwithme.view.running_result.RunningResultActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -54,7 +49,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.Math.round
-import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,7 +77,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var imgFile: MultipartBody.Part
     private lateinit var imgByteArray: ByteArray
-    private var coordinates: List<Coordinate> = listOf()
+    private var coordinates: ArrayList<Coordinates> = arrayListOf()
     private lateinit var runRecord: RunRecord
     private var isStopError = false
 
@@ -96,6 +90,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
         val type = intent.getIntExtra("goalType", -1)
         val goal = intent.getLongExtra("goalAmount", 0)
+        val challengeName = intent.getStringExtra("challengeName") ?: ""
 
         initMapView()
 
@@ -106,11 +101,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
 
-            if(challengeSeq == 0 || type == -1 || goal == 0L){
+            if(challengeSeq == 0 || type == -1 || goal == 0L || challengeName.isEmpty()){
                 startError(resources.getString(R.string.running_error_not_found))
             }
 
-            runningViewModel.saveChallengeInfo(challengeSeq, type, goal)
+            runningViewModel.saveChallengeInfo(challengeSeq, type, goal, challengeName)
 
             // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
             require(runningViewModel.challengeSeq.value != 0)
@@ -163,14 +158,17 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
-                runningViewModel.saveChallengeInfo(0, -1, 0L)
+
+                /** refresh 해줄 필요가 있는가? **/
+                runningViewModel.saveChallengeInfo(0, -1, 0L, "")
 
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
-                    putExtra("coordinates", ArrayList(coordinates.mapperToCoordinates()))
+                    putParcelableArrayListExtra("coordinates", coordinates)
                     putExtra("challengeSeq", runningViewModel.challengeSeq.value)
+                    putExtra("imgByteArray", imgByteArray)
                 }
-                RunningResultActivity.imgByteArray = imgByteArray
+//                RunningResultActivity.imgByteArray = imgByteArray
 
                 startActivity(intent)
                 finish()
@@ -371,7 +369,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 runningViewModel.postChallengeRunRecord(
                     AllRunRecord(
                         runRecord = runRecord,
-                        coordinates = coordinates,
+                        coordinates = coordinates.mapperToCoordinate(),
                         imgFile = imgFile
                     )
                 )
@@ -418,13 +416,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             completed = completed,
             userName = "",
             userSeq = 0,
-            challengeName = if(runningViewModel.challengeSeq.value == -1) "연습 러닝" else "",
+            challengeName = runningViewModel.challengeName.value,
             challengeSeq = 0
         )
     }
 
     private fun changeCoordinates() {
-        coordinates = naverLatLng.mapperToCoordinateList()
+        coordinates = naverLatLng.mapperToCoordinatesList()
     }
 
     private fun takeSnapShot() {
@@ -439,30 +437,16 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 40, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 20, outputStream)
         return outputStream.toByteArray()
     }
 
     private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part {
-        var imageFile: File? = null
-        try {
-            imageFile = createFileFromBitmap(bitmap)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageFile!!)
-        return MultipartBody.Part.createFormData("imgFile", imageFile!!.name, requestFile)
+        val imageByteArray = createByteArray(bitmap)
+        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), imageByteArray)
+        return MultipartBody.Part.createFormData("imgFile", "running", requestFile)
     }
 
-    @Throws(IOException::class)
-    private fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val newFile = File(this.filesDir, "run_${System.currentTimeMillis()}")
-        val fileOutputStream = FileOutputStream(newFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
-        fileOutputStream.close()
-        return newFile
-    }
 
     // 이동한 전체 polyLine 담기
     private fun moveLatLngBounds() {
