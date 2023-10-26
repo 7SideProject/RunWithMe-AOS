@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="myPageVM"
+            type="com.side.runwithme.view.my_page.MyPageViewModel" />
+    </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -69,34 +74,50 @@
 
                         <TextView
                             android:id="@+id/tv_user_name"
+                            android:layout_width="0dp"
                             style="@style/header_text"
-                            android:layout_marginTop="8dp"
-                            tools:text="도널드 트럼프"
-                            android:textSize="16sp"
                             android:layout_marginStart="28dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@{myPageVM.userProfile.nickname.toString()}"
+                            android:textSize="16sp"
+                            android:layout_marginEnd="@dimen/margin_small"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_user_height"
                             app:layout_constraintStart_toEndOf="@id/civ_user_profile"
-                            app:layout_constraintTop_toTopOf="@id/civ_user_profile" />
+                            app:layout_constraintTop_toTopOf="@id/civ_user_profile"
+                            tools:text="도널드 트럼프" />
 
                         <TextView
                             android:id="@+id/tv_user_height"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
                             android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_user_name"
-                            app:layout_constraintStart_toEndOf="@id/tv_user_name"
-                            app:layout_constraintTop_toTopOf="@id/tv_user_name"
-                            tools:text="190cm / " />
+                            app:setHeight="@{myPageVM.userProfile.height}"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_divide"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_divide"
+                            app:layout_constraintTop_toTopOf="@+id/tv_divide"
+                            app:layout_constraintVertical_bias="0.588"
+                            tools:text="190cm" />
+
+                        <TextView
+                            android:id="@+id/tv_divide"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" / "
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_user_weight"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_user_weight"
+                            app:layout_constraintTop_toTopOf="@+id/tv_user_weight"
+                            app:layout_constraintVertical_bias="0.0" />
 
                         <TextView
                             android:id="@+id/tv_user_weight"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="@dimen/margin_regular"
                             android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_user_height"
-                            app:layout_constraintStart_toEndOf="@+id/tv_user_height"
-                            app:layout_constraintTop_toTopOf="@+id/tv_user_height"
+                            app:setWeight="@{myPageVM.userProfile.weight}"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_user_name"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_user_name"
                             tools:text="80kg" />
 
                         <ImageView
@@ -128,6 +149,7 @@
                             android:layout_marginStart="16dp"
                             android:textSize="16sp"
                             android:textColor="@color/main_black"
+                            app:setPoint="@{myPageVM.userProfile.point}"
                             app:layout_constraintBottom_toBottomOf="@+id/tv_user_point"
                             app:layout_constraintStart_toEndOf="@+id/tv_user_point"
                             app:layout_constraintTop_toTopOf="@+id/tv_user_point"
