@@ -8,6 +8,7 @@ import com.side.domain.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
@@ -27,7 +28,7 @@ interface UserApi {
 //    suspend fun refreshingToken(@Body refreshToken: String)
 
     @GET("users/{userSeq}")
-    suspend fun getUserProfile(@Query("userSeq") userSeq: Long): BaseResponse<UserResponse>
+    suspend fun getUserProfile(@Path("userSeq") userSeq: Long): BaseResponse<UserResponse>
 
     @GET("users/duplicate-email")
     suspend fun checkIdIsDuplicate(@Query("email") email: String): BaseResponse<DuplicateCheckResponse>
