@@ -3,13 +3,15 @@ package com.side.runwithme.view.route_detail
 import androidx.lifecycle.ViewModel
 import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
+import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.RunRecordParcelable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class RouteDetailViewModel : ViewModel() {
 
-    private val _runRecord = MutableStateFlow<RunRecord>(
-        RunRecord(
+    private val _runRecord = MutableStateFlow<RunRecordParcelable>(
+        RunRecordParcelable(
         runRecordSeq = 0,
         runImageSeq = 0,
         runningDay = "",
@@ -30,15 +32,15 @@ class RouteDetailViewModel : ViewModel() {
     )
     val runRecord get() = _runRecord.asStateFlow()
 
-    private val _coordinates = MutableStateFlow<List<Coordinate>>(listOf())
+    private val _coordinates = MutableStateFlow<Array<Coordinates>>(arrayOf())
     val coordinates get() = _coordinates.asStateFlow()
 
-    fun putRunRecord(runRecord: RunRecord){
+    fun putRunRecord(runRecord: RunRecordParcelable){
         _runRecord.value = runRecord
     }
 
 
-    fun putCoordinates(coordinates: List<Coordinate>){
+    fun putCoordinates(coordinates: Array<Coordinates>){
         _coordinates.value = coordinates
 
 //        val list = mutableListOf<Coordinate>()

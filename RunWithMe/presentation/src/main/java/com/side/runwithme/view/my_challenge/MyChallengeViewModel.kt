@@ -6,9 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.GetMyChallengeListUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onSuccess
-import com.side.runwithme.model.ChallengeParcelable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +28,6 @@ class MyChallengeViewModel @Inject constructor(
             getMyChallengeListUseCase(size).collectLatest {
                 it.onSuccess {
                     _myChallenges.value = it
-                    Log.d("test123", "getMyChallengeList: ${it.toString()}")
                 }.onError {
                     Log.e("test123", "getMyChallengeList: ", it)
                 }

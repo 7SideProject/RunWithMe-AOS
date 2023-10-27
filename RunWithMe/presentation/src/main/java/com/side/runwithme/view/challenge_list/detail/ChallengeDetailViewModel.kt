@@ -1,15 +1,10 @@
 package com.side.runwithme.view.challenge_list.detail
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onFailure
-import com.side.domain.utils.onSuccess
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.CHALLENGE_STATE
 import com.side.runwithme.util.MutableEventFlow
@@ -20,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

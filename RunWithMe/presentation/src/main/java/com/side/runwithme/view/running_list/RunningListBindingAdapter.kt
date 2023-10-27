@@ -6,7 +6,6 @@ import androidx.databinding.BindingAdapter
 
 @BindingAdapter("btnTTS")
 fun ImageButton.settingBtnTTS(option: Boolean) {
-    Log.d("test123", "settingBtnTTS: $option")
     if(option){
         this.alpha = 1.0F
     }else{

@@ -19,25 +19,24 @@ sealed class ResultType<out T> {
         val isNetworkError = exception is IOException
     }
 
-}
+    inline fun onSuccess(
+        action: (value: T) -> Unit
+    ): ResultType<T> {
+        if(this is ResultType.Success) action(this.data)
+        return this
+    }
 
-inline fun <T> ResultType<T>.onSuccess(
-    action: (value: T) -> Unit
-): ResultType<T> {
-    if(this is ResultType.Success) action(this.data)
-    return this
-}
+    inline fun onFailure(
+        action: (value: T) -> Unit
+    ): ResultType<T> {
+        if(this is ResultType.Fail) action(this.data)
+        return this
+    }
 
-inline fun <T> ResultType<T>.onFailure(
-    action: (value: T) -> Unit
-): ResultType<T> {
-    if(this is ResultType.Fail) action(this.data)
-    return this
-}
-
-inline fun <T> ResultType<T>.onError(
-    action: (value: Throwable) -> Unit
-) {
-    if(this is ResultType.Error) action(this.exception)
-    return
+    inline fun onError(
+        action: (value: Throwable) -> Unit
+    ) {
+        if(this is ResultType.Error) action(this.exception)
+        return
+    }
 }

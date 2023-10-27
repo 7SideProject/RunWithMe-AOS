@@ -6,9 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.CreateChallengeUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onFailure
-import com.side.domain.utils.onSuccess
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
