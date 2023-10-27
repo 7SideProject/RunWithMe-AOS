@@ -7,9 +7,6 @@ import com.side.domain.model.User
 import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
 import com.side.domain.usecase.user.CheckNicknameIsDuplicateUseCase
 import com.side.domain.usecase.user.JoinUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onFailure
-import com.side.domain.utils.onSuccess
 import com.side.runwithme.R
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.PasswordVerificationType
