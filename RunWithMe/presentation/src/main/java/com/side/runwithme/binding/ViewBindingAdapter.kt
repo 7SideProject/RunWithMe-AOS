@@ -115,3 +115,18 @@ fun ImageView.setImageBySeq(imgSeq: Long) {
     Glide.with(this.context).load(BASE_URL + "/image/${imgSeq}").fitCenter()
         .override(Target.SIZE_ORIGINAL, R.dimen.challenge_detail_img_height).into(this)
 }
+
+@BindingAdapter("setHeight")
+fun TextView.setHeight(height: Int) {
+    this.text = "${height}cm"
+}
+
+@BindingAdapter("setWeight")
+fun TextView.setWeight(weight: Int) {
+    this.text = "${weight}kg"
+}
+
+@BindingAdapter("setPoint")
+fun TextView.setPoint(point: Int) {
+    this.text = "${point}P"
+}
