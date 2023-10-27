@@ -1,14 +1,20 @@
 package com.side.runwithme.view.join
 
 import android.util.Log
-import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.model.User
+import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
+import com.side.domain.usecase.user.CheckNicknameIsDuplicateUseCase
 import com.side.domain.usecase.user.JoinUseCase
-import com.side.domain.utils.ResultType
+import com.side.domain.utils.onError
+import com.side.domain.utils.onFailure
+import com.side.domain.utils.onSuccess
+import com.side.runwithme.R
 import com.side.runwithme.util.MutableEventFlow
+import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.asEventFlow
+import com.side.runwithme.util.passwordValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,22 +25,21 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
 class JoinViewModel @Inject constructor(
-    private val joinUseCase: JoinUseCase
+    private val joinUseCase: JoinUseCase,
+    private val checkIdIsDuplicateUseCase: CheckIdIsDuplicateUseCase,
+    private val checkNicknameIsDuplicateUseCase: CheckNicknameIsDuplicateUseCase
 ) : ViewModel() {
 
     val id: MutableStateFlow<String> = MutableStateFlow("")
 
     val password: MutableStateFlow<String> = MutableStateFlow("")
 
-    val password_confirm: MutableStateFlow<String> = MutableStateFlow("")
+    val passwordConfirm: MutableStateFlow<String> = MutableStateFlow("")
 
     val nickname: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -44,33 +49,23 @@ class JoinViewModel @Inject constructor(
     private val _height = MutableStateFlow<Int>(0)
     val height get() = _height.asStateFlow()
 
-    val phoneNumber = MutableStateFlow<String>("")
-
     val verifyNumber = MutableStateFlow<String>("")
 
-    private val _resending = MutableStateFlow<Boolean>(false)
-    val resending get() = _resending.asStateFlow()
-
-    private val _complete = MutableStateFlow<Boolean>(false)
-    val complete get() = _complete.asStateFlow()
-
-    private val _completePassword = MutableStateFlow<Boolean>(false)
-    val completePassword get() = _completePassword.asStateFlow()
-
     val allDone : StateFlow<Boolean> = combine(height, nickname, weight){ height, nickname, weight ->
-            Log.d("test123", "combine: ${height}, ${nickname}, ${weight}")
+            Log.d("test123", "combine: ${height}, ${nickname}, $weight")
             height != 0 && weight != 0 && nickname.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
-//    private val _imgFile = MutableStateFlow<MultipartBody.Part?>(null)
-//    val imgFile get() = _imgFile.asStateFlow()
+    private val _join3EventFlow = MutableEventFlow<JoinEvent>()
+    val join3EventFlow get() = _join3EventFlow.asEventFlow()
 
+    private val _join2EventFlow = MutableEventFlow<PasswordVerificationType>()
+    val join2EventFlow get() = _join2EventFlow.asEventFlow()
 
-    private val _idConfirmEventFlow = MutableEventFlow<Event>()
-    val idConfirmEventFlow get() = _idConfirmEventFlow.asEventFlow()
+    private val _idIsDuplicateEventFlow = MutableEventFlow<IdCheckEvent>()
+    val idIsDuplicateEventFlow get() = _idIsDuplicateEventFlow.asEventFlow()
 
-    private val _joinEventFlow = MutableEventFlow<Event>()
-    val joinEventFlow get() = _joinEventFlow.asEventFlow()
+    private val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
 
     fun setHeight(height: Int){
         this._height.update { height }
@@ -80,39 +75,23 @@ class JoinViewModel @Inject constructor(
         this._weight.update { weight }
     }
 
-    fun completeVerify(){
-        this._complete.value = true
+    fun clickJoin2NextButton(){
+        viewModelScope.launch {
+            _join2EventFlow.emit(passwordValidation(password.value, passwordConfirm.value))
+        }
     }
 
-    fun completePassword(){
-        _completePassword.value = true
-    }
-
-    fun initCompletePassword(){
-        _completePassword.value = false
-    }
-
-    fun clickSendButton(){
-        this._resending.value = true
-    }
-
-    fun initSendButton(){
-        this._resending.value = false
-    }
-
-//    fun setImgFile(imgFile: MultipartBody.Part){
-//        this._imgFile.update { imgFile }
-//    }
-
-    fun join() {
+    fun joinInvalidCheck() {
         if(!matchesNickNameRule(nickname.value)){
             viewModelScope.launch {
-                _joinEventFlow.emit(Event.Fail("닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다."))
+                _join3EventFlow.emit(JoinEvent.Fail(R.string.message_invalid_nickname))
             }
-            return
+        }else{
+            checkNicknameIsDuplicate()
         }
+    }
 
-
+    fun join() {
         val user = User(
             seq = 0L,
             email = id.value,
@@ -125,21 +104,12 @@ class JoinViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             joinUseCase(user).collectLatest {
-                when (it) {
-                    is ResultType.Success -> {
-                        _joinEventFlow.emit(Event.Success("회원가입 완료"))
-                    }
-
-                    is ResultType.Fail -> {
-                        _joinEventFlow.emit(Event.Fail(it.data.message))
-                    }
-
-                    is ResultType.Error -> {
-                        Log.d("joinError", "${it.exception.message} ")
-                    }
-                    else -> {
-
-                    }
+                it.onSuccess {
+                    _join3EventFlow.emit(JoinEvent.Success(R.string.message_success_join))
+                }.onFailure {
+                    _join3EventFlow.emit(JoinEvent.Fail(R.string.message_fail_join))
+                }.onError { error ->
+                    Log.d("joinError", "${error.message} ")
                 }
             }
         }
@@ -147,45 +117,59 @@ class JoinViewModel @Inject constructor(
 
     fun checkIdIsDuplicate(){
         viewModelScope.launch(Dispatchers.IO) {
+            checkIdIsDuplicateUseCase(id.value).collectLatest {
+                it.onSuccess {success->
+                    // 중복시 true, 중복아니면 false
+                    if(success.data.isDuplicated){
+                        _idIsDuplicateEventFlow.emit(IdCheckEvent.Fail(R.string.message_duplicate_id))
+                    }else{
+                        _idIsDuplicateEventFlow.emit(IdCheckEvent.Success())
+                    }
+                }.onFailure {fail ->
+                    Log.d("checkIdError", fail.message)
+                }.onError {error->
+                    Log.d("checkIdError", "${error.message}")
+                }
+            }
+        }
+    }
 
-            _idConfirmEventFlow.emit(Event.Success("아이디 체크 완료"))
+    private fun checkNicknameIsDuplicate(){
+        viewModelScope.launch(Dispatchers.IO) {
+            checkNicknameIsDuplicateUseCase(nickname.value).collectLatest {
+                it.onSuccess {success->
+                    // 중복시 true, 중복아니면 false
+                    if(success.data.isDuplicated){
+                        _join3EventFlow.emit(JoinEvent.Fail(R.string.message_duplicate_nickname))
+                    }else{
+                        _join3EventFlow.emit(JoinEvent.Check())
+                    }
+                }.onFailure {fail ->
+                    Log.d("checkNickNameError", fail.message)
+                }.onError {error->
+                    Log.d("checkNickNameError", "${error.message}")
+                }
+            }
         }
     }
 
     //한글, 영문, 숫자로만 2자~8자까지 입력 가능
     fun matchesNickNameRule(nickName: String): Boolean{
-        val pattern = "^[a-zA-Z0-9가-힣]+$".toRegex()
-
-        if(nickName.length >= 2 && nickName.length <= 8 && pattern.matches(nickName)){
+        if(nickName.length in 2..8 && pattern.matches(nickName)){
             return true
         }
 
         return false
     }
 
-//    fun clear(){
-//        this.apply {
-//            email.value = ""
-//            password.value = ""
-//            password_confirm.value = ""
-//            nickname.value = ""
-//            _weight.value = 0
-//            _height.value = 0
-//            phoneNumber.value = ""
-//            verifyNumber.value = ""
-//            _resending.value = false
-//            _complete.value = false
-//            _completePassword.value = false
-//            _allDone.value = false
-//        }
-//    }
-
-
-    sealed class Event {
-        data class Success(val message: String) : Event()
-        data class Fail(val message: String) : Event()
-
+    sealed class JoinEvent {
+        data class Success(val message: Int) : JoinEvent()
+        data class Check(val check: Boolean = true): JoinEvent()
+        data class Fail(val message: Int) : JoinEvent()
     }
 
-
+    sealed class IdCheckEvent {
+        data class Success(val check: Boolean = true) : IdCheckEvent()
+        data class Fail(val message: Int) : IdCheckEvent()
+    }
 }

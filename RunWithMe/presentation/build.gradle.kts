@@ -40,6 +40,8 @@ android {
         buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
         buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
         buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+        buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
+        buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
 
         manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
         manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
@@ -106,6 +108,9 @@ dependencies {
     implementation(AndroidX.LEGACY_SUPPORT)
     implementation(AndroidX.METERIAL)
     implementation(AndroidX.VIEWMODEL)
+    implementation(files("libs\\activation.jar"))
+    implementation(files("libs\\additionnal.jar"))
+    implementation(files("libs\\mail.jar"))
 
 //    implementation("androidx.lifecycle:lifecycle-viewmodel:${Versions.VIEWMODEL}")
 

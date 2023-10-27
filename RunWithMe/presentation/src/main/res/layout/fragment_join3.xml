@@ -114,7 +114,7 @@
                         android:layout_height="50dp"
                         android:layout_marginHorizontal="18dp"
                         android:layout_marginTop="8dp"
-                        android:hint="ex) 런위드미"
+                        android:hint="@string/nickname_hint"
                         android:inputType="textPersonName"
                         android:text="@={joinVM.nickname}"
                         app:layout_constraintStart_toStartOf="@id/tv_join_nickname"
@@ -189,7 +189,7 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_join"
-            style="@style/WeakButton"
+            style="@style/disableNextButton"
             android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="50dp"

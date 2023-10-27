@@ -17,6 +17,7 @@
     <fragment
         android:id="@+id/join2Fragment"
         android:name="com.side.runwithme.view.join.Join2Fragment"
+        tools:layout="@layout/fragment_join2"
         android:label="Join2Fragment" >
         <action
             android:id="@+id/action_join2Fragment_to_join3Fragment"
@@ -25,5 +26,6 @@
     <fragment
         android:id="@+id/join3Fragment"
         android:name="com.side.runwithme.view.join.Join3Fragment"
+        tools:layout="@layout/fragment_join3"
         android:label="Join3Fragment" />
 </navigation>

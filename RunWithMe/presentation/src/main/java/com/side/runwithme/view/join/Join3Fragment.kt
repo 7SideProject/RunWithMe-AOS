@@ -1,23 +1,18 @@
 package com.side.runwithme.view.join
 
 import android.content.Context
-import android.text.InputFilter
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentJoin3Binding
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.flow.collectLatest
-import java.util.regex.Pattern
 
 class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3) {
 
@@ -38,7 +33,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
     private fun initClickListener() {
         binding.apply {
             btnJoin.setOnClickListener {
-                joinViewModel.join()
+                joinViewModel.joinInvalidCheck()
             }
             toolbar.setBackButtonClickEvent {
                 findNavController().popBackStack()
@@ -79,8 +74,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
                     position: Int,
                     id: Long
                 ) {
-                    joinViewModel.setWeight(weightList.get(position))
-                    Log.d("test123", "onItemSelected: ${joinViewModel.weight}")
+                    joinViewModel.setWeight(weightList[position])
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -93,8 +87,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
                     position: Int,
                     id: Long
                 ) {
-                    joinViewModel.setWeight(weightList.get(position))
-                    Log.d("test123", "onItemSelected: ${joinViewModel.weight}")
+                    joinViewModel.setWeight(weightList[position])
                 }
             }
         }
@@ -113,8 +106,7 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
                     position: Int,
                     id: Long
                 ) {
-                    joinViewModel.setHeight(heightList.get(position))
-                    Log.d("test123", "onItemSelected: ${joinViewModel.height}")
+                    joinViewModel.setHeight(heightList[position])
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -127,36 +119,32 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
                     position: Int,
                     id: Long
                 ) {
-                    joinViewModel.setHeight(heightList.get(position))
-                    Log.d("test123", "onItemSelected: ${joinViewModel.height}")
+                    joinViewModel.setHeight(heightList[position])
                 }
             }
         }
     }
 
     private fun initViewModelCallBack() {
-
         repeatOnStarted {
-            joinViewModel.joinEventFlow.collectLatest { event ->
+            joinViewModel.join3EventFlow.collectLatest { event ->
                 handleEvent(event)
-
             }
         }
-
-
-
     }
 
-    private fun handleEvent(event: JoinViewModel.Event) {
-        when (event) {
-            is JoinViewModel.Event.Success -> {
-                showToast(event.message)
+    private fun handleEvent(joinEvent: JoinViewModel.JoinEvent) {
+        when (joinEvent) {
+            is JoinViewModel.JoinEvent.Success -> {
+                showToast(resources.getString(joinEvent.message))
                 requireActivity().finish()
             }
-            is JoinViewModel.Event.Fail -> {
-                showToast(event.message)
+            is JoinViewModel.JoinEvent.Check ->{
+                joinViewModel.join()
+            }
+            is JoinViewModel.JoinEvent.Fail -> {
+                showToast(resources.getString(joinEvent.message))
             }
         }
     }
-
 }
