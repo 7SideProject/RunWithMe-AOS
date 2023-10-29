@@ -1,6 +1,7 @@
 package com.side.data.api
 
 import com.side.data.model.request.JoinRequest
+import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
@@ -35,4 +36,7 @@ interface UserApi {
 
     @GET("users/duplicate-nickname")
     suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
+
+    @POST("users/{userSeq}/connect")
+    suspend fun dailyCheck(@Path("userSeq") userSeq: Long): BaseResponse<DailyCheckResponse>
 }
