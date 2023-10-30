@@ -6,10 +6,12 @@ import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentHomeBinding
+import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.repeatOnStarted
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
-
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val homeViewModel: HomeViewModel by viewModels()
@@ -38,6 +40,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
         }
 
+        repeatOnStarted {
+            homeViewModel.dailyCheckEvent.collectLatest {
+                when(it){
+                    is HomeViewModel.DailyCheckEvent.Response ->{
+                        showToast(resources.getString(it.message))
+                    }
+                    is HomeViewModel.DailyCheckEvent.Fail ->{
+                        showToast(it.message)
+                    }
+                }
+
+            }
+        }
     }
 
     private fun moveChallengeList(){
@@ -58,10 +73,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             cvMyRunning.setOnClickListener {
                 homeViewModel.onClickMyChallengeList()
             }
+
+            ivDailyCheck.setOnClickListener {
+                homeViewModel.dailyCheckRequest()
+            }
         }
     }
-
-
-
-
 }

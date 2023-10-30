@@ -3,6 +3,7 @@ package com.side.data.datasource.user
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
+import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.UserResponse
@@ -22,4 +23,6 @@ interface UserRemoteDataSource {
     fun checkIdIsDuplicate(email: String): Flow<BaseResponse<DuplicateCheckResponse>>
 
     fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>>
+
+    fun dailyCheck(userSeq: Long): Flow<BaseResponse<DailyCheckResponse>>
 }
