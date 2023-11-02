@@ -28,7 +28,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.naver.maps.geometry.LatLng
 import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.runwithme.R
 import com.side.runwithme.util.*
@@ -97,6 +96,7 @@ class RunningService : LifecycleService() {
 
     private var pauseLatLng: Location? = null
     private var stopLastLatLng: Location? = null
+    private var isResumeAfterStop: Boolean = false
 
     private val _isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
     val isRunning: LiveData<Boolean> get() = _isRunning
@@ -368,7 +368,7 @@ class RunningService : LifecycleService() {
     private fun optimizationPolyLine(next: Location) {
         val polyLine = pathPoints.value
         val secondFromLast = polyLine!!.get(polyLine.size - 2)
-        val last = polyLine!!.last()
+        val last = polyLine.last()
 
         val lastToNextDistance = last.distanceTo(next)
 
@@ -403,9 +403,60 @@ class RunningService : LifecycleService() {
 
     }
 
+    // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
+    private fun checkNotMoving(distance: Float): Boolean {
+        val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
+        if (isNotMoving) {
+            notMovingCount += 1
+
+            if (notMovingCount >= 2) {
+                notMovingCount = 0
+                return true
+            }
+        } else {
+            notMovingCount = 0
+        }
+
+        return false
+    }
+
+    private fun stopWhenNotMoving(lastLatLng: Location){
+        isResumeAfterStop = true
+        pauseLatLng = lastLatLng
+        pauseLast = true
+        pauseService(resources.getString(R.string.running_pause_not_moving), resources.getString(R.string.running_pause_not_moving))
+    }
+
+    // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
+    private fun checkFastMoving(distance: Float): Boolean {
+        val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
+        if (isFastMoving) {
+            tooFastCount += 1
+
+            if (tooFastCount >= 2) {
+                tooFastCount = 0
+                return true
+            }
+        } else {
+            tooFastCount = 0
+        }
+
+        return false
+    }
+
+    private fun stopWhenFastMoving(){
+        isResumeAfterStop = true
+        pauseService(resources.getString(R.string.running_pause_too_fast), resources.getString(R.string.running_pause_too_fast))
+    }
 
     // 거리 표시 (마지막 전, 마지막 경로 차이 비교)
     private fun distancePolyline(next: Location) {
+        // 일시 정지 후 재시작한 경우 -> 일시정지 지점에서 재시작점까지의 거리 계산하지 않기
+        if(isResumeAfterStop){
+            isResumeAfterStop = false
+            return
+        }
+
         val polylines = pathPoints.value!!
         val possiblePolyline = polylines.isNotEmpty()
 
@@ -413,50 +464,22 @@ class RunningService : LifecycleService() {
             val lastLatLng = polylines.last() // 마지막 경로
 
             val distance = lastLatLng.distanceTo(next)
+
+            if(checkNotMoving(distance)){
+                stopWhenNotMoving(lastLatLng)
+                return
+            }
+
+            if(checkFastMoving(distance)){
+                stopWhenFastMoving()
+                return
+            }
+
             _sumDistance.postValue(sumDistance.value!!.plus(distance))
-
-            checkNotMoving(distance, lastLatLng)
-
-            checkFastMoving(distance)
-
         }
     }
 
-    // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
-    private fun checkNotMoving(distance: Float, lastLatLng: Location){
-        val isNotMoving = distance < 2.5f && (System.currentTimeMillis() - startTime) > 3000L
-        if (isNotMoving) {
-            notMovingCount += 1
 
-            if (notMovingCount >= 2) {
-                notMovingCount = 0
-                showToast(resources.getString(R.string.running_pause_not_moving))
-                ttsSpeakAndVibrate(resources.getString(R.string.running_pause_not_moving))
-                pauseLatLng = lastLatLng
-                pauseLast = true
-                pauseService()
-            }
-        } else {
-            notMovingCount = 0
-        }
-    }
-
-    // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
-    private fun checkFastMoving(distance: Float){
-        val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
-        if (isFastMoving) {
-            tooFastCount += 1
-
-            if (tooFastCount >= 2) {
-                tooFastCount = 0
-                showToast(resources.getString(R.string.running_pause_too_fast))
-                ttsSpeakAndVibrate(resources.getString(R.string.running_pause_too_fast))
-                pauseService()
-            }
-        } else {
-            tooFastCount = 0
-        }
-    }
 
     // 서비스가 호출 되었을 때
     @RequiresApi(Build.VERSION_CODES.O)
@@ -481,12 +504,10 @@ class RunningService : LifecycleService() {
                 }
                 // 일시정지 되었을 때
                 SERVICE_ACTION.PAUSE.name -> {
-                    ttsSpeakAndVibrate(SERVICE_ACTION.PAUSE.message)
-                    pauseService()
+                    pauseService(resources.getString(R.string.running_pause_message), SERVICE_ACTION.PAUSE.message)
                 }
                 // 종료 되었을 때
                 SERVICE_ACTION.STOP.name -> {
-                    ttsSpeakAndVibrate(SERVICE_ACTION.STOP.message)
                     killService()
                 }
                 // 처음 화면 켰을 때
@@ -500,14 +521,14 @@ class RunningService : LifecycleService() {
 
 
     // 서비스 정지
-    private fun pauseService() {
+    private fun pauseService(toastMsg: String, ttsMsg: String) {
         _isRunning.postValue(false)
     }
 
     // 서비스가 종료되었을 때
     private fun killService() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        pauseService()
+        pauseService(SERVICE_ACTION.STOP.message, SERVICE_ACTION.STOP.message)
         serviceState = SERVICE_NOTSTART
         _startTime = 0L
         pauseLast = false
@@ -611,10 +632,4 @@ class RunningService : LifecycleService() {
         super.onDestroy()
     }
 
-    private fun Location.convertLatLng(): LatLng = this.run {
-        return LatLng(
-            this.latitude,
-            this.longitude
-        )
-    }
 }

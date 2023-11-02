@@ -122,6 +122,7 @@
     <string name="running_pause">일시정지</string>
     <string name="running_resume">다시 시작하기</string>
 
+    <string name="running_pause_message">러닝이 일시중지 되었습니다.</string>
     <string name="running_pause_not_moving">이동이 없어 러닝이 일시 중지되었습니다.</string>
     <string name="running_resume_when_moving">이동이 감지되어 러닝을 다시 시작합니다.</string>
     <string name="running_pause_too_fast">비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.</string>
