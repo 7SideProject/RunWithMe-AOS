@@ -9,7 +9,6 @@ import android.graphics.Bitmap
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -43,12 +42,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.lang.Math.round
 import javax.inject.Inject
 
@@ -199,13 +194,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             ibStart.setOnClickListener {
                 runningBtnUI()
 
-                sendCommandToService(SERVICE_ACTION.RESUME.name)
+                sendCommandToService(RUNNING_STATE.RESUME.name)
             }
 
             ibPause.setOnClickListener {
                 pauseBtnUI()
 
-                sendCommandToService(SERVICE_ACTION.PAUSE.name)
+                sendCommandToService(RUNNING_STATE.PAUSE.name)
             }
 
             ibStop.setOnClickListener {
@@ -304,6 +299,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         runningService.errorEvent.observe(this) {
             if(it){
                 startError(resources.getString(R.string.not_supported_location))
+                finish()
             }
         }
 
@@ -343,10 +339,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private suspend fun startRun() {
-        sendCommandToService(SERVICE_ACTION.FIRST_SHOW.name)
+        sendCommandToService(RUNNING_STATE.FIRST_SHOW.name)
         delay(3000L)
 
-        sendCommandToService(SERVICE_ACTION.START.name)
+        sendCommandToService(RUNNING_STATE.START.name)
 
         bindService()
 
@@ -462,7 +458,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun stopService(){
         unbindService(serviceConnection)
-        sendCommandToService(SERVICE_ACTION.STOP.name)
+        sendCommandToService(RUNNING_STATE.STOP.name)
     }
 
 
