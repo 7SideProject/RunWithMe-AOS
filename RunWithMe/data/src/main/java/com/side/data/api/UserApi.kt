@@ -8,6 +8,7 @@ import com.side.domain.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -35,4 +36,7 @@ interface UserApi {
 
     @GET("users/duplicate-nickname")
     suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
+
+    @PUT("users/{userSeq}/password")
+    suspend fun changePassword(@Path("userSeq") userSeq: Long, password: String): BaseResponse<Any?>
 }
