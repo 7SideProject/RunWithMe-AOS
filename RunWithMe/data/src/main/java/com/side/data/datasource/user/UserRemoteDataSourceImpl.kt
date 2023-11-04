@@ -44,4 +44,8 @@ class UserRemoteDataSourceImpl @Inject constructor(
     override fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>> = flow {
         emit(userApi.checkNicknameIsDuplicate(nickname))
     }
+
+    override fun changePassword(userSeq: Long, password: String): Flow<BaseResponse<Any?>> = flow {
+        emit(userApi.changePassword(userSeq, password))
+    }
 }
