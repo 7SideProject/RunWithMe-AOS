@@ -71,6 +71,10 @@ class RunningService : LifecycleService() {
     // NotificationCompat.Builder 수정하기 위함, 없으면 notification 삭제 안됨
     lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
+    private val runningState = MutableLiveData<RUNNING_STATE>()
+
+
+
     // 알림창에 표시될 시간
     private val timeRunInSeconds = MutableLiveData<Long>()
 
@@ -85,9 +89,6 @@ class RunningService : LifecycleService() {
     private var _startTime = 0L
     val startTime get() = _startTime
 
-    private var _isFirstRun = true // 처음 실행 여부 (true = 실행되지않음)
-    val isFirstRun get() = _isFirstRun
-
     private var _startDay = ""
     val startDay get() = _startDay
 
@@ -95,7 +96,6 @@ class RunningService : LifecycleService() {
     var stopRunningBeforeRegister = false // 정지 버튼을 누르고 서버에 기록 등록하기 전 상태 (오류 시 다시 등록하기 위함)
 
     private var pauseLatLng: Location? = null
-    private var stopLastLatLng: Location? = null
     private var isResumeAfterStop: Boolean = false
 
     private val _isRunning = MutableLiveData<Boolean>() // 위치 추적 상태 여부
@@ -167,11 +167,6 @@ class RunningService : LifecycleService() {
     }
 
     private fun vibrate() {
-        // minSdk가 24라 확인할 필요 없음
-//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-//            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-//        }
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             val vibrator = getSystemService(Vibrator::class.java)
             vibrator.vibrate(1000L)
@@ -200,49 +195,78 @@ class RunningService : LifecycleService() {
             updateLocation(it)
             updateNotificationTrackingState(it)
         }
+
+        runningState.observe(this){
+            when(it){
+                RUNNING_STATE.START -> {
+                    startTimer()
+                    startTimerJob()
+                    startForegroundService()
+                    _startDay = LocalDate.now().toString()
+                    ttsSpeakAndVibrate(it.message)
+                    _isRunning.postValue(true)
+                }
+                RUNNING_STATE.RESUME -> {
+                    startTimer()
+                    startTimerJob()
+                    ttsSpeakAndVibrate(it.message)
+                    _isRunning.postValue(true)
+                }
+                RUNNING_STATE.PAUSE -> {
+                    _isRunning.postValue(false)
+                }
+                RUNNING_STATE.STOP -> {
+                    killService()
+                    _isRunning.postValue(false)
+                }
+                RUNNING_STATE.FIRST_SHOW -> {
+                    updateLocation(true)
+                }
+                else -> {
+
+                }
+            }
+        }
     }
 
     // 초기화
     private fun postInitialValues() {
-        _isRunning.postValue(false)
         _pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
         _timeRunInMillis.postValue(0L)
     }
 
-    private fun resumeRunning() {
+    private fun checkResume(lastLocation: Location): Boolean {
         if (stopRunningBeforeRegister) {
-            return
+            return false
         }
 
-        val distance = pauseLatLng!!.distanceTo(stopLastLatLng!!)
+        val distance = pauseLatLng!!.distanceTo(lastLocation)
 
         // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
         val isMoving = distance > 8f && ((System.currentTimeMillis() - _startTime) > 3000L)
-        val isResume = !isRunning.value!! and pauseLast
 
-        if (isMoving && isResume) { // 재시작
-            showToast(resources.getString(R.string.running_resume_when_moving))
-            ttsSpeakAndVibrate(resources.getString(R.string.running_resume_when_moving))
-            startTimer()
-            _startTime = System.currentTimeMillis()
-            pauseLast = false
-        }
+        return isMoving
+    }
+
+    private fun resumeRunningWhenDetectMove(){
+        runningState.postValue(RUNNING_STATE.RESUME)
+        showToast(resources.getString(R.string.running_resume_when_moving))
+        ttsSpeakAndVibrate(resources.getString(R.string.running_resume_when_moving))
+        pauseLast = false
     }
 
 
     private fun startTimer() {
-        _isRunning.postValue(true)
+        _startTime = System.currentTimeMillis()
         timeStarted = System.currentTimeMillis()
-        startTimerJob()
-
     }
 
 
     private fun startTimerJob() {
         lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
-            while (isRunning.value!!) {
+            while (runningState.value == RUNNING_STATE.RESUME || runningState.value == RUNNING_STATE.START) {
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
@@ -289,36 +313,35 @@ class RunningService : LifecycleService() {
         }
     }
 
-
-    //위치정보 수신해 addPathPoint로 추가
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
-            // 처음 시작할 때
-            if (isFirstRun) {
-                result?.locations?.let { locations ->
-                    for (location in locations) {
-                        pauseLatLng = location
+
+            result?.locations?.let { locations ->
+                for(location in locations){
+
+                    when(runningState.value){
+                        // 처음 시작할 때
+                        RUNNING_STATE.START -> {
+                            pauseLatLng = location
+                        }
+                        // 러닝 중
+                        RUNNING_STATE.RESUME -> {
+                            addPathPoint(location)
+                        }
+                        // 일시 정지 시
+                        RUNNING_STATE.PAUSE -> {
+                            if(checkResume(location)){
+                                resumeRunningWhenDetectMove()
+                            }
+                        }
+
+                        else -> {}
                     }
+
                 }
-            }
-            // 러닝 중
-            if (isRunning.value!!) {
-                result?.locations?.let { locations ->
-                    for (location in locations) {
-                        addPathPoint(location)
-                    }
-                }
-                return
             }
 
-            // 일시 정지했을 때
-            result?.locations?.let { locations ->
-                for (location in locations) {
-                    stopLastLatLng = location
-                    resumeRunning()
-                }
-            }
         }
     }
 
@@ -392,7 +415,7 @@ class RunningService : LifecycleService() {
         }else if(lastToNextDistance < 100){
             3F
         }else{
-            2F
+            1.5F
         }
 
         // lastDistance에 따라서 각도 차이(diffBearing)이 checkBearing보다 낮거나 같은 경우 좌표 삭제(거의 직선인 경우)
@@ -479,40 +502,30 @@ class RunningService : LifecycleService() {
         }
     }
 
-
-
-    // 서비스가 호출 되었을 때
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         intent?.let {
             when (it.action) {
                 // 시작 되었을 때
-                SERVICE_ACTION.START.name -> {
-                    startTimer()
-                    startForegroundService()
-                    _isFirstRun = false
-                    _startTime = System.currentTimeMillis()
-                    _startDay = LocalDate.now().toString()
-                    ttsSpeakAndVibrate(SERVICE_ACTION.START.message)
+                RUNNING_STATE.START.name -> {
+                    runningState.postValue(RUNNING_STATE.START)
                 }
                 // 재개 되었을 때
-                SERVICE_ACTION.RESUME.name -> {
-                    startTimer()
-                    _startTime = System.currentTimeMillis()
-                    ttsSpeakAndVibrate(SERVICE_ACTION.RESUME.message)
+                RUNNING_STATE.RESUME.name -> {
+                    runningState.postValue(RUNNING_STATE.RESUME)
                 }
                 // 일시정지 되었을 때
-                SERVICE_ACTION.PAUSE.name -> {
-                    pauseService(resources.getString(R.string.running_pause_message), SERVICE_ACTION.PAUSE.message)
+                RUNNING_STATE.PAUSE.name -> {
+                    pauseService(resources.getString(R.string.running_pause_message), RUNNING_STATE.PAUSE.message)
+                    runningState.postValue(RUNNING_STATE.PAUSE)
                 }
                 // 종료 되었을 때
-                SERVICE_ACTION.STOP.name -> {
-                    killService()
+                RUNNING_STATE.STOP.name -> {
+                    runningState.postValue(RUNNING_STATE.STOP)
                 }
                 // 처음 화면 켰을 때
-                SERVICE_ACTION.FIRST_SHOW.name -> {
-                    updateLocation(true)
+                RUNNING_STATE.FIRST_SHOW.name -> {
+                    runningState.postValue(RUNNING_STATE.FIRST_SHOW)
                 }
             }
         }
@@ -522,19 +535,17 @@ class RunningService : LifecycleService() {
 
     // 서비스 정지
     private fun pauseService(toastMsg: String, ttsMsg: String) {
-        _isRunning.postValue(false)
+        showToast(toastMsg)
+        ttsSpeakAndVibrate(ttsMsg)
+        runningState.postValue(RUNNING_STATE.PAUSE)
     }
 
     // 서비스가 종료되었을 때
     private fun killService() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        pauseService(SERVICE_ACTION.STOP.message, SERVICE_ACTION.STOP.message)
+        showToast(resources.getString(R.string.running_stop_message))
+        ttsSpeakAndVibrate(resources.getString(R.string.running_stop_message))
         serviceState = SERVICE_NOTSTART
-        _startTime = 0L
-        pauseLast = false
-        _isFirstRun = true
-
-//        postInitialValues()
         stopSelf()
     }
 
@@ -544,9 +555,7 @@ class RunningService : LifecycleService() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
-        }
+        createNotificationChannel(notificationManager)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             startForeground(
@@ -570,7 +579,6 @@ class RunningService : LifecycleService() {
     }
 
     // 채널 만들기
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
@@ -586,13 +594,13 @@ class RunningService : LifecycleService() {
         // 정지 or 시작 버튼 클릭 시 그에 맞는 액션 전달
         val pendingIntent = if (isTracking) {
             val pauseIntent = Intent(this, RunningService::class.java).apply {
-                action = SERVICE_ACTION.PAUSE.name
+                action = RUNNING_STATE.PAUSE.name
             }
             // pending Intent 객체 생성
             PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_MUTABLE)
         } else {
             val resumeIntent = Intent(this, RunningService::class.java).apply {
-                action = SERVICE_ACTION.RESUME.name
+                action = RUNNING_STATE.RESUME.name
             }
             PendingIntent.getService(this, 2, resumeIntent, PendingIntent.FLAG_MUTABLE)
         }
@@ -628,6 +636,9 @@ class RunningService : LifecycleService() {
             tts?.stop()
             tts?.shutdown()
         }
+
+        /** 34버전에서 노티 지울때 destory 호출되는지 확인 **/
+        serviceState = SERVICE_NOTSTART
 
         super.onDestroy()
     }
