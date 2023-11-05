@@ -17,5 +17,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         }
 
         myPageViewModel.getUserProfileRequest()
+        myPageViewModel.getTotalRecordRequest()
     }
 }
