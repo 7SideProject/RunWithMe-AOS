@@ -29,28 +29,17 @@ class MyPageViewModel @Inject constructor(
     private val _totalRecord = MutableStateFlow<TotalRecord>(TotalRecord())
     val totalRecord get() = _totalRecord.asStateFlow()
 
-    fun getUserProfileRequest(){
-        getUserSeq { userSeq ->
-            getUserProfile(userSeq)
-        }
-    }
-
-    fun getTotalRecordRequest(){
-        getUserSeq { userSeq ->
-            getTotalRecord(userSeq)
-        }
-    }
-
-    private fun getUserSeq(function: (Long) -> Unit){
+    fun myPageInitRequest(){
         viewModelScope.launch(Dispatchers.IO) {
             getUserSeqDataStoreUseCase().collectLatest {
-                Log.d("getUserProfileError", "getUserProfile: $it")
+                Log.d("myPageInitRequest", "getUserProfile: $it")
                 it.onSuccess { userSeq ->
-                    function(userSeq)
+                    getUserProfile(userSeq)
+                    getTotalRecord(userSeq)
                 }.onFailure { error->
-                    Log.d("getUserSeqError", "${error} ")
+                    Log.d("myPageInitRequest", "${error} ")
                 }.onError { error ->
-                    Log.d("getUserSeqError", "${error.message} ")
+                    Log.d("myPageInitRequest", "${error.message} ")
                 }
             }
         }
