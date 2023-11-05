@@ -3,6 +3,7 @@ package com.side.data.api
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
+import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
@@ -39,4 +40,7 @@ interface UserApi {
 
     @POST("users/{userSeq}/connect")
     suspend fun dailyCheck(@Path("userSeq") userSeq: Long): BaseResponse<DailyCheckResponse>
+
+    @GET("users/{userSeq}/total-record")
+    suspend fun getTotalRecord(@Path("userSeq") userSeq: Long): BaseResponse<TotalRecordResponse>
 }
