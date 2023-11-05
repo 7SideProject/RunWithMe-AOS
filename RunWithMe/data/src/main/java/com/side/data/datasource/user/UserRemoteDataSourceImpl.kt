@@ -8,6 +8,7 @@ import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.EmailLoginResponse
+import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
@@ -48,5 +49,9 @@ class UserRemoteDataSourceImpl @Inject constructor(
 
     override fun dailyCheck(userSeq: Long): Flow<BaseResponse<DailyCheckResponse>> = flow {
         emit(userApi.dailyCheck(userSeq))
+    }
+
+    override fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>> = flow {
+        emit(userApi.getTotalRecord(userSeq))
     }
 }
