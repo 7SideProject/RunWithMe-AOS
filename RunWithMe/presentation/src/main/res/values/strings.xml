@@ -16,6 +16,9 @@
     <string name="my_page">마이페이지</string>
     <string name="edit_profile">프로필 수정</string>
     <string name="register_profile">프로필 등록</string>
+    <string name="record">기록</string>
+    <string name="my_board">작성글</string>
+    <string name="achieve">업적</string>
     <string name="join">회원가입</string>
     <string name="practice_running">연습 러닝</string>
     <string name="find_password">비밀번호 찾기</string>
