@@ -130,3 +130,16 @@ fun TextView.setWeight(weight: Int) {
 fun TextView.setPoint(point: Int) {
     this.text = "${point}P"
 }
+
+@BindingAdapter("setTotalRunningAvgSpeed")
+fun TextView.setTotalRunningAvgSpeed(avgSpeed: Double) {
+    this.text = "${avgSpeed} km/h"
+}
+
+@BindingAdapter("setTotalRunningTime")
+fun TextView.setTotalRunningAvgSpeed(totalTime: Int) {
+    val hour = totalTime / 60
+    val minute = totalTime % 60
+    this.text = "${hour}시간 ${minute}분"
+}
+
