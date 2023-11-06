@@ -3,6 +3,8 @@ package com.side.runwithme.view.find_password
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.user.ChangePasswordUseCase
 import com.side.runwithme.R
 import com.side.runwithme.util.MutableEventFlow
@@ -88,9 +90,16 @@ class FindPasswordViewModel @Inject constructor(
             }
         }
 
-        /** API 요청 **/
         viewModelScope.launch(Dispatchers.IO){
-            _findPasswordEventFlow.emit(Event.Success("비밀번호 변경 성공"))
+            changePasswordUseCase(verifiedEmail.value, password.value).collectLatest {
+                it.onSuccess {
+                    _findPasswordEventFlow.emit(Event.Success("비밀번호 변경 성공"))
+                }.onFailure {
+                    _findPasswordEventFlow.emit(Event.Success("변경에 실패했습니다. 잠시 후 다시 시도해주세요."))
+                }.onError {
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
         }
     }
 
