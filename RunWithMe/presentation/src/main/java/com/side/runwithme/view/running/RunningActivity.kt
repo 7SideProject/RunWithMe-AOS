@@ -65,7 +65,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var runningService: RunningService
 
-
     // 라이브 데이터 받아온 값들
     private var caloriesBurned: Int = 0
     private var sumDistance: Float = 0f
@@ -79,8 +78,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var loadingDialog: LoadingDialog
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
         val intent = intent
         val challengeSeq = intent.getIntExtra("challengeSeq", 0)
