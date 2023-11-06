@@ -6,11 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.side.domain.model.User
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onFailure
-import com.side.domain.utils.onSuccess
-import com.side.runwithme.R
-import com.side.runwithme.view.join.JoinViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

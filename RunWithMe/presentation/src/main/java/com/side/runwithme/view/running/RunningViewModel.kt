@@ -14,9 +14,6 @@ import com.side.domain.usecase.datastore.SaveRunningChallengeGoalTypeUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
-import com.side.domain.utils.onError
-import com.side.domain.utils.onFailure
-import com.side.domain.utils.onSuccess
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
@@ -24,7 +21,6 @@ import com.side.runwithme.util.getMutableStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
