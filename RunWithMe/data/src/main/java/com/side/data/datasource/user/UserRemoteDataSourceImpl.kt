@@ -45,7 +45,7 @@ class UserRemoteDataSourceImpl @Inject constructor(
         emit(userApi.checkNicknameIsDuplicate(nickname))
     }
 
-    override fun changePassword(userSeq: Long, password: String): Flow<BaseResponse<Any?>> = flow {
-        emit(userApi.changePassword(userSeq, password))
+    override fun changePassword(email: String, password: String): Flow<BaseResponse<Any?>> = flow {
+        emit(userApi.changePassword(email, password))
     }
 }

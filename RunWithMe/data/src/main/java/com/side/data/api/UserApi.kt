@@ -37,6 +37,6 @@ interface UserApi {
     @GET("users/duplicate-nickname")
     suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
 
-    @PUT("users/{userSeq}/password")
-    suspend fun changePassword(@Path("userSeq") userSeq: Long, password: String): BaseResponse<Any?>
+    @PUT("users/{userEmail}/password")
+    suspend fun changePassword(@Path("userEmail") email: String, password: String): BaseResponse<Any?>
 }

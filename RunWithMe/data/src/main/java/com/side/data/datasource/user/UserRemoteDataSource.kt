@@ -23,5 +23,5 @@ interface UserRemoteDataSource {
 
     fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>>
 
-    fun changePassword(userSeq: Long, password: String): Flow<BaseResponse<Any?>>
+    fun changePassword(email: String, password: String): Flow<BaseResponse<Any?>>
 }
