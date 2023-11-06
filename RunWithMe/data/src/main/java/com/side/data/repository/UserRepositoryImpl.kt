@@ -10,8 +10,6 @@ import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResultOtherType
 import com.side.data.util.initKeyStore
-import com.side.domain.base.changeData
-import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.User
 import com.side.domain.repository.DuplicateCheckResponse
 import com.side.domain.repository.UserRepository
