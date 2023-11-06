@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 typealias UserResponse = ResultType<BaseResponse<User?>>
 typealias DuplicateCheckResponse = ResultType<BaseResponse<DuplicateCheck>>
+typealias NullResponse = ResultType<BaseResponse<Any?>>
 
 interface UserRepository {
 //    fun login(code: String, state: String): Flow<UserResponse>
@@ -18,5 +19,8 @@ interface UserRepository {
     fun getUserProfile(userSeq: Long): Flow<UserResponse>
 
     fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
+
     fun checkNicknameIsDuplicate(nickname: String): Flow<DuplicateCheckResponse>
+
+    fun changePassword(email: String, password: String): Flow<NullResponse>
 }

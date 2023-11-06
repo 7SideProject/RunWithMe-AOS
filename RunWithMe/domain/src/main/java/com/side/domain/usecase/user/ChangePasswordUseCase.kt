@@ -8,5 +8,5 @@ import javax.inject.Singleton
 class ChangePasswordUseCase @Inject constructor(
     private val userRepository: UserRepository
 ){
-    operator fun invoke(userSeq: Long, password: String) = userRepository.changePassword(userSeq, password)
+    operator fun invoke(email: String, password: String) = userRepository.changePassword(email, password)
 }

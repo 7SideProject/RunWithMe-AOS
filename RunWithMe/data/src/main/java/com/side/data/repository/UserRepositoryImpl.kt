@@ -8,12 +8,14 @@ import com.side.data.mapper.mapperToJoinRequest
 import com.side.data.mapper.mapperToUser
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
 import com.side.data.util.initKeyStore
 import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.User
 import com.side.domain.repository.DuplicateCheckResponse
+import com.side.domain.repository.NullResponse
 import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserResponse
 import com.side.domain.utils.ResultType
@@ -171,4 +173,14 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, password).asResult{
+        when(it.code){
+            101 -> {
+                ResultType.Success(it)
+            }
+            else -> {
+                ResultType.Fail(it)
+            }
+        }
+    }
 }
