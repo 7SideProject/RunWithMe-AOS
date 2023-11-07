@@ -139,6 +139,7 @@
     <string name="message_duplicate_nickname">이미 사용중인 닉네임입니다.</string>
     <string name="message_send_mail">인증번호가 전송되었습니다.</string>
     <string name="message_not_equal_verify">인증번호가 일치하지 않습니다.</string>
+    <string name="message_equal_verify">인증번호가 일치합니다.</string>
     <string name="message_delay_send_mail">이미 인증번호가 전송되었습니다. 잠시 후 다시 시도하세요.</string>
     <string name="message_success_join">회원가입이 완료되었습니다.</string>
     <string name="message_fail_join">회원가입에 실패했습니다.</string>
