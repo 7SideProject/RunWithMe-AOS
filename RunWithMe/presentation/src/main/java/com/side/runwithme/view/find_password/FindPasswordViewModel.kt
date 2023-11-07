@@ -42,11 +42,7 @@ class FindPasswordViewModel @Inject constructor(
     val doneState = combine(verifiedEmail, password, passwordConfirm) { verifiedEmail, password, passwordConfirm ->
         if(verifiedEmail.isBlank() || password.isBlank() || passwordConfirm.isBlank()){
             false
-        }
-        if(password != passwordConfirm){
-            false
-        }
-        true
+        }else password == passwordConfirm
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     private val _findPasswordEventFlow = MutableEventFlow<Event>()
@@ -58,6 +54,7 @@ class FindPasswordViewModel @Inject constructor(
     }
 
     fun changePassword(){
+        Log.d("test123", "changePassword: click")
         if(email.value.isBlank()){
             viewModelScope.launch {
                 _findPasswordEventFlow.emit(Event.Fail("이메일을 입력해주세요."))
