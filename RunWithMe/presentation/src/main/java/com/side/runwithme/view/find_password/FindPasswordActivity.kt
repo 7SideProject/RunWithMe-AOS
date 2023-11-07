@@ -66,6 +66,8 @@ class FindPasswordActivity : BaseActivity<ActivityFindPasswordBinding>(R.layout.
             btnVerify.setOnClickListener {
                 if(etVerifyNumber.text.toString() == mailSender.getEmailCode()){
                     layoutFindPassword.visibility = View.VISIBLE
+                    etPassword.requestFocus()
+                    showToast(resources.getString(R.string.message_equal_verify))
                     findPasswordViewModel.verifyEmail()
                 }else{
                     showToast(resources.getString(R.string.message_not_equal_verify))
