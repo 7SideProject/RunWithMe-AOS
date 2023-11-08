@@ -2,6 +2,7 @@ package com.side.runwithme.view.challenge_list
 
 import android.content.Intent
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
@@ -10,6 +11,7 @@ import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge_list.create.ChallengeCreateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChallengeListFragment :
@@ -35,7 +37,7 @@ class ChallengeListFragment :
 
     private fun initViewModelCallback() {
         // Coroutine 사용 때문에 binding 못함
-        repeatOnStarted {
+        lifecycleScope.launch {
             challengeViewModel.challengeList.collectLatest { challengeList ->
 
                 challengeListAdapter.submitData(challengeList)
