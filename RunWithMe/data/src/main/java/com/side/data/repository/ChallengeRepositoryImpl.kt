@@ -2,6 +2,7 @@ package com.side.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
@@ -35,8 +36,7 @@ class ChallengeRepositoryImpl @Inject constructor(
     private val challengeRemoteDataSource: ChallengeRemoteDataSource
 ) : ChallengeRepository {
 
-    override fun getRecruitingChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
-        emitResultTypeLoading()
+    override fun getRecruitingChallengeList(size: Int): Flow<PagingData<Challenge>> {
 
         val pagingSourceFactory =
             {
@@ -45,20 +45,15 @@ class ChallengeRepositoryImpl @Inject constructor(
                     challengeRemoteDataSource = challengeRemoteDataSource
                 )
             }
-        Pager(
+        return Pager(
             config = PagingConfig(
                 pageSize = size,
                 enablePlaceholders = false,
                 maxSize = size * 3
             ), pagingSourceFactory = pagingSourceFactory
-        ).flow.collect {
-
-            emitResultTypeSuccess(it)
-        }
-
-    }.catch {
-        emitResultTypeError(it)
+        ).flow
     }
+
 
     override fun createChallenge(
         challenge: Challenge,
@@ -125,9 +120,7 @@ class ChallengeRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun getMyChallengeList(size: Int): Flow<PagingChallengeResponse> = flow {
-        emitResultTypeLoading()
-
+    override fun getMyChallengeList(size: Int): Flow<PagingData<Challenge>> {
         val pagingSourceFactory =
             {
                 MyChallengeListPagingSource(
@@ -135,19 +128,13 @@ class ChallengeRepositoryImpl @Inject constructor(
                     challengeRemoteDataSource = challengeRemoteDataSource
                 )
             }
-        Pager(
+        return Pager(
             config = PagingConfig(
                 pageSize = size,
                 enablePlaceholders = false,
                 maxSize = size * 3
             ), pagingSourceFactory = pagingSourceFactory
-        ).flow.collect {
-
-            emitResultTypeSuccess(it)
-        }
-
-    }.catch {
-        emitResultTypeError(it)
+        ).flow
     }
 
     override fun joinChallenge(challengeSeq: Long, password: String?): Flow<JoinChallengeResponse> =
