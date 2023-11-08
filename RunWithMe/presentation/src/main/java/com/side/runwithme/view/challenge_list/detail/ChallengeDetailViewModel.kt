@@ -7,6 +7,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
 import com.side.domain.usecase.challenge.JoinChallengeUseCase
+import com.side.domain.usecase.challenge.LeaveChallengeUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.CHALLENGE_STATE
@@ -29,7 +30,8 @@ import javax.inject.Inject
 class ChallengeDetailViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val isChallengeAlreadyJoinUseCase: IsChallengeAlreadyJoinUseCase,
-    private val joinChallengeUseCase: JoinChallengeUseCase
+    private val joinChallengeUseCase: JoinChallengeUseCase,
+    private val leaveChallengeUseCase: LeaveChallengeUseCase
 ) : ViewModel() {
 
     private val _challenge = MutableStateFlow<ChallengeParcelable?>(null)
@@ -142,11 +144,25 @@ class ChallengeDetailViewModel @Inject constructor(
     /** api 구현해야함 **/
     private fun quitChallenge(){
         // quit api 성공 시 ChallengeState Not_Join으로 변경
+        viewModelScope.launch(Dispatchers.IO) {
+            leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
+                it.onSuccess {
+                    isJoin.value = false
+
+                }.onFailure {
+
+                }.onError {
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
     }
+
 
 
     sealed interface Event {
         class Success : Event
         class Fail : Event
+        class DeleteChallenge : Event
     }
 }

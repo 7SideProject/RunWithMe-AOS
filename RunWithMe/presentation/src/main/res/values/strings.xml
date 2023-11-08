@@ -133,5 +133,5 @@
 
     <string name="message_back_btn">뒤로가기 버튼을 한번 더 누르면 회원가입이 종료됩니다.</string>
 
-
+    <string name="delete_challenge_success">챌린지가 해체되었습니다.</string>
 </resources>
