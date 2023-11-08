@@ -13,13 +13,12 @@ import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
-import com.side.domain.base.BaseResponse
-import com.side.domain.base.changeData
-import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Challenge
-import com.side.domain.repository.ChallengeRepository
 import com.side.domain.repository.ChallengeCreateResponse
+import com.side.domain.repository.ChallengeRepository
+import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
+import com.side.domain.repository.NullDataResponse
 import com.side.domain.repository.PagingChallengeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
@@ -83,13 +82,10 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
-
-                /** 실패 다른 경우들 처리해야함**/
-                ResponseCodeStatus.CREATE_CHALLENGE_FAIL.code -> {
+                else -> {
                     emitResultTypeFail(
-                        it.changeMessageAndData(
-                            it.message,
-                            it.data
+                        it.changeMessage(
+                            "잘못된 입력입니다."
                         )
                     )
                 }
@@ -100,7 +96,7 @@ class ChallengeRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
-    override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>> =
+    override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<IsChallengeJoinResponse> =
         challengeRemoteDataSource.isChallengeAlreadyJoin(challengeSeq).asResultOtherType {
             when (it.code) {
                 ResponseCodeStatus.CHECK_IN_CHALLENGE_SUCCESS.code -> {
@@ -180,4 +176,31 @@ class ChallengeRepositoryImpl @Inject constructor(
                 }
             }
         }
+
+    override fun leaveChallenge(challengeSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.leaveChallenge(challengeSeq).asResult {
+        when(it.code){
+            ResponseCodeStatus.DELETE_CHALLENGE_SUCCESS.code -> {
+                ResultType.Success(
+                    it
+                )
+            }
+
+            ResponseCodeStatus.LEAVE_CHALLENGE_SUCCESS.code -> {
+                ResultType.Success(it)
+            }
+
+            ResponseCodeStatus.CHALLENGE_NOT_FOUND.code -> {
+                ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_NOT_FOUND.message))
+            }
+
+            ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.code -> {
+                ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.message))
+            }
+
+            else -> {
+                ResultType.Fail(it)
+            }
+
+        }
+    }
 }

@@ -34,4 +34,7 @@ interface ChallengeApi {
 
     @POST("challenge/{challengeSeq}/join")
     suspend fun joinChallenge(@Path("challengeSeq") challengeSeq: Long, @Query("password") password: String?): BaseResponse<String?>
+
+    @POST("challenge/{challengeSeq}")
+    suspend fun leaveChallenge(@Path("challengeSeq") challengeSeq: Long): BaseResponse<Any?>
 }

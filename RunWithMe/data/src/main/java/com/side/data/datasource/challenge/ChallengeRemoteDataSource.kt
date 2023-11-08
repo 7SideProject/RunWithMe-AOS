@@ -25,4 +25,6 @@ interface ChallengeRemoteDataSource {
     fun getMyChallengeList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<Challenge>>>
 
     fun joinChallenge(challengeSeq: Long, password: String?): Flow<BaseResponse<String?>>
+
+    fun leaveChallenge(challengeSeq: Long): Flow<BaseResponse<Any?>>
 }
