@@ -1,12 +1,12 @@
-package com.side.runwithme.view.challenge_list.create
+package com.side.runwithme.view.challenge_create
 
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate4Binding
-import com.side.runwithme.view.challenge_list.create.dialog.CostDialog
-import com.side.runwithme.view.challenge_list.create.dialog.MaxMemberDialog
+import com.side.runwithme.view.challenge_create.dialog.CostDialog
+import com.side.runwithme.view.challenge_create.dialog.MaxMemberDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 

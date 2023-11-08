@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.challenge_list.create.ChallengeCreateActivity"
+        <activity android:name=".view.challenge_create.ChallengeCreateActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
 

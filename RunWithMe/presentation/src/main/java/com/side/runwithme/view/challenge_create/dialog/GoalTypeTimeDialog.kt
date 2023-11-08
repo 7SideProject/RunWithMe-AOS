@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create.dialog
+package com.side.runwithme.view.challenge_create.dialog
 
 import android.os.Build
 import android.widget.NumberPicker
@@ -6,13 +6,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogMaxMemberBinding
+import com.side.runwithme.databinding.DialogGoalTypeTimeBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel
 
-class MaxMemberDialog(): BaseDialogFragment<DialogMaxMemberBinding>(
-    R.layout.dialog_max_member) {
+class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
+    R.layout.dialog_goal_type_time) {
 
+    private lateinit var timeValues : Array<String>
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     override fun init() {
@@ -21,6 +22,8 @@ class MaxMemberDialog(): BaseDialogFragment<DialogMaxMemberBinding>(
             challengeCreateVM = challengeCreateViewModel
         }
 
+        initTimeValues()
+
         initNumberPicker()
 
         initViewModelCallbacks()
@@ -28,7 +31,7 @@ class MaxMemberDialog(): BaseDialogFragment<DialogMaxMemberBinding>(
 
     private fun initViewModelCallbacks(){
         repeatOnStarted {
-            challengeCreateViewModel.dialogMaxMemberEventFlow.collect {
+            challengeCreateViewModel.dialogGoalTimeEventFlow.collect {
                 if(it is ChallengeCreateViewModel.Event.Success){
                     dismiss()
                 }
@@ -36,11 +39,17 @@ class MaxMemberDialog(): BaseDialogFragment<DialogMaxMemberBinding>(
         }
     }
 
+    private fun initTimeValues(){
+        timeValues = Array<String>(60, {i -> ((i + 1) * 10).toString()})
+    }
+
     private fun initNumberPicker(){
         binding.apply {
-            np.minValue = 2
-            np.maxValue = 20
-            np.value = 7
+            np.minValue = 0
+            np.maxValue = 59
+            np.value = 3
+            np.displayedValues = timeValues
+            //순환 안되게 막기
             np.wrapSelectorWheel = false
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
