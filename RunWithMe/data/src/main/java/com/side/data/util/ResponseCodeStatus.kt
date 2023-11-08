@@ -36,6 +36,7 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     GET_MY_CHALLENGE_SUCCESS(306, "가입한 챌린지 조회에 성공하였습니다."),
     CHALLENGE_NOT_FOUND(-300, "존재하지 않는 챌린지입니다."),
     CHALLENGE_JOIN_ALREADY_EXIST(-301, "이미 가입한 챌린지 입니다."),
+    CHALLENGE_IS_NOT_MY_CHALLENGE(-307, "챌린지에 가입되어 있지 않습니다."),
 
     // Board
     CREATE_BOARD_SUCCESS(400, "게시글 등록에 성공하였습니다."),
@@ -44,8 +45,12 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     DELETE_BOARD_SUCCESS(403, "게시글 삭제에 성공하였습니다."),
 
     // Challenge 등록
-    CREATE_CHALLENGE_FAIL(-402, "챌린지 등록에 실패했습니다."),
-    CREATE_CHALLENGE_SUCCESS(406, "챌린지 등록에 성공했습니다."),
+    CREATE_CHALLENGE_FAIL(-306, "챌린지 등록에 실패했습니다."),
+    CREATE_CHALLENGE_SUCCESS(307, "챌린지 등록에 성공했습니다."),
+
+    // Challenge 탈퇴
+    DELETE_CHALLENGE_SUCCESS(308, "챌린지 해체에 성공하였습니다."),
+    LEAVE_CHALLENGE_SUCCESS(309, "가입한 챌린지에 탈퇴하였습니다."),
 
     // Image
     IMAGE_NOT_FOUND(-500, "이미지를 찾을 수 없습니다."),
