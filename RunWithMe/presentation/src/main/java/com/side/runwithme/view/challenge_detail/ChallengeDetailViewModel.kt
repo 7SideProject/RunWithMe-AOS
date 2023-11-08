@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.detail
+package com.side.runwithme.view.challenge_detail
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -101,6 +101,7 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
     fun onClickButton(){
+        Log.d("test123", "onClickButton: ${challengeState.value}")
         when(challengeState.value){
             CHALLENGE_STATE.START -> {
                 goRunning()
@@ -141,17 +142,19 @@ class ChallengeDetailViewModel @Inject constructor(
         }
     }
 
-    /** api 구현해야함 **/
     private fun quitChallenge(){
         // quit api 성공 시 ChallengeState Not_Join으로 변경
         viewModelScope.launch(Dispatchers.IO) {
             leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
                 it.onSuccess {
-                    isJoin.value = false
-
+                    Log.d("test123", "quitChallenge: success ${it.code}")
+                    _ChallengeDetailEventFlow.emit(Event.DeleteChallenge())
                 }.onFailure {
+                    Log.d("test123", "quitChallenge: fail ${it.code}")
 
                 }.onError {
+                    Log.d("test123", "quitChallenge: err ${it}")
+
                     Firebase.crashlytics.recordException(it)
                 }
             }
