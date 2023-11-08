@@ -6,6 +6,7 @@ import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -35,6 +36,6 @@ interface ChallengeApi {
     @POST("challenge/{challengeSeq}/join")
     suspend fun joinChallenge(@Path("challengeSeq") challengeSeq: Long, @Query("password") password: String?): BaseResponse<String?>
 
-    @POST("challenge/{challengeSeq}")
+    @DELETE("challenge/{challengeSeq}")
     suspend fun leaveChallenge(@Path("challengeSeq") challengeSeq: Long): BaseResponse<Any?>
 }
