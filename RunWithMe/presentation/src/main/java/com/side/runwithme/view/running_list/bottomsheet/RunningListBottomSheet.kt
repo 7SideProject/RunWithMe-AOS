@@ -70,7 +70,7 @@ class RunningListBottomSheet(private val intentToRunningActivityClickListener: I
     private fun initViewModelCallbacks(){
         binding.apply {
             lifecycleScope.launch {
-                runningListViewModel.myChallenges.collectLatest {
+                runningListViewModel.getMyChallenges().collectLatest {
                     runningListAdapter.submitData(it)
                 }
             }
