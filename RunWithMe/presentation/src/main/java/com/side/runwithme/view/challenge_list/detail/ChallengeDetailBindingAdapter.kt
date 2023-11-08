@@ -16,10 +16,12 @@ fun TextView.setGoalDays(goalDays: Int){
 
 @BindingAdapter("challengeState")
 fun AppCompatButton.setState(state: CHALLENGE_STATE){
+
     when(state){
         CHALLENGE_STATE.START -> {
             this.apply {
                 text = resources.getString(R.string.running)
+                visibility = View.VISIBLE
                 setTextColor(ContextCompat.getColor(this.context, R.color.white))
                 background = ContextCompat.getDrawable(this.context, R.drawable.btn_round_main_color)
             }
@@ -27,6 +29,7 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
         CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {
             this.apply {
                 text = resources.getString(R.string.challenge_quit)
+                visibility = View.VISIBLE
                 setTextColor(ContextCompat.getColor(this.context, R.color.black))
                 background = ContextCompat.getDrawable(this.context, R.drawable.border_rectangle_blue)
             }
@@ -34,6 +37,7 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
         CHALLENGE_STATE.NOT_START_AND_NOT_JOIN -> {
             this.apply {
                 text = resources.getString(R.string.challenge_join)
+                visibility = View.VISIBLE
                 setTextColor(ContextCompat.getColor(this.context, R.color.white))
                 background = ContextCompat.getDrawable(this.context, R.drawable.btn_round_main_color)
             }
