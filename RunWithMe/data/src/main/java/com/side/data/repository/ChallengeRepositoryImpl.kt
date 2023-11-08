@@ -2,12 +2,13 @@ package com.side.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
+import com.side.data.datasource.paging.AvailableRunningListPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.util.ResponseCodeStatus
-import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
@@ -149,5 +150,22 @@ class ChallengeRepositoryImpl @Inject constructor(
 
     }.catch {
         emitResultTypeError(it)
+    }
+
+    override fun getAvailableRunningList(size: Int): Flow<PagingData<Challenge>> {
+        val pagingSourceFactory =
+            {
+                AvailableRunningListPagingSource(
+                    size,
+                    challengeRemoteDataSource = challengeRemoteDataSource
+                )
+            }
+        return Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow
     }
 }

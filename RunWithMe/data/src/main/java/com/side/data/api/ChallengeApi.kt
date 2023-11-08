@@ -30,4 +30,7 @@ interface ChallengeApi {
 
     @GET("challenge/my")
     suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+
+    @GET("challenge/my/running")
+    suspend fun getAvailableRunningList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
 }
