@@ -35,12 +35,14 @@
                     android:id="@+id/rcv_my_challenge_running_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_my_current_challenge_list"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_practice"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_regular">
 
                     <ImageView
                         android:id="@+id/iv_practice_challenge"
