@@ -114,7 +114,7 @@
 
 
     <string name="running">러닝</string>
-    <string name="challenge_join">러닝</string>
+    <string name="challenge_join">가입</string>
     <string name="challenge_quit">탈퇴</string>
 
     <string name="email_hint">이메일 형태로 입력해주세요.</string>

@@ -104,7 +104,8 @@ class ChallengeDetailViewModel @Inject constructor(
         Log.d("test123", "onClickButton: ${challengeState.value}")
         when(challengeState.value){
             CHALLENGE_STATE.START -> {
-                goRunning()
+                /** 챌린지 detail 화면에서 러닝은 일단 안되게 하고 배포 후에 추가 예정 **/
+//                goRunning()
             }
             CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {
                 quitChallenge()
