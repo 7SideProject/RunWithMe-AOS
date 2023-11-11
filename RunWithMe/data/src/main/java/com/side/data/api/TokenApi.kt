@@ -1,9 +1,6 @@
 package com.side.data.api
 
-import com.side.data.model.request.RefreshTokenRequest
-import com.side.domain.base.BaseResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
