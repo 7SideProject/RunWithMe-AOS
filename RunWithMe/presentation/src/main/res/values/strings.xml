@@ -18,7 +18,8 @@
     <string name="register_profile">프로필 등록</string>
     <string name="join">회원가입</string>
     <string name="practice_running">연습 러닝</string>
-
+    <string name="find_password">비밀번호 찾기</string>
+    <string name="login">로그인</string>
 
     <string name="research_in_range">범위 내 재검색</string>
 
@@ -39,6 +40,8 @@
     <string name="verify_number">인증 번호</string>
     <string name="entry_fee">참가비</string>
     <string name="password">비밀번호</string>
+    <string name="change_password">변경할 비밀번호</string>
+    <string name="change_password_confirm">변경할 비밀번호 확인</string>
     <string name="password_confirm">비밀번호 확인</string>
     <string name="not_equal_password">입력하신 비밀번호가 일치하지 않습니다.</string>
     <string name="not_length_password">비밀번호는 8 ~ 16자 이상이어야 합니다.</string>
@@ -116,6 +119,16 @@
     <string name="running">러닝</string>
     <string name="challenge_join">가입</string>
     <string name="challenge_quit">탈퇴</string>
+    <string name="running_pause">일시정지</string>
+    <string name="running_resume">다시 시작하기</string>
+
+    <string name="running_pause_not_moving">이동이 없어 러닝이 일시 중지되었습니다.</string>
+    <string name="running_resume_when_moving">이동이 감지되어 러닝을 다시 시작합니다.</string>
+    <string name="running_pause_too_fast">비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.</string>
+    <string name="not_supported_tts_language">음성 안내를 지원하지 않는 언어입니다.</string>
+    <string name="not_supported_location">위치 권한이 허용되지 않았습니다.</string>
+    <string name="running_error_not_found">알 수 없는 오류입니다. 다시 러닝을 시작해주세요.</string>
+
 
     <string name="email_hint">이메일 형태로 입력해주세요.</string>
 
@@ -134,4 +147,8 @@
     <string name="message_back_btn">뒤로가기 버튼을 한번 더 누르면 회원가입이 종료됩니다.</string>
 
     <string name="delete_challenge_success">챌린지를 탈퇴했습니다.</string>
+
+    <string name="message_daily_check">출석 체크 100P 지급 완료!</string>
+    <string name="message_duplicate_today_daily_check">오늘은 이미 출석했습니다.</string>
+
 </resources>

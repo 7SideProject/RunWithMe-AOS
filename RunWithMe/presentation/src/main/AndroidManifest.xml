@@ -11,12 +11,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <queries>
         <intent>
-            <action
-                android:name="android.intent.action.TTS_SERVICE" />
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
 
@@ -32,6 +31,10 @@
         android:theme="@style/Theme.RunWithMe"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".view.find_password.FindPasswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
 
         <service
             android:name=".service.RunningService"
@@ -40,7 +43,7 @@
         <activity
             android:name=".view.join.JoinActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.running_result.RunningResultActivity"
             android:exported="false" />
@@ -50,7 +53,7 @@
         <activity
             android:name=".view.MainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".view.login.LoginActivity"
             android:exported="true">
@@ -63,12 +66,11 @@
 
         <activity android:name=".view.challenge_create.ChallengeCreateActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
         <meta-data
             android:name="android.app.lib_name"
             android:value="" />
-
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${KAKAOAPIKEY}" />

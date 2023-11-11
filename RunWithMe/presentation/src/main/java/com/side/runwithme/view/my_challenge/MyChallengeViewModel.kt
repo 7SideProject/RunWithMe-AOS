@@ -25,7 +25,6 @@ class MyChallengeViewModel @Inject constructor(
 
     fun getMyChallengeList() : Flow<PagingData<Challenge>> {
         return getMyChallengeListUseCase(CHALLNEGE_SIZE).cachedIn(viewModelScope)
-
     }
 
 }

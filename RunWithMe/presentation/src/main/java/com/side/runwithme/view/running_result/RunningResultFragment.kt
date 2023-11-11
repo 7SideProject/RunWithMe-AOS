@@ -41,7 +41,7 @@ class RunningResultFragment : BaseFragment<FragmentRuuningResultBinding>(R.layou
 
             btnRoute.setOnClickListener {
                 runningResultViewModel.run {
-                    val action = RunningResultFragmentDirections.actionRuuningResultFragmentToRouteDetailFragment(runRecord.value.mapperToRunRecordParcelable(), coordinates.value.mapperToCoordinates().toTypedArray())
+                    val action = RunningResultFragmentDirections.actionRuuningResultFragmentToRouteDetailFragment(runRecord.value, coordinates.value)
                     findNavController().navigate(action)
                 }
             }

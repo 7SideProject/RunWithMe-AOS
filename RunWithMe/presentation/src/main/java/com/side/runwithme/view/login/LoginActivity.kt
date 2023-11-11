@@ -17,6 +17,7 @@ import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityLoginBinding
 import com.side.runwithme.util.*
 import com.side.runwithme.view.MainActivity
+import com.side.runwithme.view.find_password.FindPasswordActivity
 import com.side.runwithme.view.join.JoinActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
@@ -57,7 +58,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
             }
 
-            tvJoin.setOnClickListener {
+            btnJoin.setOnClickListener {
                 //회원가입
                 startActivity(Intent(this@LoginActivity, JoinActivity::class.java))
             }
@@ -65,6 +66,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             btnLogin.setOnClickListener {
                 initKeyStore(Calendar.getInstance().timeInMillis.toString())
                 loginViewModel.loginWithEmail()
+            }
+
+            tvFindPassword.setOnClickListener {
+                startActivity(Intent(this@LoginActivity, FindPasswordActivity::class.java))
             }
         }
     }

@@ -27,6 +27,8 @@ interface DataStoreRepository {
 
     suspend fun saveRunningGoalType(goalType: Int)
 
+    suspend fun saveRunningChallengeName(challengeName: String)
+
     fun getRunningChallengInfo() : Flow<ResultType<RunningInfo>>
 
     suspend fun saveTTSOption(option: Boolean)

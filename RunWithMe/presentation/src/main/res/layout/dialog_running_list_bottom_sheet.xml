@@ -35,7 +35,6 @@
                     android:id="@+id/rcv_my_challenge_running_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    submitList2="@{runningListVM.myChallengeList}"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout

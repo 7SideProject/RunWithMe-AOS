@@ -2,9 +2,11 @@ package com.side.data.mapper
 
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
+import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.model.response.UserResponse
+import com.side.domain.model.DailyCheck
 import com.side.domain.model.DuplicateCheck
 import com.side.domain.model.User
 
@@ -26,4 +28,8 @@ fun UserResponse.mapperToUser(): User = this.run {
 
 fun DuplicateCheckResponse.mapperToDuplicateCheck(): DuplicateCheck = this.run {
     DuplicateCheck(isDuplicated)
+}
+
+fun DailyCheckResponse.mapperToDailyCheck(): DailyCheck = this.run {
+    DailyCheck(isSuccess)
 }

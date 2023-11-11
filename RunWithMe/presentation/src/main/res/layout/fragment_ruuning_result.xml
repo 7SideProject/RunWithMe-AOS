@@ -232,7 +232,7 @@
                         android:textSize="@dimen/fontsize_caption" />
 
                     <TextView
-                        android:id="@+id/tv_crew_name"
+                        android:id="@+id/tv_challenge_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/run_24"

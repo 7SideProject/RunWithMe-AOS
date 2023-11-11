@@ -2,25 +2,23 @@ package com.side.runwithme.view.running_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.runwithme.databinding.ItemMyCurrentChallengeListBinding
 
-class RunningListAdapter(private val listener: IntentToRunningActivityClickListener) : ListAdapter<Challenge, RunningListAdapter.ViewHolder>(diffUtil) {
+class RunningListAdapter(private val listener: IntentToRunningActivityClickListener) : PagingDataAdapter<Challenge, RunningListAdapter.ViewHolder>(diffUtil) {
 
-    inner class ViewHolder(private val binding: ItemMyCurrentChallengeListBinding): RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(private val binding: ItemMyCurrentChallengeListBinding): RecyclerView.ViewHolder(binding.root){
 
-        init {
-            binding.root.setOnClickListener {
-                listener.onItemClick(getItem(absoluteAdapterPosition).seq)
-            }
-        }
 
-        fun bind(challenge: Challenge){
+        fun bind(challenge: Challenge, listener: IntentToRunningActivityClickListener){
             binding.challenge = challenge
-            binding.executePendingBindings()
+            binding.root.setOnClickListener {
+                listener.onItemClick(challenge)
+            }
         }
     }
 
@@ -30,8 +28,10 @@ class RunningListAdapter(private val listener: IntentToRunningActivityClickListe
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
-    }
+        val item = getItem(position)
+        if(item != null) {
+            holder.bind(item, listener)
+        }    }
 
     companion object{
         val diffUtil = object : DiffUtil.ItemCallback<Challenge>(){

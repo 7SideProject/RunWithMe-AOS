@@ -31,16 +31,12 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
 
     private val runningResultViewModel : RunningResultViewModel by viewModels<RunningResultViewModel>()
 
-    companion object {
-        var imgByteArray: ByteArray? = null
-    }
 
     override fun init() {
         initNavigation()
 
         initIntentExtra()
 
-        runningResultViewModel.putImgByteArray(imgByteArray)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
@@ -48,6 +44,8 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
         val intent = intent
         val runRecord : RunRecordParcelable?
         val coordinates : List<Coordinates>?
+        val imgByteArray : ByteArray? = intent.getByteArrayExtra("imgByteArray")
+        val challengeName = intent.getStringExtra("challengeName")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             runRecord = intent.getParcelableExtra("runRecord", RunRecordParcelable::class.java)
@@ -61,10 +59,18 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
 
         runningResultViewModel.apply {
             if(runRecord != null) {
-                putRunRecord(runRecord.mapperToRunRecord())
+                putRunRecord(runRecord)
             }
             if(!coordinates.isNullOrEmpty()) {
-                putCoordinates(coordinates.mapperToCoordinate())
+                putCoordinates(coordinates.toTypedArray())
+            }
+
+            if(imgByteArray != null){
+                putImgByteArray(imgByteArray)
+            }
+
+            if(challengeName != null){
+                putChallengeName(challengeName)
             }
         }
 
@@ -87,8 +93,4 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        imgByteArray = null
-    }
 }

@@ -11,6 +11,7 @@ import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalTypeUseCase
+import com.side.domain.usecase.datastore.SaveRunningChallengeNameUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
@@ -33,27 +34,27 @@ class RunningViewModel @Inject constructor(
     private val saveRunningChallengeSeqUseCase: SaveRunningChallengeSeqUseCase,
     private val saveRunningChallengeGoalAmountUseCase: SaveRunningChallengeGoalAmountUseCase,
     private val saveRunningChallengeGoalTypeUseCase: SaveRunningChallengeGoalTypeUseCase,
+    private val saveRunningChallengeNameUseCase: SaveRunningChallengeNameUseCase,
     private val getRunningInfoUseCase: GetRunningInfoUseCase
-): ViewModel(){
+) : ViewModel() {
 
     private val _postRunRecordEventFlow = MutableEventFlow<Event>()
-    val postRunRecordEventFlow get() = _postRunRecordEventFlow.asEventFlow()
+    val postRunRecordEventFlow = _postRunRecordEventFlow.asEventFlow()
 
     private val _weight = stateHandler.getMutableStateFlow("weight", 65)
-    val weight: StateFlow<Int>
-        get() = _weight.asStateFlow()
+    val weight: StateFlow<Int> = _weight.asStateFlow()
 
     private val _challengeSeq = stateHandler.getMutableStateFlow("challengeSeq", 0)
-    val challengeSeq: StateFlow<Int>
-        get() = _challengeSeq.asStateFlow()
+    val challengeSeq: StateFlow<Int> = _challengeSeq.asStateFlow()
+
+    private val _challengeName = stateHandler.getMutableStateFlow("challengeName", "")
+    val challengeName = _challengeName.asStateFlow()
 
     private var _goalAmount = stateHandler.getMutableStateFlow<Long>("goalAmount", 60000L)
-    val goalAmount
-        get() = _goalAmount.asStateFlow()
+    val goalAmount = _goalAmount.asStateFlow()
 
     private var _goalType = stateHandler.getMutableStateFlow<GOAL_TYPE>("goalType", GOAL_TYPE.TIME)
-    val goalType
-        get() = _goalType.asStateFlow()
+    val goalType = _goalType.asStateFlow()
 
 
     fun getMyWeight() {
@@ -70,23 +71,30 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun saveChallengeInfo(challengeSeq: Int, goalType: Int, goalAmount: Long) {
+    fun saveChallengeInfo(
+        challengeSeq: Int,
+        goalType: Int,
+        goalAmount: Long,
+        challengeName: String
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             saveRunningChallengeSeqUseCase(challengeSeq)
             saveRunningChallengeGoalAmountUseCase(goalAmount)
             saveRunningChallengeGoalTypeUseCase(goalType)
+            saveRunningChallengeNameUseCase(challengeName)
         }
     }
 
-    fun getChallnegeInfo(){
+    fun getChallnegeInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             getRunningInfoUseCase().collect {
                 it.onSuccess {
                     _challengeSeq.value = it.challengeSeq
+                    _challengeName.value = it.challengeName
                     _goalAmount.value = it.goalAmount
-                    if(it.goalType == GOAL_TYPE.TIME.ordinal) {
+                    if (it.goalType == GOAL_TYPE.TIME.ordinal) {
                         _goalType.value = GOAL_TYPE.TIME
-                    }else{
+                    } else {
                         _goalType.value = GOAL_TYPE.DISTANCE
                     }
                 }.onFailure {
@@ -98,18 +106,34 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray){
+    fun checkIsOver10Seconds(runRecord: RunRecord): Boolean {
+        if (runRecord.runningTime <= 10) {
+            return false;
+        }
+
+        return true;
+    }
+
+    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray) {
+        if (!checkIsOver10Seconds(runRecord)) {
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Success())
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            insertPracticeRunRecordUseCase(PracticeRunRecord(
-                seq = 0,
-                image = imgByteArray,
-                startTime = runRecord.runningStartTime,
-                endTime = runRecord.runningEndTime,
-                runningTime = runRecord.runningTime,
-                runningDistance = runRecord.runningDistance,
-                avgSpeed = runRecord.runningAvgSpeed,
-                calorie = runRecord.runningCalorieBurned
-            )).collect {
+            insertPracticeRunRecordUseCase(
+                PracticeRunRecord(
+                    seq = 0,
+                    image = imgByteArray,
+                    startTime = runRecord.runningStartTime,
+                    endTime = runRecord.runningEndTime,
+                    runningTime = runRecord.runningTime,
+                    runningDistance = runRecord.runningDistance,
+                    avgSpeed = runRecord.runningAvgSpeed,
+                    calorie = runRecord.runningCalorieBurned
+                )
+            ).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
@@ -124,7 +148,13 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postChallengeRunRecord(allRunRecord: AllRunRecord){
+    fun postChallengeRunRecord(allRunRecord: AllRunRecord) {
+        if (!checkIsOver10Seconds(allRunRecord.runRecord)) {
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Success())
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
                 it.onSuccess {
@@ -145,7 +175,7 @@ class RunningViewModel @Inject constructor(
         class Success : Event()
         class Fail : Event()
         class ServerError : Event()
-        class Error: Event()
+        class Error : Event()
         class GetDataStoreValuesError : Event()
     }
 

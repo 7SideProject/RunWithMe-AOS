@@ -1,6 +1,5 @@
 package com.side.runwithme.view.route_detail
 
-import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,10 +14,8 @@ import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentRouteDetailBinding
-import com.side.runwithme.mapper.mapperToCoordinate
 import com.side.runwithme.mapper.mapperToNaverLatLng
 import com.side.runwithme.mapper.mapperToNaverLatLngList
-import com.side.runwithme.mapper.mapperToRunRecord
 import com.side.runwithme.util.DRAWING_POLYLINE_FAST
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
 import com.side.runwithme.util.repeatOnStarted
@@ -46,11 +43,11 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
 
         routeDetailViewModel.apply {
             if(runRecord != null) {
-                putRunRecord(runRecord.mapperToRunRecord())
+                putRunRecord(runRecord)
             }
 
             if(!coordinates.isNullOrEmpty()){
-                putCoordinates(coordinates.toList().mapperToCoordinate())
+                putCoordinates(coordinates)
             }
 
         }
@@ -78,6 +75,11 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
             routeDetailViewModel.coordinates.collect {
                 if(it.isNotEmpty()) {
                     zoomToWholeTrack()
+
+                    if(it.size < 2){
+                        showToast("비정상적인 좌표로 경로를 그릴 수 없습니다.")
+                        return@collect
+                    }
 
                     // polyline.coords에 2개 이상의 리스트를 넣어야함
                     val naverLatLngs = mutableListOf<LatLng>()
