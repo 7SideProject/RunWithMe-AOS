@@ -13,10 +13,12 @@ class PostRunRecordUseCase @Inject constructor(
     private val runningRepository: RunningRepository
 ) {
     operator fun invoke(
-        challengeSeq: Int,
-        allRunRecord: AllRunRecord
+        challengeSeq: Long,
+        runRecord: RunRecord,
+        image: MultipartBody.Part
     ) = runningRepository.postRunRecord(
         challengeSeq = challengeSeq,
-        allRunRecord = allRunRecord
+        runRecord = runRecord,
+        image = image
     )
 }
