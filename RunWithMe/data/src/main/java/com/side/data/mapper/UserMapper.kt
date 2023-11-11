@@ -1,5 +1,6 @@
 package com.side.data.mapper
 
+import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DailyCheckResponse
@@ -9,6 +10,7 @@ import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.model.DailyCheck
 import com.side.domain.model.DuplicateCheck
+import com.side.domain.model.Profile
 import com.side.domain.model.TotalRecord
 import com.side.domain.model.User
 
@@ -40,4 +42,8 @@ fun TotalRecordResponse.mapperToTotalRecord(): TotalRecord = this.run {
     userTotalRecord.run {
         TotalRecord(totalTime,totalDistance,totalCalorie, totalLongestTime, totalLongestDistance, totalAvgSpeed)
     }
+}
+
+fun Profile.mapperToEditProfileRequest(): EditProfileRequest = this.run {
+    EditProfileRequest(nickname, height, weight)
 }
