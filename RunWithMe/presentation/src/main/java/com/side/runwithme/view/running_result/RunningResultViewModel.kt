@@ -1,9 +1,7 @@
 package com.side.runwithme.view.running_result
 
 import androidx.lifecycle.ViewModel
-import com.side.domain.model.Coordinate
-import com.side.domain.model.RunRecord
-import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,29 +15,23 @@ class RunningResultViewModel @Inject constructor(
 
     private val _runRecord = MutableStateFlow<RunRecordParcelable>(RunRecordParcelable(
         runRecordSeq = 0,
-        runImageSeq = 0,
+        startTime = "",
+        endTime = "",
         runningDay = "",
-        runningStartTime = "",
-        runningEndTime = "",
         runningTime = 0,
         runningDistance = 0,
-        runningAvgSpeed = 0.0,
-        runningCalorieBurned = 0,
-        runningStartingLat = 0.0,
-        runningStartingLng = 0.0,
-        completed = "",
-        userName = "",
-        userSeq = 0,
-        challengeName = "",
-        challengeSeq = 0
+        avgSpeed = 0.0,
+        calorie = 0,
+        successYN = ""
+
     ))
     val runRecord get() = _runRecord.asStateFlow()
 
     private val _imgByteArray = MutableStateFlow<ByteArray?>(null)
     val imgByteArray get() = _imgByteArray.asStateFlow()
 
-    private val _coordinates = MutableStateFlow<Array<Coordinates>>(arrayOf())
-    val coordinates get() = _coordinates.asStateFlow()
+    private val _coordinatesParcelable = MutableStateFlow<Array<CoordinatesParcelable>>(arrayOf())
+    val coordinates get() = _coordinatesParcelable.asStateFlow()
 
     private val _challengeName = MutableStateFlow<String>("")
     val challengeName = _challengeName.asStateFlow()
@@ -52,8 +44,8 @@ class RunningResultViewModel @Inject constructor(
         _imgByteArray.value = imgByteArray
     }
 
-    fun putCoordinates(coordinates: Array<Coordinates>){
-        _coordinates.value = coordinates
+    fun putCoordinates(coordinates: Array<CoordinatesParcelable>){
+        _coordinatesParcelable.value = coordinates
     }
 
     fun putChallengeName(challengeName: String){

@@ -8,8 +8,6 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentRuuningResultBinding
-import com.side.runwithme.mapper.mapperToCoordinates
-import com.side.runwithme.mapper.mapperToRunRecordParcelable
 import com.side.runwithme.view.MainActivity
 
 class RunningResultFragment : BaseFragment<FragmentRuuningResultBinding>(R.layout.fragment_ruuning_result){

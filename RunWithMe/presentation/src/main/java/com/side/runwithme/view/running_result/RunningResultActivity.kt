@@ -2,24 +2,14 @@ package com.side.runwithme.view.running_result
 
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI.setupWithNavController
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.seobaseview.base.BaseActivity
-import com.side.domain.model.AllRunRecord
-import com.side.domain.model.Coordinate
-import com.side.domain.model.RunRecord
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningResultBinding
-import com.side.runwithme.mapper.mapperToCoordinate
-import com.side.runwithme.mapper.mapperToRunRecord
-import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable
 import com.side.runwithme.view.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,16 +33,16 @@ class RunningResultActivity : BaseActivity<ActivityRunningResultBinding>(R.layou
     private fun initIntentExtra(){
         val intent = intent
         val runRecord : RunRecordParcelable?
-        val coordinates : List<Coordinates>?
+        val coordinates : List<CoordinatesParcelable>?
         val imgByteArray : ByteArray? = intent.getByteArrayExtra("imgByteArray")
         val challengeName = intent.getStringExtra("challengeName")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             runRecord = intent.getParcelableExtra("runRecord", RunRecordParcelable::class.java)
-            coordinates = intent.getParcelableArrayListExtra("coordinates", Coordinates::class.java)
+            coordinates = intent.getParcelableArrayListExtra("coordinates", CoordinatesParcelable::class.java)
         }else {
             runRecord = (intent.getParcelableExtra("runRecord") as RunRecordParcelable?)
-            coordinates = (intent.getParcelableArrayListExtra<Coordinates>("coordinates"))
+            coordinates = (intent.getParcelableArrayListExtra<CoordinatesParcelable>("coordinates"))
         }
 
 
