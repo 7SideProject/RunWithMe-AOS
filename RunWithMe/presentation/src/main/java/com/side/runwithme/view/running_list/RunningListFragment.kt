@@ -112,7 +112,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
             val intent = Intent(requireContext(), RunningActivity::class.java)
             intent.apply {
                 putExtra("challengeName", resources.getString(R.string.practice_running))
-                putExtra("challengeSeq", -1)
+                putExtra("challengeSeq", -1L)
                 putExtra("goalType", type.ordinal)
                 putExtra("goalAmount", amount)
             }
