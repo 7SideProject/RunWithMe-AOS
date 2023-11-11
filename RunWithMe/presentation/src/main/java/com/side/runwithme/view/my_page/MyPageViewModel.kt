@@ -3,16 +3,23 @@ package com.side.runwithme.view.my_page
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.side.domain.model.Profile
 import com.side.domain.model.TotalRecord
 import com.side.domain.model.User
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
+import com.side.domain.usecase.user.EditProfileUseCase
 import com.side.domain.usecase.user.GetTotalRecordUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
+import com.side.runwithme.R
+import com.side.runwithme.util.MutableEventFlow
+import com.side.runwithme.util.asEventFlow
+import com.side.runwithme.util.matchesNickNameRule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +27,8 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val getUserSeqDataStoreUseCase: GetUserSeqDataStoreUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val getTotalRecordUseCase: GetTotalRecordUseCase
+    private val getTotalRecordUseCase: GetTotalRecordUseCase,
+    private val editProfileUseCase: EditProfileUseCase
 ): ViewModel() {
 
     private val _userProfile = MutableStateFlow<User>(User("",""))
@@ -29,10 +37,16 @@ class MyPageViewModel @Inject constructor(
     private val _totalRecord = MutableStateFlow<TotalRecord>(TotalRecord())
     val totalRecord get() = _totalRecord.asStateFlow()
 
+    val editNickname = MutableStateFlow<String>("")
+    val editHeight = MutableStateFlow<Int>(150)
+    val editWeight = MutableStateFlow<Int>(50)
+
+    private val _editEventFlow = MutableEventFlow<EditEvent>()
+    val editEventFlow get() = _editEventFlow.asEventFlow()
+
     fun myPageInitRequest(){
         viewModelScope.launch(Dispatchers.IO) {
             getUserSeqDataStoreUseCase().collectLatest {
-                Log.d("myPageInitRequest", "getUserProfile: $it")
                 it.onSuccess { userSeq ->
                     getUserProfile(userSeq)
                     getTotalRecord(userSeq)
@@ -47,9 +61,15 @@ class MyPageViewModel @Inject constructor(
     private fun getUserProfile(userSeq: Long){
         viewModelScope.launch(Dispatchers.IO) {
             getUserProfileUseCase(userSeq).collectLatest {
-                Log.d("getUserProfileError", "getUserProfile: $it")
                 it.onSuccess { success ->
-                    _userProfile.value = success.data!!
+                    val user = success.data!!
+                    _userProfile.value = user
+
+                    user.run {
+                        editNickname.value = nickname
+                        editWeight.value = weight
+                        editHeight.value = height
+                    }
                 }.onFailure { error->
                     Log.d("getUserProfileError", "${error.message} ")
                 }.onError { error ->
@@ -62,7 +82,6 @@ class MyPageViewModel @Inject constructor(
     private fun getTotalRecord(userSeq: Long){
         viewModelScope.launch(Dispatchers.IO) {
             getTotalRecordUseCase(userSeq).collectLatest {
-                Log.d("getTotalRecordError", "getTotalRecord: $it")
                 it.onSuccess { success ->
                     _totalRecord.value = success.data!!
                 }.onFailure { error->
@@ -72,5 +91,48 @@ class MyPageViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setHeight(height: Int){
+        this.editHeight.update { height }
+    }
+
+    fun setWeight(weight: Int){
+        this.editWeight.update { weight }
+    }
+
+    fun editProfileRequest(){
+        nicknameInvalidCheck()
+    }
+    private fun nicknameInvalidCheck() {
+        if(!matchesNickNameRule(editNickname.value)){
+            viewModelScope.launch {
+                _editEventFlow.emit(EditEvent.Fail(R.string.message_invalid_nickname))
+            }
+        }else{
+            editProfile()
+        }
+    }
+
+    private fun editProfile(){
+        viewModelScope.launch(Dispatchers.IO) {
+            editProfileUseCase(
+                userProfile.value.seq,
+                Profile(editNickname.value, editHeight.value, editWeight.value)
+            ).collectLatest {
+                it.onSuccess {
+                    _editEventFlow.emit(EditEvent.Success(R.string.message_edit_profile_success))
+                }.onFailure {
+                    _editEventFlow.emit(EditEvent.Fail(R.string.message_edit_profile_fail))
+                }.onError { error ->
+                    Log.d("editProfileError", "${error.message} ")
+                }
+            }
+        }
+    }
+
+    sealed class EditEvent {
+        data class Success(val message: Int) : EditEvent()
+        data class Fail(val message: Int) : EditEvent()
     }
 }
