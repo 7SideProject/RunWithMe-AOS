@@ -8,12 +8,13 @@ import okhttp3.MultipartBody
 @Entity(tableName = "run_table")
 data class RunRecordEntity(
     @PrimaryKey(autoGenerate = true)
-    var seq: Int = 0,
-    var image: ByteArray,
-    var startTime: String,
-    var endTime: String,
-    var runningTime: Int,
-    var runningDistance: Int,
-    var avgSpeed: Double,
-    var calorie: Int = 0,
+    val seq: Long = 0,
+    val image: ByteArray,
+    val startTime: String,
+    val endTime: String,
+    val runningDay: String,
+    val runningTime: Int,
+    val runningDistance: Int,
+    val avgSpeed: Double,
+    val calorie: Int = 0,
 )
