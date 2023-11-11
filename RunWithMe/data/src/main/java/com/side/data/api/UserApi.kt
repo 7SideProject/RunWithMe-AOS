@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
@@ -10,6 +11,7 @@ import com.side.domain.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -43,4 +45,7 @@ interface UserApi {
 
     @GET("users/{userSeq}/total-record")
     suspend fun getTotalRecord(@Path("userSeq") userSeq: Long): BaseResponse<TotalRecordResponse>
+
+    @PUT("/users/{userSeq}/profile")
+    suspend fun editProfile(@Path("userSeq") userSeq: Long, @Body editProfileRequest: EditProfileRequest): BaseResponse<UserResponse>
 }
