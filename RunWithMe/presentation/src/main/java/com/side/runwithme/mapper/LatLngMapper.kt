@@ -5,9 +5,9 @@ import com.side.domain.model.Coordinate
 import com.side.runwithme.model.CoordinatesParcelable
 
 
-fun List<LatLng>.mapperToCoordinateList(): ArrayList<Coordinate> = this.run {
+fun List<LatLng>.mapperToCoordinateList(): ArrayList<CoordinatesParcelable> = this.run {
         return ArrayList(this.map {
-            Coordinate(
+            CoordinatesParcelable(
                 it.latitude,
                 it.longitude
             )

@@ -7,32 +7,40 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.location.Location
-import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
-import com.naver.maps.map.*
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
-import com.side.domain.model.AllRunRecord
-import com.side.domain.model.RunRecord
+import com.side.domain.model.Coordinate
 import com.side.runwithme.R
 import com.side.runwithme.databinding.ActivityRunningBinding
-import com.side.runwithme.mapper.mapperToCoordinate
-import com.side.runwithme.mapper.mapperToCoordinatesList
-import com.side.runwithme.mapper.mapperToRunRecordParcelable
-import com.side.runwithme.model.Coordinates
+import com.side.runwithme.mapper.mapperToCoordinateList
+import com.side.runwithme.mapper.mapperToCoordinatesParcelable
+import com.side.runwithme.model.CoordinatesParcelable
+import com.side.runwithme.model.RunRecordParcelable
 import com.side.runwithme.service.RunningService
 import com.side.runwithme.service.SERVICE_NOTSTART
-import com.side.runwithme.util.*
+import com.side.runwithme.util.GOAL_TYPE
+import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
+import com.side.runwithme.util.RUNNING_STATE
+import com.side.runwithme.util.TrackingUtility
+import com.side.runwithme.util.onlyTimeFormatter
+import com.side.runwithme.util.repeatOnStarted
+import com.side.runwithme.util.timeFormatter
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.running_result.RunningResultActivity
@@ -72,18 +80,20 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private lateinit var imgFile: MultipartBody.Part
     private lateinit var imgByteArray: ByteArray
-    private var coordinates: ArrayList<Coordinates> = arrayListOf()
-    private lateinit var runRecord: RunRecord
+    private var coordinates: ArrayList<CoordinatesParcelable> = arrayListOf()
+    private lateinit var runRecord: RunRecordParcelable
     private var isStopError = false
 
     private lateinit var loadingDialog: LoadingDialog
 
     override fun init() {
         val intent = intent
-        val challengeSeq = intent.getIntExtra("challengeSeq", 0)
+        val challengeSeq = intent.getLongExtra("challengeSeq", 0L)
         val type = intent.getIntExtra("goalType", -1)
-        val goal = intent.getLongExtra("goalAmount", 0)
+        val goal = intent.getLongExtra("goalAmount", 0L)
         val challengeName = intent.getStringExtra("challengeName") ?: ""
+
+        Log.d("test123", "runningactivity start init : ${challengeSeq}, ${type}, ${goal}, ${challengeName}")
 
         initMapView()
 
@@ -94,14 +104,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
         if (RunningService.serviceState == SERVICE_NOTSTART) {
 
-            if(challengeSeq == 0 || type == -1 || goal == 0L || challengeName.isEmpty()){
+            if(challengeSeq == 0L || type == -1 || goal == 0L || challengeName.isEmpty()){
                 startError(resources.getString(R.string.running_error_not_found))
+                finish()
             }
 
             runningViewModel.saveChallengeInfo(challengeSeq, type, goal, challengeName)
 
             // 연습 모드는 -1, 나머지 challenge는 1이상이 들어와야함
-            require(runningViewModel.challengeSeq.value != 0)
+            require(runningViewModel.challengeSeq.value != 0L)
 
             firstStart()
         } else { // app killed 된 후 activity 재시작
@@ -156,7 +167,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 runningViewModel.saveChallengeInfo(0, -1, 0L, "")
 
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
-                    putExtra("runRecord", runRecord.mapperToRunRecordParcelable())
+                    putExtra("runRecord", runRecord)
                     putParcelableArrayListExtra("coordinates", coordinates)
 //                    putExtra("challengeSeq", runningViewModel.challengeSeq.value)
                     putExtra("challengeName", runningViewModel.challengeName.value)
@@ -348,6 +359,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     // 달리기 종료
     private fun stopRun() {
+        lifecycleScope.launch {
+            loading(2000L)
+
+        }
+
         lifecycleScope.launch{
             if (!isStopError) { // 서버 에러 등으로 다시 stop을 눌러야할 때 한 번 더 저장 안하도록, (bitmap 하나 더 생성하기 때문에 메모리 누수 우려)
                 endToSaveData()
@@ -356,19 +372,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
             runningService.stopRunningBeforeRegister = true
 
-            if(runningViewModel.challengeSeq.value == -1){ // 연습러닝
+            if(runningViewModel.challengeSeq.value == -1L){ // 연습러닝
                 runningViewModel.postPracticeRunRecord(runRecord, imgByteArray)
             }else {
                 runningViewModel.postChallengeRunRecord(
-                    AllRunRecord(
-                        runRecord = runRecord,
-                        coordinates = coordinates.mapperToCoordinate(),
-                        imgFile = imgFile
-                    )
+                    runRecord = runRecord, coordinates = coordinates, image = imgFile,
                 )
             }
-
-            loading(2000L)
         }
 
     }
@@ -381,41 +391,34 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun saveRunRecord() {
-        var completed = "N"
+        var successYN = "N"
         /** goalAmount하고 sumDistance, runningTime의 단위 맞춰야함 **/
         if(runningViewModel.goalType.value == GOAL_TYPE.DISTANCE && runningViewModel.goalAmount.value <= sumDistance){
-            completed = "Y"
+            successYN = "Y"
         }
 
         val runningTime = (currentTimeInMillis / 1000).toInt()
 
         if(runningViewModel.goalType.value == GOAL_TYPE.TIME && runningViewModel.goalAmount.value <= runningTime){
-            completed = "Y"
+            successYN = "Y"
         }
 
 
-        runRecord = RunRecord(
+        runRecord = RunRecordParcelable(
             runRecordSeq = 0,
-            runImageSeq = 0,
+            startTime = onlyTimeFormatter(runningService.startTime),
+            endTime = onlyTimeFormatter(System.currentTimeMillis()),
             runningDay = runningService.startDay,
-            runningStartTime = timeFormatter(runningService.startTime),
-            runningEndTime = timeFormatter(System.currentTimeMillis()),
             runningTime = runningTime,
             runningDistance = sumDistance.toInt(),
-            runningAvgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,
-            runningCalorieBurned = caloriesBurned,
-            runningStartingLat = coordinates.first().latitude,
-            runningStartingLng = coordinates.first().longitude,
-            completed = completed,
-            userName = "",
-            userSeq = 0,
-            challengeName = runningViewModel.challengeName.value,
-            challengeSeq = runningViewModel.challengeSeq.value
+            avgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,  /** 속도 구하는거 잘못된듯 **/
+            calorie = caloriesBurned,
+            successYN = successYN
         )
     }
 
     private fun changeCoordinates() {
-        coordinates = naverLatLng.mapperToCoordinatesList()
+        coordinates = naverLatLng.mapperToCoordinateList()
     }
 
     private fun takeSnapShot() {
@@ -430,13 +433,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 20, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
         return outputStream.toByteArray()
     }
 
     private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
         val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData("imgFile", "running", requestFile)
+        return MultipartBody.Part.createFormData("image", "running", requestFile)
     }
 
 

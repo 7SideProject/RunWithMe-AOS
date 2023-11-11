@@ -14,7 +14,9 @@ import com.side.domain.usecase.datastore.SaveRunningChallengeNameUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
+import com.side.runwithme.mapper.mapperToCoordinate
 import com.side.runwithme.mapper.mapperToRunRecordWithCoordinates
+import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
@@ -151,7 +153,7 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<Coordinate>, image: MultipartBody.Part) {
+    fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<CoordinatesParcelable>, image: MultipartBody.Part) {
         if (!checkIsOver10Seconds(runRecord)) {
             viewModelScope.launch {
                 _postRunRecordEventFlow.emit(Event.Success())
@@ -159,7 +161,7 @@ class RunningViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            postRunRecordUseCase(challengeSeq.value, runRecord.mapperToRunRecordWithCoordinates(coordinates), image).collect {
+            postRunRecordUseCase(challengeSeq.value, runRecord.mapperToRunRecordWithCoordinates(coordinates.mapperToCoordinate()), image).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
