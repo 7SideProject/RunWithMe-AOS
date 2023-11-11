@@ -2,6 +2,7 @@ package com.side.data.datasource.user
 
 import com.side.data.api.LoginApi
 import com.side.data.api.UserApi
+import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
@@ -53,5 +54,12 @@ class UserRemoteDataSourceImpl @Inject constructor(
 
     override fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>> = flow {
         emit(userApi.getTotalRecord(userSeq))
+    }
+
+    override fun editProfile(
+        userSeq: Long,
+        editProfileRequest: EditProfileRequest
+    ) = flow {
+        emit(userApi.editProfile(userSeq, editProfileRequest))
     }
 }
