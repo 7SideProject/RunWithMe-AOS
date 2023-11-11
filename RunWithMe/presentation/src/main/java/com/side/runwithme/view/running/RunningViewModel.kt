@@ -5,8 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.side.domain.modedl.PracticeRunRecord
-import com.side.domain.model.AllRunRecord
-import com.side.domain.model.RunRecord
+import com.side.domain.model.Coordinate
 import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
@@ -15,6 +14,8 @@ import com.side.domain.usecase.datastore.SaveRunningChallengeNameUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeSeqUseCase
 import com.side.domain.usecase.practice.InsertPracticeRunRecordUseCase
 import com.side.domain.usecase.running.PostRunRecordUseCase
+import com.side.runwithme.mapper.mapperToRunRecordWithCoordinates
+import com.side.runwithme.model.RunRecordParcelable
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
@@ -23,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,8 +46,8 @@ class RunningViewModel @Inject constructor(
     private val _weight = stateHandler.getMutableStateFlow("weight", 65)
     val weight: StateFlow<Int> = _weight.asStateFlow()
 
-    private val _challengeSeq = stateHandler.getMutableStateFlow("challengeSeq", 0)
-    val challengeSeq: StateFlow<Int> = _challengeSeq.asStateFlow()
+    private val _challengeSeq = stateHandler.getMutableStateFlow("challengeSeq", 0L)
+    val challengeSeq: StateFlow<Long> = _challengeSeq.asStateFlow()
 
     private val _challengeName = stateHandler.getMutableStateFlow("challengeName", "")
     val challengeName = _challengeName.asStateFlow()
@@ -72,7 +74,7 @@ class RunningViewModel @Inject constructor(
     }
 
     fun saveChallengeInfo(
-        challengeSeq: Int,
+        challengeSeq: Long,
         goalType: Int,
         goalAmount: Long,
         challengeName: String
@@ -106,7 +108,7 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun checkIsOver10Seconds(runRecord: RunRecord): Boolean {
+    fun checkIsOver10Seconds(runRecord: RunRecordParcelable): Boolean {
         if (runRecord.runningTime <= 10) {
             return false;
         }
@@ -114,7 +116,7 @@ class RunningViewModel @Inject constructor(
         return true;
     }
 
-    fun postPracticeRunRecord(runRecord: RunRecord, imgByteArray: ByteArray) {
+    fun postPracticeRunRecord(runRecord: RunRecordParcelable, imgByteArray: ByteArray) {
         if (!checkIsOver10Seconds(runRecord)) {
             viewModelScope.launch {
                 _postRunRecordEventFlow.emit(Event.Success())
@@ -126,12 +128,13 @@ class RunningViewModel @Inject constructor(
                 PracticeRunRecord(
                     seq = 0,
                     image = imgByteArray,
-                    startTime = runRecord.runningStartTime,
-                    endTime = runRecord.runningEndTime,
+                    startTime = runRecord.startTime,
+                    endTime = runRecord.endTime,
+                    runningDay = runRecord.runningDay,
                     runningTime = runRecord.runningTime,
                     runningDistance = runRecord.runningDistance,
-                    avgSpeed = runRecord.runningAvgSpeed,
-                    calorie = runRecord.runningCalorieBurned
+                    avgSpeed = runRecord.avgSpeed,
+                    calorie = runRecord.calorie
                 )
             ).collect {
                 it.onSuccess {
@@ -148,21 +151,23 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postChallengeRunRecord(allRunRecord: AllRunRecord) {
-        if (!checkIsOver10Seconds(allRunRecord.runRecord)) {
+    fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<Coordinate>, image: MultipartBody.Part) {
+        if (!checkIsOver10Seconds(runRecord)) {
             viewModelScope.launch {
                 _postRunRecordEventFlow.emit(Event.Success())
             }
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            postRunRecordUseCase(challengeSeq.value, allRunRecord).collect {
+            postRunRecordUseCase(challengeSeq.value, runRecord.mapperToRunRecordWithCoordinates(coordinates), image).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
+                    Log.d("test123", "postPracticeRunRecord fail: $it")
                     _postRunRecordEventFlow.emit(Event.Fail())
                 }.onError {
                     // 서버 에러 분류해줄 수 있으면 좋을듯
+                    Log.d("test123", "postPracticeRunRecord err: $it")
                     _postRunRecordEventFlow.emit(Event.ServerError())
                 }
 
