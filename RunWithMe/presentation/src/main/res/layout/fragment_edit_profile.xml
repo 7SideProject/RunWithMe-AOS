@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+    <data>
+        <variable
+            name="myPageVm"
+            type="com.side.runwithme.view.my_page.MyPageViewModel" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,6 +62,7 @@
                 android:id="@+id/tv_user_name"
                 style="@style/header_text"
                 tools:text="감스트"
+                android:text="@{myPageVm.userProfile.nickname}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fontsize_h4"
                 android:layout_marginStart="24dp"
@@ -67,6 +74,7 @@
                 android:id="@+id/tv_profile_email_value"
                 style="@style/header_text"
                 tools:text="gamst@gmail.com"
+                android:text="@{myPageVm.userProfile.email}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fontsize_h4"
                 app:layout_constraintStart_toStartOf="@id/tv_user_name"
@@ -98,7 +106,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginHorizontal="18dp"
                 android:inputType="textPersonName"
-                android:hint="ex) 런위드미"
+                android:hint="@string/nickname_hint"
+                android:text="@={myPageVm.editNickname}"
                 app:layout_constraintStart_toStartOf="@id/tv_join_nickname"
                 app:layout_constraintTop_toBottomOf="@id/tv_join_nickname" />
 
