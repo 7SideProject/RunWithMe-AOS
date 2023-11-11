@@ -1,6 +1,10 @@
 package com.side.data.datasource.token
 
 import com.side.data.api.TokenApi
+import com.side.data.model.request.RefreshTokenRequest
+import com.side.data.model.response.TokenResponse
+import com.side.domain.base.BaseResponse
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,8 +13,8 @@ class TokenDataSourceImpl @Inject constructor(
     private val tokenApi: TokenApi
 ): TokenDataSource{
 
-    override suspend fun refreshingToken(refreshToken: String) {
-        tokenApi.refreshingToken(refreshToken)
-    }
+    override suspend fun refreshingToken(refreshToken: String): Response<Any?> =
+        tokenApi.refreshingToken("refresh_token", refreshToken)
+
 
 }
