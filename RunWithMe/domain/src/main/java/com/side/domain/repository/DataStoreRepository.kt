@@ -21,7 +21,7 @@ interface DataStoreRepository {
 
 //    fun getRefreshToken(): Flow<String>
 
-    suspend fun saveRunningChallengeSeq(challengeSeq: Int)
+    suspend fun saveRunningChallengeSeq(challengeSeq: Long)
 
     suspend fun saveRunningGoalAmount(goalAmount: Long)
 

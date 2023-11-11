@@ -14,7 +14,7 @@ object preferencesKeys {
     val EMAIL = stringPreferencesKey("email")
     val SEQ = stringPreferencesKey("seq")
     val WEIGHT = intPreferencesKey("weight")
-    val CHALLENGE_SEQ = intPreferencesKey("challenge_seq")
+    val CHALLENGE_SEQ = longPreferencesKey("challenge_seq")
     val CHALLENGE_NAME = stringPreferencesKey("challenge_name")
     val GOAL_AMOUNT = longPreferencesKey("goal_amount")
     val GOAL_TYPE = intPreferencesKey("goal_type")

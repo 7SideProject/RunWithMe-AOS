@@ -20,7 +20,7 @@ interface DataStoreDataSource {
 
     fun getRefreshToken(): Flow<String>
 
-    suspend fun saveRunningChallengSeq(challengSeq: Int)
+    suspend fun saveRunningChallengSeq(challengSeq: Long)
 
     suspend fun saveRunningGoalAmount(goalAmount: Long)
 
@@ -28,7 +28,7 @@ interface DataStoreDataSource {
 
     suspend fun saveRunningChallengeName(challengeName: String)
 
-    fun getRunningChallengeSeq(): Flow<Int>
+    fun getRunningChallengeSeq(): Flow<Long>
 
     fun getRunningGoalAmount(): Flow<Long>
 
