@@ -18,7 +18,6 @@ import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
@@ -30,11 +29,20 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.runwithme.R
-import com.side.runwithme.util.*
+import com.side.runwithme.util.FASTEST_LOCATION_UPDATE_INTERVAL
+import com.side.runwithme.util.LOCATION_UPDATE_INTERVAL
+import com.side.runwithme.util.NOTIFICATION_CHANNEL_ID
+import com.side.runwithme.util.NOTIFICATION_CHANNEL_NAME
+import com.side.runwithme.util.NOTIFICATION_ID
+import com.side.runwithme.util.RUNNING_STATE
+import com.side.runwithme.util.TIMER_UPDATE_INTERVAL
+import com.side.runwithme.util.TrackingUtility
 import com.side.runwithme.util.TrackingUtility.Companion.getTTSTime
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
 import javax.inject.Inject
@@ -236,10 +244,12 @@ class RunningService : LifecycleService() {
         timeStarted = System.currentTimeMillis()
     }
 
+
+    private val ISRUNNING_STATE = setOf(RUNNING_STATE.FIRST_SHOW, RUNNING_STATE.RESUME, RUNNING_STATE.START)
     private fun startTimerJob() {
         lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
-            while ((runningState.value == RUNNING_STATE.RESUME) and (runningState.value == RUNNING_STATE.START)) {
+            while (runningState.value in ISRUNNING_STATE) {
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
@@ -291,11 +301,11 @@ class RunningService : LifecycleService() {
 
             result?.locations?.let { locations ->
                 for(location in locations){
-
                     when(runningState.value){
                         // 처음 시작할 때
                         RUNNING_STATE.START -> {
                             pauseLatLng = location
+                            addPathPoint(location)
                         }
                         // 러닝 중
                         RUNNING_STATE.RESUME -> {
@@ -339,7 +349,7 @@ class RunningService : LifecycleService() {
     //위치 정보 추가
     private fun addPathPoint(location: Location?) {
         location?.let {
-            _pathPoints.value?.apply {
+            pathPoints.value?.apply {
                 // GPS가 튀어 정확하지 않거나 비정상적인 빠르기는 거리에 계산되지 않도록
                 if (!isWrongGps(it)) return
 
@@ -350,7 +360,7 @@ class RunningService : LifecycleService() {
                 if (pathPoints.value!!.size >= 2) {
                     optimizationPolyLine(it)
                 }
-                this.add(it)
+                add(it)
                 _pathPoints.postValue(this)
             }
         }
@@ -630,7 +640,6 @@ class RunningService : LifecycleService() {
             tts?.shutdown()
         }
 
-        /** 34버전에서 노티 지울때 destory 호출되는지 확인 **/
         serviceState = SERVICE_NOTSTART
 
         super.onDestroy()
