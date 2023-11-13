@@ -57,14 +57,6 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     DELETE_CHALLENGE_SUCCESS(308, "챌린지 해체에 성공하였습니다."),
     LEAVE_CHALLENGE_SUCCESS(309, "가입한 챌린지에 탈퇴하였습니다."),
 
-    // Challenge 등록
-    CREATE_CHALLENGE_FAIL(-306, "챌린지 등록에 실패했습니다."),
-    CREATE_CHALLENGE_SUCCESS(307, "챌린지 등록에 성공했습니다."),
-
-    // Challenge 탈퇴
-    DELETE_CHALLENGE_SUCCESS(308, "챌린지 해체에 성공하였습니다."),
-    LEAVE_CHALLENGE_SUCCESS(309, "가입한 챌린지에 탈퇴하였습니다."),
-
     // Image
     IMAGE_NOT_FOUND      			 (-500, "이미지를 찾을 수 없습니다."),
     FAILED_CONVERT      			 (-501, "잘못된 파일입니다."),

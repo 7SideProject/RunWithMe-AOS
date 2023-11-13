@@ -148,22 +148,12 @@ class ChallengeDetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
                 it.onSuccess {
-<<<<<<< HEAD:RunWithMe/presentation/src/main/java/com/side/runwithme/view/challenge_list/detail/ChallengeDetailViewModel.kt
-                    isJoin.value = false
-
-                }.onFailure {
-
-                }.onError {
-=======
-                    Log.d("test123", "quitChallenge: success ${it.code}")
                     _ChallengeDetailEventFlow.emit(Event.DeleteChallenge())
                 }.onFailure {
-                    Log.d("test123", "quitChallenge: fail ${it.code}")
+                    _ChallengeDetailEventFlow.emit(Event.Fail())
 
                 }.onError {
                     Log.d("test123", "quitChallenge: err ${it}")
-
->>>>>>> c43abd4fe6d66df1b999aa5e7022d456a94d5552:RunWithMe/presentation/src/main/java/com/side/runwithme/view/challenge_detail/ChallengeDetailViewModel.kt
                     Firebase.crashlytics.recordException(it)
                 }
             }
