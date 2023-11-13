@@ -9,6 +9,8 @@ import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 
 typealias UserResponse = ResultType<BaseResponse<User?>>
+
+typealias NullResponse = ResultType<BaseResponse<Any?>>
 typealias DuplicateCheckTypeResponse = ResultType<BaseResponse<DuplicateCheck>>
 typealias DailyCheckTypeResponse = ResultType<BaseResponse<DailyCheck?>>
 typealias TotalRecordTypeResponse = ResultType<BaseResponse<TotalRecord?>>
@@ -20,6 +22,8 @@ interface UserRepository {
     fun loginWithEmail(user: User): Flow<UserResponse>
 
     fun getUserProfile(userSeq: Long): Flow<UserResponse>
+
+    fun changePassword(email: String, password: String): Flow<NullResponse>
 
     fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckTypeResponse>
 

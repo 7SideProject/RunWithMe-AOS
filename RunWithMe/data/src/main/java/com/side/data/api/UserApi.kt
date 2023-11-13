@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
@@ -10,6 +11,7 @@ import com.side.domain.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -23,12 +25,6 @@ interface UserApi {
     @POST("users/join")
     suspend fun join(@Body request: JoinRequest): BaseResponse<UserResponse>
 
-//    @POST("users/login")
-//    suspend fun loginWithEmail(@Body request: EmailLoginRequest): BaseResponse<EmailLoginResponse?>
-
-//    @POST("/token")
-//    suspend fun refreshingToken(@Body refreshToken: String)
-
     @GET("users/{userSeq}")
     suspend fun getUserProfile(@Path("userSeq") userSeq: Long): BaseResponse<UserResponse>
 
@@ -38,6 +34,8 @@ interface UserApi {
     @GET("users/duplicate-nickname")
     suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
 
+    @PUT("users/{userEmail}/password")
+    suspend fun changePassword(@Path("userEmail") email: String, @Body passwordRequest: FindPasswordRequest): BaseResponse<Any?>
     @POST("users/{userSeq}/connect")
     suspend fun dailyCheck(@Path("userSeq") userSeq: Long): BaseResponse<DailyCheckResponse>
 
