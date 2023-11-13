@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // Toolbar strings
+    <string name="recommend_course">추천 코스</string>
+    <string name="running_hard">러닝 난이도</string>
+    <string name="running_environment">러닝 환경</string>
+    <string name="my_running_challenge">내 챌린지</string>
+    <string name="recruiting_challenge">모집 중인 챌린지</string>
+    <string name="my_challenge">내 챌린지</string>
+    <string name="my_record">내 러닝 기록</string>
+    <string name="create_challenge">챌린지 생성</string>
+    <string name="challegne_detail">챌린지 정보</string>
+    <string name="challegne_board">챌린지 게시판</string>
+    <string name="recommend_course_by_user">유저들이 추천하는 러닝 코스</string>
+    <string name="my_page">마이페이지</string>
+    <string name="edit_profile">프로필 수정</string>
+    <string name="register_profile">프로필 등록</string>
+    <string name="record">기록</string>
+    <string name="my_board">작성글</string>
+    <string name="achieve">업적</string>
+    <string name="join">회원가입</string>
+    <string name="practice_running">연습 러닝</string>
+    <string name="find_password">비밀번호 찾기</string>
+    <string name="login">로그인</string>
+</resources>
