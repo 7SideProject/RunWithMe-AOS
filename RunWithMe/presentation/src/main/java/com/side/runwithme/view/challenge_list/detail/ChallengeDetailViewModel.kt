@@ -3,6 +3,8 @@ package com.side.runwithme.view.challenge_list.detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
 import com.side.runwithme.model.ChallengeParcelable
@@ -15,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -71,6 +74,7 @@ class ChallengeDetailViewModel @Inject constructor(
                 }.onFailure {
 
                 }.onError {
+                    Firebase.crashlytics.recordException(it)
                     Log.e("test123", "getManagerName: ", it)
                 }
             }
@@ -85,6 +89,7 @@ class ChallengeDetailViewModel @Inject constructor(
                 }.onFailure {
 
                 }.onError {
+                    Firebase.crashlytics.recordException(it)
                     Log.e("test123", "isChallengeAlreadyJoin: ", it)
                 }
             }
@@ -120,6 +125,17 @@ class ChallengeDetailViewModel @Inject constructor(
     /** api 구현해야함 **/
     private fun joinChallenge(){
         // join api 성공 시 ChallengeState AleadyJoin으로 변경
+        viewModelScope.launch(Dispatchers.IO) {
+            joinChallengeUseCase(challenge.value!!.seq, password).collectLatest {
+                it.onSuccess {
+                    isJoin.value = true
+                }.onFailure {
+                    /** 실패 처리 해야함 **/
+                }.onError {
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
     }
 
     private fun quitChallenge(){
