@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/challengeSearchFragment"
-        android:name="com.side.runwithme.view.challenge_list.search.ChallengeSearchFragment"
+        android:name="com.side.runwithme.view.challenge_search.ChallengeSearchFragment"
         android:label="ChallengeSearchFragment" />
     <fragment
         android:id="@+id/recommendFragment"
@@ -82,7 +82,7 @@
         android:label="RunningListFragment" />
     <fragment
         android:id="@+id/challengeDetailFragment"
-        android:name="com.side.runwithme.view.challenge_list.detail.ChallengeDetailFragment"
+        android:name="com.side.runwithme.view.challenge_detail.ChallengeDetailFragment"
         android:label="ChallengeDetailFragment" >
         <argument
             android:name="challenge"

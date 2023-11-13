@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create.dialog
+package com.side.runwithme.view.challenge_create.dialog
 
 import android.os.Build
 import android.widget.NumberPicker
@@ -6,12 +6,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogGoalDaysBinding
+import com.side.runwithme.databinding.DialogGoalWeeksBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel
 
-class GoalDaysDialog(): BaseDialogFragment<DialogGoalDaysBinding>(
-    R.layout.dialog_goal_days) {
+class GoalWeeksDialog: BaseDialogFragment<DialogGoalWeeksBinding>(R.layout.dialog_goal_weeks) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
@@ -24,11 +23,12 @@ class GoalDaysDialog(): BaseDialogFragment<DialogGoalDaysBinding>(
         initNumberPicker()
 
         initViewModelCallbacks()
+
     }
 
     private fun initViewModelCallbacks(){
         repeatOnStarted {
-            challengeCreateViewModel.dialogGoalDaysEventFlow.collect {
+            challengeCreateViewModel.dialogGoalWeeksEventFlow.collect {
                 if(it is ChallengeCreateViewModel.Event.Success){
                     dismiss()
                 }
@@ -39,13 +39,14 @@ class GoalDaysDialog(): BaseDialogFragment<DialogGoalDaysBinding>(
     private fun initNumberPicker(){
         binding.apply {
             np.minValue = 1
-            np.maxValue = 7
-            np.value = 3
-            np.wrapSelectorWheel = false
-
+            np.maxValue = 25
+            np.value = 4
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 np.textColor = ContextCompat.getColor(requireActivity(), R.color.main_blue)
             }
+
+            //순환 안되게 막기
+            np.wrapSelectorWheel = false
 
             np.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }

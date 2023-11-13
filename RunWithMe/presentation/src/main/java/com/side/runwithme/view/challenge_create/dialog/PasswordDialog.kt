@@ -1,11 +1,11 @@
-package com.side.runwithme.view.challenge_list.create.dialog
+package com.side.runwithme.view.challenge_create.dialog
 
 import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.DialogPasswordBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel
 
 class PasswordDialog(): BaseDialogFragment<DialogPasswordBinding>(
     R.layout.dialog_password) {
