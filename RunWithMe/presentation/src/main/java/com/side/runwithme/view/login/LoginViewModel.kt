@@ -28,8 +28,7 @@ class LoginViewModel @Inject constructor(
 
 
     fun loginWithEmail() {
-        val user = User("test@naver.com", "12341234")
-//        val user = User(email.value, password.value)
+        val user = if(email.value.isBlank()) User("test@naver.com", "12341234") else User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {
             loginWithEmailUseCase(user).collectLatest {
