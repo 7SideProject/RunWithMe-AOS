@@ -16,6 +16,9 @@
     <string name="my_page">마이페이지</string>
     <string name="edit_profile">프로필 수정</string>
     <string name="register_profile">프로필 등록</string>
+    <string name="record">기록</string>
+    <string name="my_board">작성글</string>
+    <string name="achieve">업적</string>
     <string name="join">회원가입</string>
     <string name="practice_running">연습 러닝</string>
     <string name="find_password">비밀번호 찾기</string>
@@ -117,11 +120,13 @@
 
 
     <string name="running">러닝</string>
-    <string name="challenge_join">러닝</string>
+    <string name="challenge_join">가입</string>
     <string name="challenge_quit">탈퇴</string>
     <string name="running_pause">일시정지</string>
     <string name="running_resume">다시 시작하기</string>
 
+    <string name="running_pause_message">러닝이 일시중지 되었습니다.</string>
+    <string name="running_stop_message">러닝이 종료되었습니다.</string>
     <string name="running_pause_not_moving">이동이 없어 러닝이 일시 중지되었습니다.</string>
     <string name="running_resume_when_moving">이동이 감지되어 러닝을 다시 시작합니다.</string>
     <string name="running_pause_too_fast">비정상적인 이동이 감지되어 러닝이 일시 중지되었습니다.</string>
@@ -139,12 +144,15 @@
     <string name="message_duplicate_nickname">이미 사용중인 닉네임입니다.</string>
     <string name="message_send_mail">인증번호가 전송되었습니다.</string>
     <string name="message_not_equal_verify">인증번호가 일치하지 않습니다.</string>
+    <string name="message_equal_verify">인증번호가 일치합니다.</string>
     <string name="message_delay_send_mail">이미 인증번호가 전송되었습니다. 잠시 후 다시 시도하세요.</string>
     <string name="message_success_join">회원가입이 완료되었습니다.</string>
     <string name="message_fail_join">회원가입에 실패했습니다.</string>
     <string name="message_invalid_nickname">닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다.</string>
 
     <string name="message_back_btn">뒤로가기 버튼을 한번 더 누르면 회원가입이 종료됩니다.</string>
+
+    <string name="delete_challenge_success">챌린지를 탈퇴했습니다.</string>
 
     <string name="message_daily_check">출석 체크 100P 지급 완료!</string>
     <string name="message_duplicate_today_daily_check">오늘은 이미 출석했습니다.</string>

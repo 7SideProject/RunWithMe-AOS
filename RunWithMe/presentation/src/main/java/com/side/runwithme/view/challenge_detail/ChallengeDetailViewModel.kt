@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.detail
+package com.side.runwithme.view.challenge_detail
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -101,9 +101,11 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
     fun onClickButton(){
+        Log.d("test123", "onClickButton: ${challengeState.value}")
         when(challengeState.value){
             CHALLENGE_STATE.START -> {
-                goRunning()
+                /** 챌린지 detail 화면에서 러닝은 일단 안되게 하고 배포 후에 추가 예정 **/
+//                goRunning()
             }
             CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {
                 quitChallenge()
@@ -126,8 +128,7 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
 
-    /** api 구현해야함 **/
-    private fun joinChallenge(){
+    private fun joinChallenge(password: String? = null){
         // join api 성공 시 ChallengeState AleadyJoin으로 변경
         viewModelScope.launch(Dispatchers.IO) {
             joinChallengeUseCase(challenge.value!!.seq, password).collectLatest {
@@ -147,11 +148,22 @@ class ChallengeDetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
                 it.onSuccess {
+<<<<<<< HEAD:RunWithMe/presentation/src/main/java/com/side/runwithme/view/challenge_list/detail/ChallengeDetailViewModel.kt
                     isJoin.value = false
 
                 }.onFailure {
 
                 }.onError {
+=======
+                    Log.d("test123", "quitChallenge: success ${it.code}")
+                    _ChallengeDetailEventFlow.emit(Event.DeleteChallenge())
+                }.onFailure {
+                    Log.d("test123", "quitChallenge: fail ${it.code}")
+
+                }.onError {
+                    Log.d("test123", "quitChallenge: err ${it}")
+
+>>>>>>> c43abd4fe6d66df1b999aa5e7022d456a94d5552:RunWithMe/presentation/src/main/java/com/side/runwithme/view/challenge_detail/ChallengeDetailViewModel.kt
                     Firebase.crashlytics.recordException(it)
                 }
             }

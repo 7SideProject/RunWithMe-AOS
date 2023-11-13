@@ -5,10 +5,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
+import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeListBinding
-import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateActivity
+import com.side.runwithme.mapper.mapperToChallengeParcelable
+import com.side.runwithme.view.challenge_create.ChallengeCreateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,12 +37,9 @@ class ChallengeListFragment :
     }
 
     private fun initViewModelCallback() {
-        // Coroutine 사용 때문에 binding 못함
         lifecycleScope.launch {
-            challengeViewModel.challengeList.collectLatest { challengeList ->
-
+            challengeViewModel.getRecruitingChallengesPaging().collect{ challengeList ->
                 challengeListAdapter.submitData(challengeList)
-
             }
         }
     }
@@ -67,9 +65,14 @@ class ChallengeListFragment :
     }
 
     private fun initChallengeList() {
-        challengeListAdapter = ChallengeListAdapter()
+        challengeListAdapter = ChallengeListAdapter(challengeListAdapterClickListener)
         binding.rvChallengeList.adapter = challengeListAdapter
-        challengeViewModel.getRecruitingChallengesPaging(20)
+    }
 
+    private val challengeListAdapterClickListener = object : ChallengeListAdapterClickListener {
+        override fun onClick(challenge: Challenge) {
+            val action = ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeDetailFragment(challenge.mapperToChallengeParcelable())
+            findNavController().navigate(action)
+        }
     }
 }

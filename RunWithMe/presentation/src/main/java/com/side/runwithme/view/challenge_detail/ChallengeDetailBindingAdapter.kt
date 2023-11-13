@@ -19,10 +19,19 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
     when(state){
         CHALLENGE_STATE.START -> {
             this.apply {
+<<<<<<< HEAD
                 text = resources.getString(R.string.running)
                 visibility = View.VISIBLE
                 setTextColor(ContextCompat.getColor(this.context, R.color.white))
                 background = ContextCompat.getDrawable(this.context, R.drawable.btn_round_main_color)
+=======
+                /** 챌린지 detail 화면에서 러닝은 일단 안되게 하고 배포 후에 추가 예정 **/
+//                text = resources.getString(R.string.running)
+//                visibility = View.VISIBLE
+//                setTextColor(ContextCompat.getColor(this.context, R.color.white))
+//                background = ContextCompat.getDrawable(this.context, R.drawable.btn_round_main_color)
+                visibility = View.GONE
+>>>>>>> c43abd4fe6d66df1b999aa5e7022d456a94d5552
             }
         }
         CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {

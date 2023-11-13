@@ -49,6 +49,13 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     BOARD_NOT_FOUND      			 (-400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST      			 (-401, "이미 신고한 게시글 입니다."),
 
+    // Challenge 등록
+    CREATE_CHALLENGE_FAIL(-306, "챌린지 등록에 실패했습니다."),
+    CREATE_CHALLENGE_SUCCESS(307, "챌린지 등록에 성공했습니다."),
+
+    // Challenge 탈퇴
+    DELETE_CHALLENGE_SUCCESS(308, "챌린지 해체에 성공하였습니다."),
+    LEAVE_CHALLENGE_SUCCESS(309, "가입한 챌린지에 탈퇴하였습니다."),
 
     // Challenge 등록
     CREATE_CHALLENGE_FAIL(-306, "챌린지 등록에 실패했습니다."),
