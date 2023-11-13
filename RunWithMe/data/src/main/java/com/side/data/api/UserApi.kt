@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.UserResponse
@@ -38,5 +39,5 @@ interface UserApi {
     suspend fun checkNicknameIsDuplicate(@Query("nickname") nickname: String): BaseResponse<DuplicateCheckResponse>
 
     @PUT("users/{userEmail}/password")
-    suspend fun changePassword(@Path("userEmail") email: String, password: String): BaseResponse<Any?>
+    suspend fun changePassword(@Path("userEmail") email: String, @Body passwordRequest: FindPasswordRequest): BaseResponse<Any?>
 }

@@ -6,6 +6,7 @@ import com.side.data.mapper.mapperToDuplicateCheck
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
 import com.side.data.mapper.mapperToUser
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
@@ -173,7 +174,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, password).asResult{
+    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, FindPasswordRequest(password)).asResult{
         when(it.code){
             101 -> {
                 ResultType.Success(it)

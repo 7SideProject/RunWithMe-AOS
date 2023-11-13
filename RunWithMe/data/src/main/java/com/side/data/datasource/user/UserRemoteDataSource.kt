@@ -1,6 +1,7 @@
 package com.side.data.datasource.user
 
 import com.side.data.model.request.EmailLoginRequest
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.DuplicateCheckResponse
@@ -23,5 +24,5 @@ interface UserRemoteDataSource {
 
     fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>>
 
-    fun changePassword(email: String, password: String): Flow<BaseResponse<Any?>>
+    fun changePassword(email: String, passwordRequest: FindPasswordRequest): Flow<BaseResponse<Any?>>
 }
