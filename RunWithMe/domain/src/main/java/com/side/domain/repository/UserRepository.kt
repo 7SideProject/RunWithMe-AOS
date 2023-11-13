@@ -32,4 +32,6 @@ interface UserRepository {
     fun dailyCheck(userSeq: Long): Flow<DailyCheckTypeResponse>
 
     fun getTotalRecord(userSeq: Long): Flow<TotalRecordTypeResponse>
+
+    fun deleteUser(): Flow<NullResponse>
 }

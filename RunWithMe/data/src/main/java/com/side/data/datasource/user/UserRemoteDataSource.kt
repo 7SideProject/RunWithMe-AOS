@@ -31,4 +31,6 @@ interface UserRemoteDataSource {
     fun dailyCheck(userSeq: Long): Flow<BaseResponse<DailyCheckResponse>>
 
     fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>>
+
+    fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>>
 }
