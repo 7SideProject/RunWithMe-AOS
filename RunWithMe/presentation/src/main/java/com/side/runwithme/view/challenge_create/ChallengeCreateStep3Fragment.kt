@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create
+package com.side.runwithme.view.challenge_create
 
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -6,9 +6,9 @@ import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate3Binding
 import com.side.runwithme.util.GOAL_TYPE
-import com.side.runwithme.view.challenge_list.create.dialog.GoalDaysDialog
-import com.side.runwithme.view.challenge_list.create.dialog.GoalTypeDistanceDialog
-import com.side.runwithme.view.challenge_list.create.dialog.GoalTypeTimeDialog
+import com.side.runwithme.view.challenge_create.dialog.GoalDaysDialog
+import com.side.runwithme.view.challenge_create.dialog.GoalTypeDistanceDialog
+import com.side.runwithme.view.challenge_create.dialog.GoalTypeTimeDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

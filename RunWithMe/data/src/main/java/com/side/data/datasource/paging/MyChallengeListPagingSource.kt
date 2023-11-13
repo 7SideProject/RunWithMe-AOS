@@ -30,8 +30,6 @@ class MyChallengeListPagingSource @Inject constructor(
 
             val challengeList = response.first().data
 
-            Log.d("test123", "load: ${challengeList}")
-
             val nextKey = if (challengeList.size < size) {
                 null
             } else {

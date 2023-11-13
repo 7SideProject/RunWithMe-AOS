@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.runwithme.databinding.ItemMyChallengeBinding
-import com.side.runwithme.model.ChallengeParcelable
 
 class MyChallengeListAdapter(private val myChallengeListAdapterClickListener: MyChallengeListAdapterClickListener) : PagingDataAdapter<Challenge, MyChallengeListAdapter.ViewHolder>(diffUtil) {
 
@@ -44,7 +43,7 @@ class MyChallengeListAdapter(private val myChallengeListAdapterClickListener: My
             }
 
             override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem == newItem
             }
         }
     }

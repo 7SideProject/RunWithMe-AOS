@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create
+package com.side.runwithme.view.challenge_create
 
 import android.app.Activity
 import android.content.Intent
@@ -18,7 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -92,15 +95,14 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
         if(it.resultCode == Activity.RESULT_OK){
             challengeCreateViewModel.challengeImg.value = it.data?.data
 
-            var bitmap : Bitmap? = null
             val uri = it.data?.data
             try {
                 if(uri != null){
-                    bitmap = resizeBitmapFormUri(uri,requireContext())
+                    val bitmap = resizeBitmapFormUri(uri,requireContext())
 
                     if(bitmap == null) return@registerForActivityResult
 
-                    challengeCreateViewModel.challengeImgMultiPart.value = createMultiPart(bitmap)
+                    challengeCreateViewModel.challengeImgMultiPart.value = createMultiPart(createByteArray(bitmap))
                 }
             } catch (e : Exception){
                 e.printStackTrace()
@@ -108,29 +110,15 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
         }
     }
 
-    @Throws(IOException::class)
-    private fun createFileFromBitmap(bitmap: Bitmap): File {
-        val newFile = File(requireActivity().filesDir, "challenge_${System.currentTimeMillis()}")
-        val fileOutputStream = FileOutputStream(newFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, fileOutputStream)
-        fileOutputStream.close()
-        return newFile
+    private fun createByteArray(bitmap: Bitmap): ByteArray{
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 20, outputStream)
+        return outputStream.toByteArray()
     }
 
-
-
-    private fun createMultiPart(bitmap: Bitmap): MultipartBody.Part? {
-        var imageFile: File? = null
-        try {
-            imageFile = createFileFromBitmap(bitmap)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        val mediaType = "multipart/form-data".toMediaTypeOrNull()
-        val requestFile = imageFile?.asRequestBody(mediaType) ?: return null
-
-        return MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+    private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
+        val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("imgFile", "running", requestFile)
     }
-
 
 }

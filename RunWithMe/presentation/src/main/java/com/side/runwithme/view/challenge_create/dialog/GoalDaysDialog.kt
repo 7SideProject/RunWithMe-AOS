@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create.dialog
+package com.side.runwithme.view.challenge_create.dialog
 
 import android.os.Build
 import android.widget.NumberPicker
@@ -6,12 +6,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogGoalTypeDistanceBinding
+import com.side.runwithme.databinding.DialogGoalDaysBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel
 
-class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
-    R.layout.dialog_goal_type_distance) {
+class GoalDaysDialog(): BaseDialogFragment<DialogGoalDaysBinding>(
+    R.layout.dialog_goal_days) {
 
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
@@ -28,7 +28,7 @@ class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
 
     private fun initViewModelCallbacks(){
         repeatOnStarted {
-            challengeCreateViewModel.dialogGoalDistanceEventFlow.collect {
+            challengeCreateViewModel.dialogGoalDaysEventFlow.collect {
                 if(it is ChallengeCreateViewModel.Event.Success){
                     dismiss()
                 }
@@ -39,10 +39,8 @@ class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
     private fun initNumberPicker(){
         binding.apply {
             np.minValue = 1
-            np.maxValue = 60
+            np.maxValue = 7
             np.value = 3
-
-            //순환 안되게 막기
             np.wrapSelectorWheel = false
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -52,6 +50,5 @@ class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
             np.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }
     }
-
 
 }

@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.detail
+package com.side.runwithme.view.challenge_detail
 
 import android.content.Intent
 import androidx.fragment.app.viewModels
@@ -55,9 +55,20 @@ class ChallengeDetailFragment :
 
         repeatOnStarted {
             challengeDetailViewModel.ChallengeDetailEventFlow.collect {
-                if(it is ChallengeDetailViewModel.Event.Success){
-                    goRunning()
-                    moveHomeFragment()
+                when (it) {
+                    is ChallengeDetailViewModel.Event.Success -> {
+                        goRunning()
+                        moveHomeFragment()
+                    }
+
+                    is ChallengeDetailViewModel.Event.DeleteChallenge -> {
+                        showToast(resources.getString(R.string.delete_challenge_success))
+                        findNavController().popBackStack()
+                    }
+
+                    is ChallengeDetailViewModel.Event.Fail -> {
+                        // 실패 시 메세지
+                    }
                 }
             }
         }
