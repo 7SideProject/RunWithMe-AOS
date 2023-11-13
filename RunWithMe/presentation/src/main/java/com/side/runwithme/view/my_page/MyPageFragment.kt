@@ -1,6 +1,7 @@
 package com.side.runwithme.view.my_page
 
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentMyPageBinding
@@ -17,5 +18,21 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         }
 
         myPageViewModel.myPageInitRequest()
+
+        initClickListener()
+    }
+
+    private fun initClickListener(){
+        binding.apply {
+            toolbar.apply {
+                setBackButtonClickEvent {
+                    findNavController().popBackStack()
+                }
+
+                setOptionButtonClickEvent(1){
+                    findNavController().navigate(MyPageFragmentDirections.actionMyPageFragmentToOthersFragment())
+                }
+            }
+        }
     }
 }

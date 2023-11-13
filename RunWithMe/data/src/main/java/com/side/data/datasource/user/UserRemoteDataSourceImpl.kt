@@ -59,4 +59,8 @@ class UserRemoteDataSourceImpl @Inject constructor(
     override fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>> = flow {
         emit(userApi.getTotalRecord(userSeq))
     }
+
+    override fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(userApi.deleteUser(userSeq))
+    }
 }

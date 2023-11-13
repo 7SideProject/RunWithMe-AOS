@@ -8,7 +8,9 @@ import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
+import com.side.domain.repository.NullResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -41,4 +43,7 @@ interface UserApi {
 
     @GET("users/{userSeq}/total-record")
     suspend fun getTotalRecord(@Path("userSeq") userSeq: Long): BaseResponse<TotalRecordResponse>
+
+    @DELETE("users/{userSeq}")
+    suspend fun deleteUser(@Path("userSeq") userSeq: Long): BaseResponse<Any?>
 }
