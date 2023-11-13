@@ -75,7 +75,11 @@
     <fragment
         android:id="@+id/MyPageFragment"
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
-        android:label="MyPageFragment" />
+        android:label="MyPageFragment" >
+        <action
+            android:id="@+id/action_MyPageFragment_to_othersFragment"
+            app:destination="@id/othersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/runningListFragment"
         android:name="com.side.runwithme.view.running_list.RunningListFragment"
@@ -103,5 +107,9 @@
             android:id="@+id/action_myChallengeFragment_to_challengeDetailFragment"
             app:destination="@id/challengeDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/othersFragment"
+        android:name="com.side.runwithme.view.others.OthersFragment"
+        android:label="OthersFragment" />
 
 </navigation>
