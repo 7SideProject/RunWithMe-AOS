@@ -10,6 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ChallengeApi {
@@ -30,4 +31,10 @@ interface ChallengeApi {
 
     @GET("challenge/my")
     suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+
+    @POST("challenge/{challengeSeq}/join")
+    suspend fun joinChallenge(@Path("challengeSeq") challengeSeq: Long, @Query("password") password: String?): BaseResponse<String?>
+
+    @POST("challenge/{challengeSeq}")
+    suspend fun leaveChallenge(@Path("challengeSeq") challengeSeq: Long): BaseResponse<Any?>
 }
