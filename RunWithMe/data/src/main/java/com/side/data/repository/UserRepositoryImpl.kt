@@ -9,8 +9,10 @@ import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
 import com.side.data.mapper.mapperToTotalRecord
 import com.side.data.mapper.mapperToUser
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
 import com.side.data.util.initKeyStore
 import com.side.domain.base.changeData
@@ -19,6 +21,7 @@ import com.side.domain.model.Profile
 import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
 import com.side.domain.repository.DuplicateCheckTypeResponse
+import com.side.domain.repository.NullResponse
 import com.side.domain.repository.TotalRecordTypeResponse
 import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserTypeResponse
@@ -34,29 +37,6 @@ class UserRepositoryImpl @Inject constructor(
     private val dataStoreDataSource: DataStoreDataSource,
 ) : UserRepository {
 
-//    override fun login(code: String, state: String): Flow<UserResponse> = flow {
-//        emit(ResultType.Loading)
-//        userRemoteDataSource.login(LoginRequest(code, state)).collectLatest {
-//            emit(
-//                ResultType.Success(
-//                    BaseResponse(
-//                        it.code,
-//                        it.message,
-//                        it.data
-//                    )
-//                )
-//            )
-//
-//
-//        }
-//    }.catch {
-//        emit(
-//            ResultType.Error(
-//                it.cause!!
-//            )
-//        )
-//    }
-
     override fun join(user: User): Flow<UserTypeResponse> = userRemoteDataSource.join(user.mapperToJoinRequest()).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
@@ -70,8 +50,6 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
-
-
 
     override fun loginWithEmail(user: User): Flow<UserTypeResponse> = userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).asResultOtherType {
         when(it.code){
@@ -173,6 +151,18 @@ class UserRepositoryImpl @Inject constructor(
             }
             else -> {
                 ResultType.Fail(it.changeData(it.data.mapperToDuplicateCheck()))
+            }
+        }
+    }
+
+    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, FindPasswordRequest(password)).asResult {
+        when (it.code) {
+            101 -> {
+                ResultType.Success(it)
+            }
+
+            else -> {
+                ResultType.Fail(it)
             }
         }
     }

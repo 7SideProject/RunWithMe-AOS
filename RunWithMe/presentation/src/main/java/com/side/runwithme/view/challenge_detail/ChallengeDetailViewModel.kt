@@ -1,9 +1,13 @@
-package com.side.runwithme.view.challenge_list.detail
+package com.side.runwithme.view.challenge_detail
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
+import com.side.domain.usecase.challenge.JoinChallengeUseCase
+import com.side.domain.usecase.challenge.LeaveChallengeUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.CHALLENGE_STATE
@@ -15,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -25,6 +30,8 @@ import javax.inject.Inject
 class ChallengeDetailViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val isChallengeAlreadyJoinUseCase: IsChallengeAlreadyJoinUseCase,
+    private val joinChallengeUseCase: JoinChallengeUseCase,
+    private val leaveChallengeUseCase: LeaveChallengeUseCase
 ) : ViewModel() {
 
     private val _challenge = MutableStateFlow<ChallengeParcelable?>(null)
@@ -71,6 +78,7 @@ class ChallengeDetailViewModel @Inject constructor(
                 }.onFailure {
 
                 }.onError {
+                    Firebase.crashlytics.recordException(it)
                     Log.e("test123", "getManagerName: ", it)
                 }
             }
@@ -85,6 +93,7 @@ class ChallengeDetailViewModel @Inject constructor(
                 }.onFailure {
 
                 }.onError {
+                    Firebase.crashlytics.recordException(it)
                     Log.e("test123", "isChallengeAlreadyJoin: ", it)
                 }
             }
@@ -92,9 +101,11 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
     fun onClickButton(){
+        Log.d("test123", "onClickButton: ${challengeState.value}")
         when(challengeState.value){
             CHALLENGE_STATE.START -> {
-                goRunning()
+                /** 챌린지 detail 화면에서 러닝은 일단 안되게 하고 배포 후에 추가 예정 **/
+//                goRunning()
             }
             CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {
                 quitChallenge()
@@ -117,18 +128,45 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
 
-    /** api 구현해야함 **/
-    private fun joinChallenge(){
+    private fun joinChallenge(password: String? = null){
         // join api 성공 시 ChallengeState AleadyJoin으로 변경
+        viewModelScope.launch(Dispatchers.IO) {
+            joinChallengeUseCase(challenge.value!!.seq, password).collectLatest {
+                it.onSuccess {
+                    isJoin.value = true
+                }.onFailure {
+                    /** 실패 처리 해야함 **/
+                }.onError {
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
     }
 
     private fun quitChallenge(){
         // quit api 성공 시 ChallengeState Not_Join으로 변경
+        viewModelScope.launch(Dispatchers.IO) {
+            leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
+                it.onSuccess {
+                    Log.d("test123", "quitChallenge: success ${it.code}")
+                    _ChallengeDetailEventFlow.emit(Event.DeleteChallenge())
+                }.onFailure {
+                    Log.d("test123", "quitChallenge: fail ${it.code}")
+
+                }.onError {
+                    Log.d("test123", "quitChallenge: err ${it}")
+
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
     }
+
 
 
     sealed interface Event {
         class Success : Event
         class Fail : Event
+        class DeleteChallenge : Event
     }
 }

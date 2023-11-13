@@ -218,5 +218,6 @@ dependencies {
     implementation(platform(Dependencies.FIREBASE_PLATFORM))
     implementation(Dependencies.FIREBASE_ANALYTICS)
     implementation(Dependencies.FIREBASE_AUTH)
+    implementation(Dependencies.FIREBASE_CRASHLYTICS)
 
 }

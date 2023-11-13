@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create
+package com.side.runwithme.view.challenge_create
 
 import android.view.View
 import android.widget.RadioGroup
@@ -9,7 +9,7 @@ import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentChallengeCreate5Binding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.dialog.PasswordDialog
+import com.side.runwithme.view.challenge_create.dialog.PasswordDialog
 import com.side.runwithme.view.loading.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay

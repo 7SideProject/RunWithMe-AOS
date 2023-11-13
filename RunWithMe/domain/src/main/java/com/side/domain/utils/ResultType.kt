@@ -18,25 +18,25 @@ sealed class ResultType<out T> {
     data class Error(val exception: Throwable) : ResultType<Nothing>() {
         val isNetworkError = exception is IOException
     }
-
     inline fun onSuccess(
         action: (value: T) -> Unit
     ): ResultType<T> {
-        if(this is ResultType.Success) action(this.data)
+
+        if(this is Success) action(this.data)
         return this
     }
 
     inline fun onFailure(
         action: (value: T) -> Unit
     ): ResultType<T> {
-        if(this is ResultType.Fail) action(this.data)
+        if(this is Fail) action(this.data)
         return this
     }
 
     inline fun onError(
         action: (value: Throwable) -> Unit
     ) {
-        if(this is ResultType.Error) action(this.exception)
+        if(this is Error) action(this.exception)
         return
     }
 }

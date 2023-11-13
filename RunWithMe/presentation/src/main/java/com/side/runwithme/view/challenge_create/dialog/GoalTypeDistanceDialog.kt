@@ -1,4 +1,4 @@
-package com.side.runwithme.view.challenge_list.create.dialog
+package com.side.runwithme.view.challenge_create.dialog
 
 import android.os.Build
 import android.widget.NumberPicker
@@ -6,14 +6,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogGoalTypeTimeBinding
+import com.side.runwithme.databinding.DialogGoalTypeDistanceBinding
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel
+import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel
 
-class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
-    R.layout.dialog_goal_type_time) {
+class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
+    R.layout.dialog_goal_type_distance) {
 
-    private lateinit var timeValues : Array<String>
     private val challengeCreateViewModel by activityViewModels<ChallengeCreateViewModel>()
 
     override fun init() {
@@ -22,8 +21,6 @@ class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
             challengeCreateVM = challengeCreateViewModel
         }
 
-        initTimeValues()
-
         initNumberPicker()
 
         initViewModelCallbacks()
@@ -31,7 +28,7 @@ class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
 
     private fun initViewModelCallbacks(){
         repeatOnStarted {
-            challengeCreateViewModel.dialogGoalTimeEventFlow.collect {
+            challengeCreateViewModel.dialogGoalDistanceEventFlow.collect {
                 if(it is ChallengeCreateViewModel.Event.Success){
                     dismiss()
                 }
@@ -39,16 +36,12 @@ class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
         }
     }
 
-    private fun initTimeValues(){
-        timeValues = Array<String>(60, {i -> ((i + 1) * 10).toString()})
-    }
-
     private fun initNumberPicker(){
         binding.apply {
-            np.minValue = 0
-            np.maxValue = 59
+            np.minValue = 1
+            np.maxValue = 60
             np.value = 3
-            np.displayedValues = timeValues
+
             //순환 안되게 막기
             np.wrapSelectorWheel = false
 
@@ -59,5 +52,6 @@ class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
             np.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }
     }
+
 
 }

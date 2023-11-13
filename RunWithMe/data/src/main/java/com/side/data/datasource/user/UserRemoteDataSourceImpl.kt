@@ -4,6 +4,7 @@ import com.side.data.api.LoginApi
 import com.side.data.api.UserApi
 import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.EmailLoginRequest
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.DailyCheckResponse
@@ -46,6 +47,10 @@ class UserRemoteDataSourceImpl @Inject constructor(
 
     override fun checkNicknameIsDuplicate(nickname: String): Flow<BaseResponse<DuplicateCheckResponse>> = flow {
         emit(userApi.checkNicknameIsDuplicate(nickname))
+    }
+
+    override fun changePassword(email: String, passwordRequest: FindPasswordRequest): Flow<BaseResponse<Any?>> = flow {
+        emit(userApi.changePassword(email, passwordRequest))
     }
 
     override fun dailyCheck(userSeq: Long): Flow<BaseResponse<DailyCheckResponse>> = flow {

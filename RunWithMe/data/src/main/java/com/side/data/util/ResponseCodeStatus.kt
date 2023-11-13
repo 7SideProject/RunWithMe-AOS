@@ -28,15 +28,16 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     RECORD_ALREADY_EXIST      			 (-200, "오늘 이미 기록을 등록 하였습니다."),
 
     // Challenge
-    GET_ONE_CHALLENGE_SUCCESS      			 (300, "챌린지 상세 조회에 성공하였습니다."),
-    GET_ALL_CHALLENGE_SUCCESS      			 (301, "챌린지 전체 조회에 성공하였습니다."),
-    JOIN_CHALLENGE_SUCCESS      			 (302, "챌린지 가입에 성공하였습니다."),
-    JOIN_CHALLENGE_FAIL      			 (303, "챌린지 가입에 실패하였습니다."),
-    CHECK_IN_CHALLENGE_SUCCESS      			 (304, "챌린지 가입되어 있는 계정입니다."),
-    CHECK_IN_CHALLENGE_FAIL      			 (305, "챌린지 가입되지 않은 계정입니다."),
-    GET_MY_CHALLENGE_SUCCESS      			 (306, "가입한 챌린지 조회에 성공하였습니다."),
-    CHALLENGE_NOT_FOUND      			 (-300, "존재하지 않는 챌린지입니다."),
-    CHALLENGE_JOIN_ALREADY_EXIST      			 (-301, "이미 가입한 챌린지 입니다."),
+    GET_ONE_CHALLENGE_SUCCESS(300, "챌린지 상세 조회에 성공하였습니다."),
+    GET_ALL_CHALLENGE_SUCCESS(301, "챌린지 전체 조회에 성공하였습니다."),
+    JOIN_CHALLENGE_SUCCESS(302, "챌린지 가입에 성공하였습니다."),
+    JOIN_CHALLENGE_FAIL(303, "챌린지 가입에 실패하였습니다."),
+    CHECK_IN_CHALLENGE_SUCCESS(304, "챌린지 가입되어 있는 계정입니다."),
+    CHECK_IN_CHALLENGE_FAIL(305, "챌린지 가입되지 않은 계정입니다."),
+    GET_MY_CHALLENGE_SUCCESS(306, "가입한 챌린지 조회에 성공하였습니다."),
+    CHALLENGE_NOT_FOUND(-300, "존재하지 않는 챌린지입니다."),
+    CHALLENGE_JOIN_ALREADY_EXIST(-301, "이미 가입한 챌린지 입니다."),
+    CHALLENGE_IS_NOT_MY_CHALLENGE(-307, "챌린지에 가입되어 있지 않습니다."),
 
     // Board
     CREATE_BOARD_SUCCESS      			 (400, "게시글 등록에 성공하였습니다."),
@@ -45,11 +46,16 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     DELETE_BOARD_SUCCESS      			 (403, "게시글 삭제에 성공하였습니다."),
     WARN_BOARD_SUCCESS      			 (404, "게시글 신고에 성공하였습니다."),
     WARN_BOARD_FAIL      			 (405, "게시글 신고에 실패하였습니다."),
-    CREATE_CHALLENGE_SUCCESS      			 (406, "챌린지 등록에 성공하였습니다."),
     BOARD_NOT_FOUND      			 (-400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST      			 (-401, "이미 신고한 게시글 입니다."),
-    CREATE_CHALLENGE_FAIL      			 (-402, "챌린지 등록에 실패하였습니다."),
 
+    // Challenge 등록
+    CREATE_CHALLENGE_FAIL(-306, "챌린지 등록에 실패했습니다."),
+    CREATE_CHALLENGE_SUCCESS(307, "챌린지 등록에 성공했습니다."),
+
+    // Challenge 탈퇴
+    DELETE_CHALLENGE_SUCCESS(308, "챌린지 해체에 성공하였습니다."),
+    LEAVE_CHALLENGE_SUCCESS(309, "가입한 챌린지에 탈퇴하였습니다."),
 
     // Image
     IMAGE_NOT_FOUND      			 (-500, "이미지를 찾을 수 없습니다."),
