@@ -30,4 +30,11 @@
     <string name="not_equal_password">입력하신 비밀번호가 일치하지 않습니다.</string>
     <string name="not_length_password">비밀번호는 8 ~ 16자 이상이어야 합니다.</string>
     <string name="not_matches_nickname_rule">"닉네임은 한글, 영문, 숫자로만 2자~8자까지 입력 가능합니다."</string>
+
+    <string name="logout">로그아웃</string>
+    <string name="delete_user">회원 탈퇴</string>
+
+    <string name="check_delete_user">탈퇴하시면 유저 정보가 모두 사라집니다.\n 정말로 탈퇴하시겠습니까?</string>
+    <string name="success_delete_user">회원 탈퇴 되었습니다.</string>
+
 </resources>
