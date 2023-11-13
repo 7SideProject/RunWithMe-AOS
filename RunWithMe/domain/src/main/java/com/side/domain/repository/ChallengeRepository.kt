@@ -7,20 +7,30 @@ import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
-typealias JoinResponse = ResultType<BaseResponse<Any?>>
-typealias PagingChallengeResponse = ResultType<PagingData<Challenge>>
+typealias ChallengeCreateResponse = ResultType<BaseResponse<Any?>>
+typealias PagingChallengeResponse = Flow<PagingData<Challenge>>
+typealias JoinChallengeResponse = ResultType<BaseResponse<String?>>
+typealias IsChallengeJoinResponse = ResultType<BaseResponse<Boolean>>
+typealias NullDataResponse = ResultType<BaseResponse<Any?>>
 
 interface ChallengeRepository {
 
     fun getRecruitingChallengeList(
         size: Int
-    ): Flow<PagingChallengeResponse>
+    ): Flow<PagingData<Challenge>>
 
-    fun createChallenge(challenge: Challenge, imgFile: MultipartBody.Part?): Flow<JoinResponse>
+    fun createChallenge(challenge: Challenge, imgFile: MultipartBody.Part?): Flow<ChallengeCreateResponse>
 
-    fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<ResultType<BaseResponse<Boolean>>>
+    fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<IsChallengeJoinResponse>
 
     fun getMyChallengeList(
         size: Int
-    ): Flow<PagingChallengeResponse>
+    ): Flow<PagingData<Challenge>>
+
+    fun joinChallenge(
+        challengeSeq: Long,
+        password: String?
+    ): Flow<JoinChallengeResponse>
+
+    fun leaveChallenge(challengeSeq: Long): Flow<NullDataResponse>
 }

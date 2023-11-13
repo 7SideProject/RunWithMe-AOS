@@ -1,16 +1,16 @@
 package com.side.runwithme.view.my_challenge
 
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
 import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.databinding.FragmentMyChallengeBinding
 import com.side.runwithme.mapper.mapperToChallengeParcelable
-import com.side.runwithme.model.ChallengeParcelable
-import com.side.runwithme.util.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -20,9 +20,11 @@ class MyChallengeFragment : BaseFragment<FragmentMyChallengeBinding>(R.layout.fr
     private lateinit var myChallengeListAdapter: MyChallengeListAdapter
 
     override fun init() {
+
+        myChallengeListAdapter = MyChallengeListAdapter(myChallengeListAdapterClickListener)
+
         binding.apply {
             myChallengeVM = myChallengeViewModel
-            myChallengeListAdapter = MyChallengeListAdapter(myChallengeListAdapterClickListener)
             rcvMyChallenge.adapter = myChallengeListAdapter
         }
 
@@ -40,10 +42,9 @@ class MyChallengeFragment : BaseFragment<FragmentMyChallengeBinding>(R.layout.fr
     }
 
     private fun initViewModelCallbacks(){
-        myChallengeViewModel.getMyChallengeList()
 
-        repeatOnStarted {
-            myChallengeViewModel.myChallenges.collectLatest { challengeList ->
+        lifecycleScope.launch {
+            myChallengeViewModel.getMyChallengeList().collectLatest { challengeList ->
                 myChallengeListAdapter.submitData(challengeList)
             }
         }

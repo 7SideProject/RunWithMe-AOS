@@ -170,51 +170,241 @@
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout_my_page"
-                app:tabGravity="fill"
-                app:tabMode="fixed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabTextAppearance="@style/tab_text"
-                app:tabBackground="@color/white"
-                app:tabIndicatorColor="@color/main_blue"
-                app:tabTextColor="@color/main_grey"
-                app:tabSelectedTextColor="@color/main_blue">
+<!--            <com.google.android.material.tabs.TabLayout-->
+<!--                android:id="@+id/tab_layout_my_page"-->
+<!--                app:tabGravity="fill"-->
+<!--                app:tabMode="fixed"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:tabTextAppearance="@style/tab_text"-->
+<!--                app:tabBackground="@color/white"-->
+<!--                app:tabIndicatorColor="@color/main_blue"-->
+<!--                app:tabTextColor="@color/main_grey"-->
+<!--                app:tabSelectedTextColor="@color/main_blue">-->
 
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_my_record"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="기록" />
+<!--                <com.google.android.material.tabs.TabItem-->
+<!--                    android:id="@+id/tab_my_record"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/record" />-->
 
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_my_board"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="작성글" />
+<!--                <com.google.android.material.tabs.TabItem-->
+<!--                    android:id="@+id/tab_my_board"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/my_board" />-->
 
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_achieve"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="업적" />
-            </com.google.android.material.tabs.TabLayout>
+<!--                <com.google.android.material.tabs.TabItem-->
+<!--                    android:id="@+id/tab_achieve"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/achieve" />-->
+<!--            </com.google.android.material.tabs.TabLayout>-->
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+<!--        <androidx.core.widget.NestedScrollView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:fillViewport="true"-->
+<!--            android:scrollbars="none"-->
+<!--            app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+
+<!--            <FrameLayout-->
+<!--                android:id="@+id/frame_layout_my_page"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent" />-->
+
+<!--        </androidx.core.widget.NestedScrollView>-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_margin="16dp">
 
-            <FrameLayout
-                android:id="@+id/frame_layout_my_page"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_distance"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginTop="4dp"
+                android:layout_marginHorizontal="4dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toStartOf="@+id/card_speed"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp">
 
-        </androidx.core.widget.NestedScrollView>
+                    <TextView
+                        android:id="@+id/tv_distance_headers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_distance"
+                        android:textColor="@color/main_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/tv_distances"
+                        style="@style/header_text"
+                        android:textColor="@color/black_high_emphasis"
+                        android:textSize="20sp"
+                        app:runningDistance="@{myPageVM.totalRecord.totalLongestDistance}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_distance_headers"
+                        tools:text="16.5 km" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/distances"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_speed"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginTop="4dp"
+                android:layout_marginHorizontal="4dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/card_distance"
+                app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_speed_headers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/average_speed"
+                        android:textColor="@color/main_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/tv_speeds"
+                        style="@style/header_text"
+                        android:textColor="@color/black_high_emphasis"
+                        android:textSize="16sp"
+                        app:runningAvgSpeed="@{myPageVM.totalRecord.totalAvgSpeed}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_speed_headers"
+                        tools:text="5.3 km/h" />
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/speeds"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_kcal"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginVertical="4dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:layout_constraintStart_toStartOf="@id/card_distance"
+                app:layout_constraintTop_toBottomOf="@id/card_distance"
+                app:layout_constraintEnd_toEndOf="@id/card_distance"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_kcal_headers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_calorie"
+                        android:textColor="@color/main_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/tv_kcal"
+                        style="@style/header_text"
+                        android:textColor="@color/black_high_emphasis"
+                        android:textSize="16sp"
+                        app:runningCalorie="@{myPageVM.totalRecord.totalCalorie}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_kcal_headers"
+                        tools:text="1600kcal" />
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/calorie"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_time"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginVertical="4dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@id/card_speed"
+                app:layout_constraintEnd_toEndOf="@id/card_speed"
+                app:layout_constraintStart_toStartOf="@id/card_speed"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_time_headers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_time"
+                        android:textColor="@color/main_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/tv_times"
+                        style="@style/header_text"
+                        android:textColor="@color/black_high_emphasis"
+                        android:textSize="20sp"
+                        app:setTotalRunningTime="@{myPageVM.totalRecord.totalTime}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_time_headers"
+                        tools:text="15시간 55분" />
+                    <ImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/timer_96"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

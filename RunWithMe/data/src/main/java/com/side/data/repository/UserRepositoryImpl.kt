@@ -6,6 +6,7 @@ import com.side.data.mapper.mapperToDailyCheck
 import com.side.data.mapper.mapperToDuplicateCheck
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
+import com.side.data.mapper.mapperToTotalRecord
 import com.side.data.mapper.mapperToUser
 import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.response.EmailLoginResponse
@@ -13,12 +14,11 @@ import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
 import com.side.data.util.initKeyStore
-import com.side.domain.base.changeData
-import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
 import com.side.domain.repository.DuplicateCheckTypeResponse
 import com.side.domain.repository.NullResponse
+import com.side.domain.repository.TotalRecordTypeResponse
 import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserResponse
 import com.side.domain.utils.ResultType
@@ -164,7 +164,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override fun dailyCheck(userSeq: Long): Flow<DailyCheckTypeResponse>
-        = userRemoteDataSource.dailyCheck((userSeq)).asResultOtherType {
+        = userRemoteDataSource.dailyCheck(userSeq).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(
@@ -201,5 +201,22 @@ class UserRepositoryImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun getTotalRecord(userSeq: Long): Flow<TotalRecordTypeResponse>
+        = userRemoteDataSource.getTotalRecord(userSeq).asResultOtherType {
+            when(it.code) {
+                ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                    ResultType.Success(
+                        it.changeData(it.data.mapperToTotalRecord())
+                    )
+                }
+
+                else -> {
+                    ResultType.Fail(
+                        it.changeData(null)
+                    )
+                }
+            }
     }
 }
