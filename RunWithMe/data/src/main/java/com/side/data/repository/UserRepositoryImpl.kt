@@ -2,6 +2,7 @@ package com.side.data.repository
 
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.user.UserRemoteDataSource
+import com.side.data.mapper.mapperToDailyCheck
 import com.side.data.mapper.mapperToDuplicateCheck
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
@@ -15,7 +16,8 @@ import com.side.data.util.initKeyStore
 import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.User
-import com.side.domain.repository.DuplicateCheckResponse
+import com.side.domain.repository.DailyCheckTypeResponse
+import com.side.domain.repository.DuplicateCheckTypeResponse
 import com.side.domain.repository.NullResponse
 import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserResponse
@@ -31,29 +33,6 @@ class UserRepositoryImpl @Inject constructor(
     private val dataStoreDataSource: DataStoreDataSource,
 ) : UserRepository {
 
-//    override fun login(code: String, state: String): Flow<UserResponse> = flow {
-//        emit(ResultType.Loading)
-//        userRemoteDataSource.login(LoginRequest(code, state)).collectLatest {
-//            emit(
-//                ResultType.Success(
-//                    BaseResponse(
-//                        it.code,
-//                        it.message,
-//                        it.data
-//                    )
-//                )
-//            )
-//
-//
-//        }
-//    }.catch {
-//        emit(
-//            ResultType.Error(
-//                it.cause!!
-//            )
-//        )
-//    }
-
     override fun join(user: User): Flow<UserResponse> = userRemoteDataSource.join(user.mapperToJoinRequest()).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
@@ -67,8 +46,6 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
-
-
 
     override fun loginWithEmail(user: User): Flow<UserResponse> = userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).asResultOtherType {
         when(it.code){
@@ -149,7 +126,7 @@ class UserRepositoryImpl @Inject constructor(
         dataStoreDataSource.saveUser(user)
     }
 
-    override fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckResponse>
+    override fun checkIdIsDuplicate(email: String): Flow<DuplicateCheckTypeResponse>
         = userRemoteDataSource.checkIdIsDuplicate(email).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
@@ -162,7 +139,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun checkNicknameIsDuplicate(nickname: String): Flow<DuplicateCheckResponse>
+    override fun checkNicknameIsDuplicate(nickname: String): Flow<DuplicateCheckTypeResponse>
             = userRemoteDataSource.checkNicknameIsDuplicate(nickname).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
@@ -174,13 +151,54 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, FindPasswordRequest(password)).asResult{
-        when(it.code){
+    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, FindPasswordRequest(password)).asResult {
+        when (it.code) {
             101 -> {
                 ResultType.Success(it)
             }
+
             else -> {
                 ResultType.Fail(it)
+            }
+        }
+    }
+
+    override fun dailyCheck(userSeq: Long): Flow<DailyCheckTypeResponse>
+        = userRemoteDataSource.dailyCheck((userSeq)).asResultOtherType {
+        when(it.code){
+            ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                ResultType.Success(
+                    it.changeData(it.data.mapperToDailyCheck())
+                )
+            }
+            ResponseCodeStatus.SEQ_NOT_FOUND.code -> {
+                ResultType.Fail(
+                    it.changeMessageAndData(
+                        ResponseCodeStatus.SEQ_NOT_FOUND.message,
+                        null
+                    )
+                )
+            }
+            ResponseCodeStatus.DELETED_USER.code -> {
+                ResultType.Fail(
+                    it.changeMessageAndData(
+                        ResponseCodeStatus.DELETED_USER.message,
+                        null
+                    )
+                )
+            }
+            ResponseCodeStatus.NOT_RESOURCE_CREATE_USER.code -> {
+                ResultType.Fail(
+                    it.changeMessageAndData(
+                        ResponseCodeStatus.NOT_RESOURCE_CREATE_USER.message,
+                        null
+                    )
+                )
+            }
+            else -> {
+                ResultType.Fail(
+                    it.changeData(null)
+                )
             }
         }
     }
