@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="description_about_challenge">확실한 동기부여를 위해 고안된 비대면 러닝 챌린지입니다.\n일정 기간 동안 1주 기준 목표를 설정하고 하루에 1번 챌린지원들과 각자 러닝하고 기록을 공유합니다.\n\n챌린지를 시작하기 전에 참가비로 포인트를 걸고 목표에 성공하면 실패한 팀원들의 포인트를 나눠 갖습니다. 더 많은 러닝 챌린지에 참여할 수 있습니다.\n챌린지원들과 같은 목표를 위해 달리고 더 많은 포인트를 얻어 성공적으로 러닝 습관을 만들어보세요 !</string>
+    <string name="tv_rule">챌린지 진행 방식</string>
+
+    <string name="challnege_name">챌린지명</string>
+    <string name="challenge_image">챌린지 이미지</string>
+    <string name="challenge_description">챌린지 소개</string>
+    <string name="challenge_term">챌린지 기간</string>
+    <string name="challenge_start_date_range">시작 범위</string>
+    <string name="challenge_start_date">시작 일</string>
+    <string name="challenge_end_date">종료 일</string>
+    <string name="running_start_time">러닝 시작 시간</string>
+    <string name="goal_duration">목표 기간</string>
+    <string name="setting_goal">목표 설정</string>
+    <string name="each_day_goal_amount">일일 목표</string>
+    <string name="each_weeks_goal_days">1주간 목표 횟수</string>
+    <string name="challenge_max_member">참가 가능 인원</string>
+    <string name="cost">참가비</string>
+    <string name="time">시간</string>
+    <string name="distance">거리</string>
+    <string name="km">km</string>
+    <string name="week">주</string>
+    <string name="day">일</string>
+    <string name="people_unit">명</string>
+    <string name="point">point</string>
+    <string name="setting_password">비밀번호 설정</string>
+
+    <string name="goal">목표</string>
+    <string name="entry_fee">참가비</string>
+
+    <string name="challenge_member_ranking">챌린지원 랭킹</string>
+    <string name="challenge_join">가입</string>
+    <string name="challenge_quit">탈퇴</string>
+    <string name="delete_challenge_success">챌린지가 해체되었습니다.</string>
+</resources>

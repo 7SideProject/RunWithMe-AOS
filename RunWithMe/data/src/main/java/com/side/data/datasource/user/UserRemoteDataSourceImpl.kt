@@ -67,4 +67,8 @@ class UserRemoteDataSourceImpl @Inject constructor(
     ) = flow {
         emit(userApi.editProfile(userSeq, editProfileRequest))
     }
+
+     override fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(userApi.deleteUser(userSeq))
+    }
 }

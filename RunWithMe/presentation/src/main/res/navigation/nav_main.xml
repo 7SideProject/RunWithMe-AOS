@@ -79,6 +79,9 @@
         <action
             android:id="@+id/action_MyPageFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_MyPageFragment_to_othersFragment"
+            app:destination="@id/othersFragment" />
     </fragment>
     <fragment
         android:id="@+id/runningListFragment"
@@ -111,5 +114,10 @@
         android:id="@+id/editProfileFragment"
         android:name="com.side.runwithme.view.my_page.edit_profile.EditProfileFragment"
         android:label="EditProfileFragment" />
+
+    <fragment
+        android:id="@+id/othersFragment"
+        android:name="com.side.runwithme.view.others.OthersFragment"
+        android:label="OthersFragment" />
 
 </navigation>

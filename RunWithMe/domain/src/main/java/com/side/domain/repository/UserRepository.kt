@@ -34,4 +34,6 @@ interface UserRepository {
     fun getTotalRecord(userSeq: Long): Flow<TotalRecordTypeResponse>
 
     fun editProfile(userSeq: Long, editProfileRequest: Profile): Flow<UserTypeResponse>
+
+    fun deleteUser(): Flow<NullResponse>
 }

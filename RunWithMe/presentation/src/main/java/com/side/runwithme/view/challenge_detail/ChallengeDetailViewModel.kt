@@ -148,14 +148,12 @@ class ChallengeDetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             leaveChallengeUseCase(challenge.value!!.seq).collectLatest {
                 it.onSuccess {
-                    Log.d("test123", "quitChallenge: success ${it.code}")
                     _ChallengeDetailEventFlow.emit(Event.DeleteChallenge())
                 }.onFailure {
-                    Log.d("test123", "quitChallenge: fail ${it.code}")
+                    _ChallengeDetailEventFlow.emit(Event.Fail())
 
                 }.onError {
                     Log.d("test123", "quitChallenge: err ${it}")
-
                     Firebase.crashlytics.recordException(it)
                 }
             }

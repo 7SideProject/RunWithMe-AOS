@@ -14,6 +14,8 @@ import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
+import com.side.data.util.emitResultTypeError
+import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.initKeyStore
 import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
@@ -27,6 +29,10 @@ import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserTypeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -234,5 +240,24 @@ class UserRepositoryImpl @Inject constructor(
                 ResultType.Fail(it.changeData(null))
             }
         }
+
+    override fun deleteUser(): Flow<NullResponse> = flow {
+        emitResultTypeLoading()
+
+        val userSeq = dataStoreDataSource.getUserSeq().first().toLong()
+
+        userRemoteDataSource.deleteUser(userSeq).collect {
+            when(it.code){
+                101 -> {
+                    emit(ResultType.Success(it))
+                }
+                else -> {
+                    emit(ResultType.Fail(it))
+                }
+            }
+        }
+
+    }.catch {
+        emitResultTypeError(it)
     }
 }

@@ -69,5 +69,4 @@ enum class ResponseCodeStatus(val code: Int, val message: String) {
     EXPIRED_JWT_TOKEN      			 (-604, "JWT Token이 만료되었습니다."),
     UNSUPPORTED_JWT_TOKEN      			 (-605, "지원되지 않는 Token입니다."),
 
-
 }

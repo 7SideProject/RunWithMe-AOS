@@ -34,4 +34,6 @@ interface UserRemoteDataSource {
     fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>>
 
     fun editProfile(userSeq: Long, editProfileRequest: EditProfileRequest): Flow<BaseResponse<UserResponse>>
+
+    fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>>
 }

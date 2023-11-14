@@ -17,6 +17,7 @@ import com.side.data.util.emitResultTypeSuccess
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeCreateResponse
 import com.side.domain.repository.ChallengeRepository
+import com.side.domain.repository.JoinResponse
 import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.NullDataResponse

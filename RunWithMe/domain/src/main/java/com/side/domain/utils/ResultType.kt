@@ -21,7 +21,6 @@ sealed class ResultType<out T> {
     inline fun onSuccess(
         action: (value: T) -> Unit
     ): ResultType<T> {
-
         if(this is Success) action(this.data)
         return this
     }

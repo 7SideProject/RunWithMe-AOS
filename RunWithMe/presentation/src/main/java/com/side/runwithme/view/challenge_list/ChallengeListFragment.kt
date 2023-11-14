@@ -11,6 +11,7 @@ import com.side.runwithme.databinding.FragmentChallengeListBinding
 import com.side.runwithme.mapper.mapperToChallengeParcelable
 import com.side.runwithme.view.challenge_create.ChallengeCreateActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
