@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
 import com.side.data.model.response.DailyCheckResponse
@@ -43,6 +44,9 @@ interface UserApi {
 
     @GET("users/{userSeq}/total-record")
     suspend fun getTotalRecord(@Path("userSeq") userSeq: Long): BaseResponse<TotalRecordResponse>
+
+    @PUT("/users/{userSeq}/profile")
+    suspend fun editProfile(@Path("userSeq") userSeq: Long, @Body editProfileRequest: EditProfileRequest): BaseResponse<UserResponse>
 
     @DELETE("users/{userSeq}")
     suspend fun deleteUser(@Path("userSeq") userSeq: Long): BaseResponse<Any?>

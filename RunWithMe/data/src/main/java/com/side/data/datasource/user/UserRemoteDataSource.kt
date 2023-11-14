@@ -1,5 +1,6 @@
 package com.side.data.datasource.user
 
+import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
@@ -31,6 +32,8 @@ interface UserRemoteDataSource {
     fun dailyCheck(userSeq: Long): Flow<BaseResponse<DailyCheckResponse>>
 
     fun getTotalRecord(userSeq: Long): Flow<BaseResponse<TotalRecordResponse>>
+
+    fun editProfile(userSeq: Long, editProfileRequest: EditProfileRequest): Flow<BaseResponse<UserResponse>>
 
     fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>>
 }

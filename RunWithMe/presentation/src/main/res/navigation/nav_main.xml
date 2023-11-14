@@ -77,6 +77,9 @@
         android:name="com.side.runwithme.view.my_page.MyPageFragment"
         android:label="MyPageFragment" >
         <action
+            android:id="@+id/action_MyPageFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
             android:id="@+id/action_MyPageFragment_to_othersFragment"
             app:destination="@id/othersFragment" />
     </fragment>
@@ -107,6 +110,11 @@
             android:id="@+id/action_myChallengeFragment_to_challengeDetailFragment"
             app:destination="@id/challengeDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.side.runwithme.view.my_page.edit_profile.EditProfileFragment"
+        android:label="EditProfileFragment" />
+
     <fragment
         android:id="@+id/othersFragment"
         android:name="com.side.runwithme.view.others.OthersFragment"
