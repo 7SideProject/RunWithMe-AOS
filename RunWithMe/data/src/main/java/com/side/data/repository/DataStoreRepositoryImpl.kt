@@ -61,7 +61,7 @@ class DataStoreRepositoryImpl @Inject constructor(
 //    }.catch {
 //        emitResultTypeError(it)
 //    }
-    override suspend fun saveRunningChallengeSeq(challengeSeq: Int) = dataStoreDataSource.saveRunningChallengSeq(challengeSeq)
+    override suspend fun saveRunningChallengeSeq(challengeSeq: Long) = dataStoreDataSource.saveRunningChallengSeq(challengeSeq)
 
     override suspend fun saveRunningGoalAmount(goalAmount: Long) = dataStoreDataSource.saveRunningGoalAmount(goalAmount)
 
@@ -77,7 +77,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val goalAmount = dataStoreDataSource.getRunningGoalAmount().first()
         val goalType = dataStoreDataSource.getRunningGoalType().first()
 
-        if(challengeSeq != 0 && goalAmount != 0L && goalType != -1 && challengeName.isNotEmpty()){
+        if(challengeSeq != 0L && goalAmount != 0L && goalType != -1 && challengeName.isNotEmpty()){
             emitResultTypeSuccess(RunningInfo(challengeSeq, challengeName, goalAmount, goalType))
         }else{
             emitResultTypeFail(RunningInfo(0, "", 0L, -1))

@@ -40,17 +40,17 @@
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h5" />
 
-                <TextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="@dimen/parent_horizontal_margin"
-                    android:text="@{runningResultVM.runRecord.userName}"
-                    android:textStyle="bold"
-                    android:textColor="@color/main_blue"
-                    android:textSize="@dimen/fontsize_h5"
-                    tools:text="도날드 트럼프" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_user_name"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:layout_marginStart="@dimen/parent_horizontal_margin"-->
+<!--                    android:text="@{runningResultVM.runRecord.userName}"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/main_blue"-->
+<!--                    android:textSize="@dimen/fontsize_h5"-->
+<!--                    tools:text="도날드 트럼프" />-->
 
                 <View
                     android:id="@+id/view_line"
@@ -84,7 +84,7 @@
                         android:layout_width="@dimen/complete_stamp_width"
                         android:layout_height="@dimen/complete_stamp_height"
                         tools:src="@drawable/success_stamp"
-                        runningResultCompleted="@{runningResultVM.runRecord.completed}"
+                        runningResultCompleted="@{runningResultVM.runRecord.successYN}"
                         android:paddingStart="@dimen/padding_large"
                         android:layout_marginTop="@dimen/parent_vertical_margin"
                         app:layout_constraintBottom_toBottomOf="@id/tv_distance"
@@ -122,7 +122,7 @@
                             <TextView
                                 android:id="@+id/tv_calorie"
                                 tools:text="14 kcal"
-                                runningCalorie="@{runningResultVM.runRecord.runningCalorieBurned}"
+                                runningCalorie="@{runningResultVM.runRecord.calorie}"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
@@ -180,7 +180,7 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
                                 tools:text="8.3km/h"
-                                runningAvgSpeed="@{runningResultVM.runRecord.runningAvgSpeed}"
+                                runningAvgSpeed="@{runningResultVM.runRecord.avgSpeed}"
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
@@ -225,8 +225,8 @@
                         android:drawableStart="@drawable/timer_24"
                         android:drawablePadding="4dp"
                         android:gravity="center"
-                        runningStartTime="@{runningResultVM.runRecord.runningStartTime}"
-                        runningEndTime="@{runningResultVM.runRecord.runningEndTime}"
+                        runningStartTime="@{runningResultVM.runRecord.startTime}"
+                        runningEndTime="@{runningResultVM.runRecord.endTime}"
                         tools:text="06:05 - 06:25"
                         android:textColor="@color/main_grey"
                         android:textSize="@dimen/fontsize_caption" />
@@ -240,7 +240,7 @@
                         android:gravity="right"
                         android:layout_gravity="center"
                         tools:text="손 크루"
-                        android:text="@{runningResultVM.runRecord.challengeName}"
+                        android:text="@{runningResultVM.challengeName}"
                         android:textColor="@color/main_grey" />
 
                 </LinearLayout>

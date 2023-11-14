@@ -8,5 +8,5 @@ import javax.inject.Singleton
 class SaveRunningChallengeSeqUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ){
-    operator suspend fun invoke(challengSeq: Int) = dataStoreRepository.saveRunningChallengeSeq(challengSeq)
+    operator suspend fun invoke(challengSeq: Long) = dataStoreRepository.saveRunningChallengeSeq(challengSeq)
 }

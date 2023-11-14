@@ -1,19 +1,20 @@
 package com.side.runwithme.mapper
 
 import com.naver.maps.geometry.LatLng
-import com.side.runwithme.model.Coordinates
+import com.side.domain.model.Coordinate
+import com.side.runwithme.model.CoordinatesParcelable
 
 
-fun List<LatLng>.mapperToCoordinatesList(): ArrayList<Coordinates> = this.run {
+fun List<LatLng>.mapperToCoordinateList(): ArrayList<CoordinatesParcelable> = this.run {
         return ArrayList(this.map {
-            Coordinates(
+            CoordinatesParcelable(
                 it.latitude,
                 it.longitude
             )
         })
     }
 
-fun Array<Coordinates>.mapperToNaverLatLngList(): List<LatLng> = this.run {
+fun Array<CoordinatesParcelable>.mapperToNaverLatLngList(): List<LatLng> = this.run {
     return this.map {
         LatLng(
             it.latitude,
@@ -22,7 +23,7 @@ fun Array<Coordinates>.mapperToNaverLatLngList(): List<LatLng> = this.run {
     }
 }
 
-fun Coordinates.mapperToNaverLatLng(): LatLng = this.run {
+fun CoordinatesParcelable.mapperToNaverLatLng(): LatLng = this.run {
     LatLng(
         this.latitude,
         this.longitude

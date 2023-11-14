@@ -15,6 +15,15 @@ fun timeFormatter(time: Long?): String {
     return dateFormat.format(time)
 }
 
+fun onlyTimeFormatter(time: Long?): String {
+    if(time == null){
+        return ""
+    }
+    val dateFormat = SimpleDateFormat("HH:mm:ss")
+
+    return dateFormat.format(time)
+}
+
 // Cost 포매터
 fun costFormatter(cost: String): String {
     val formatter: NumberFormat = DecimalFormat("#,###")

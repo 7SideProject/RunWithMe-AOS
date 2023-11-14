@@ -81,8 +81,8 @@ class RunningListBottomSheet(
     private fun initViewModelCallbacks() {
         binding.apply {
             lifecycleScope.launch {
-                runningListViewModel.getMyChallengeList().collectLatest { challengeList ->
-                    runningListAdapter.submitData(challengeList)
+                runningListViewModel.getMyChallenges().collectLatest {
+                    runningListAdapter.submitData(it)
                 }
             }
 

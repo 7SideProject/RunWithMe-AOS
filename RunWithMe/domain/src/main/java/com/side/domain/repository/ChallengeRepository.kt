@@ -28,6 +28,7 @@ interface ChallengeRepository {
         size: Int
     ): Flow<PagingData<Challenge>>
 
+    fun getAvailableRunningList(size: Int): Flow<PagingData<Challenge>>
 
     fun joinChallenge(
         challengeSeq: Long,

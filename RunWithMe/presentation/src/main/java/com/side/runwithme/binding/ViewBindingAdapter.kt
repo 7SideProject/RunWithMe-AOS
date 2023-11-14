@@ -48,6 +48,7 @@ fun TextView.setRunnignDistance(distance: Int) {
 fun TextView.setRunningTime(time: Int) {
     val hourInt = time / 3600
     val minuteInt = (time / 60) % 60
+    val secondInt = time % 60
 
     var hour = hourInt.toString()
     if (hourInt < 10) {
@@ -59,7 +60,7 @@ fun TextView.setRunningTime(time: Int) {
         minute = "0" + minute
     }
 
-    this.text = "${hour} : ${minute}"
+    this.text = "${hourInt}시 ${minuteInt}분 ${minuteInt}초"
 }
 
 @BindingAdapter("runningAvgSpeed")

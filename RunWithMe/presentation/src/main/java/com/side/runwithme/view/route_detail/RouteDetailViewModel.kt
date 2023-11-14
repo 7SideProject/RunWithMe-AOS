@@ -1,9 +1,7 @@
 package com.side.runwithme.view.route_detail
 
 import androidx.lifecycle.ViewModel
-import com.side.domain.model.Coordinate
-import com.side.domain.model.RunRecord
-import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,36 +10,29 @@ class RouteDetailViewModel : ViewModel() {
 
     private val _runRecord = MutableStateFlow<RunRecordParcelable>(
         RunRecordParcelable(
-        runRecordSeq = 0,
-        runImageSeq = 0,
-        runningDay = "",
-        runningStartTime = "",
-        runningEndTime = "",
-        runningTime = 0,
-        runningDistance = 0,
-        runningAvgSpeed = 0.0,
-        runningCalorieBurned = 0,
-        runningStartingLat = 0.0,
-        runningStartingLng = 0.0,
-        completed = "",
-        userName = "",
-        userSeq = 0,
-        challengeName = "",
-        challengeSeq = 0
-    )
+            runRecordSeq = 0,
+            startTime = "",
+            endTime = "",
+            runningDay = "",
+            runningTime = 0,
+            runningDistance = 0,
+            avgSpeed = 0.0,
+            calorie = 0,
+            successYN = ""
+        )
     )
     val runRecord get() = _runRecord.asStateFlow()
 
-    private val _coordinates = MutableStateFlow<Array<Coordinates>>(arrayOf())
-    val coordinates get() = _coordinates.asStateFlow()
+    private val _coordinatesParcelable = MutableStateFlow<Array<CoordinatesParcelable>>(arrayOf())
+    val coordinates get() = _coordinatesParcelable.asStateFlow()
 
     fun putRunRecord(runRecord: RunRecordParcelable){
         _runRecord.value = runRecord
     }
 
 
-    fun putCoordinates(coordinates: Array<Coordinates>){
-        _coordinates.value = coordinates
+    fun putCoordinates(coordinates: Array<CoordinatesParcelable>){
+        _coordinatesParcelable.value = coordinates
 
 //        val list = mutableListOf<Coordinate>()
 ////        list.add(Coordinate(37.3673347, 126.9319493))

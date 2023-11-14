@@ -8,6 +8,7 @@ import com.side.data.api.LoginApi
 import com.side.data.api.RunningApi
 import com.side.data.api.TokenApi
 import com.side.data.api.UserApi
+import com.side.data.interceptor.AccessTokenAuthenticator
 import com.side.data.interceptor.LoginInterceptor
 import com.side.data.interceptor.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
@@ -73,10 +74,12 @@ object RemoteDataModule {
     @BearerHeaderOkhttp
     @Singleton
     fun provideBearerHeaderOkHttpClient(
-        xAccessTokenInterceptor: XAccessTokenInterceptor
+        xAccessTokenInterceptor: XAccessTokenInterceptor,
+        accessTokenAuthenticator: AccessTokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addNetworkInterceptor(xAccessTokenInterceptor)
+            .addInterceptor(xAccessTokenInterceptor)
+            .authenticator(accessTokenAuthenticator)
             .build()
     }
 

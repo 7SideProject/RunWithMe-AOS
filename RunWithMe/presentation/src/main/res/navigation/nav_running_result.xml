@@ -25,13 +25,12 @@
         android:id="@+id/routeDetailFragment"
         android:name="com.side.runwithme.view.route_detail.RouteDetailFragment"
         android:label="RouteDetailFragment" >
+
         <argument
             android:name="runRecord"
-            app:argType="com.side.runwithme.model.RunRecordParcelable"
-            app:nullable="true" />
+            app:argType="com.side.runwithme.model.RunRecordParcelable" />
         <argument
             android:name="coordinates"
-            app:argType="com.side.runwithme.model.Coordinates[]"
-            app:nullable="true" />
+            app:argType="com.side.runwithme.model.CoordinatesParcelable[]" />
     </fragment>
 </navigation>

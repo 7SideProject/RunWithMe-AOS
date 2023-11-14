@@ -18,7 +18,6 @@ import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
@@ -30,11 +29,20 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.runwithme.R
-import com.side.runwithme.util.*
+import com.side.runwithme.util.FASTEST_LOCATION_UPDATE_INTERVAL
+import com.side.runwithme.util.LOCATION_UPDATE_INTERVAL
+import com.side.runwithme.util.NOTIFICATION_CHANNEL_ID
+import com.side.runwithme.util.NOTIFICATION_CHANNEL_NAME
+import com.side.runwithme.util.NOTIFICATION_ID
+import com.side.runwithme.util.RUNNING_STATE
+import com.side.runwithme.util.TIMER_UPDATE_INTERVAL
+import com.side.runwithme.util.TrackingUtility
 import com.side.runwithme.util.TrackingUtility.Companion.getTTSTime
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
 import javax.inject.Inject
@@ -61,6 +69,9 @@ class RunningService : LifecycleService() {
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
+    // NotificationCompat.Builder 수정하기 위함, 없으면 notification 삭제 안됨
+    lateinit var currentNotificationBuilder: NotificationCompat.Builder
+
     // FusedLocationProviderClient 주입
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -68,12 +79,7 @@ class RunningService : LifecycleService() {
     @Inject
     lateinit var getTTSOptionUseCase: GetTTSOptionUseCase
 
-    // NotificationCompat.Builder 수정하기 위함, 없으면 notification 삭제 안됨
-    lateinit var currentNotificationBuilder: NotificationCompat.Builder
-
     private val runningState = MutableLiveData<RUNNING_STATE>()
-
-
 
     // 알림창에 표시될 시간
     private val timeRunInSeconds = MutableLiveData<Long>()
@@ -137,7 +143,6 @@ class RunningService : LifecycleService() {
     }
 
     private fun initTextToSpeech() {
-
         lifecycleScope.launch(Dispatchers.IO) {
             if (getTTSOptionUseCase().first()) {
                 tts = TextToSpeech(this@RunningService) {
@@ -153,8 +158,6 @@ class RunningService : LifecycleService() {
                 }
             }
         }
-
-
     }
 
     private fun ttsSpeakAndVibrate(strTTS: String) {
@@ -236,37 +239,17 @@ class RunningService : LifecycleService() {
         _timeRunInMillis.postValue(0L)
     }
 
-    private fun checkResume(lastLocation: Location): Boolean {
-        if (stopRunningBeforeRegister) {
-            return false
-        }
-
-        val distance = pauseLatLng!!.distanceTo(lastLocation)
-
-        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
-        val isMoving = distance > 8f && ((System.currentTimeMillis() - _startTime) > 3000L)
-
-        return isMoving
-    }
-
-    private fun resumeRunningWhenDetectMove(){
-        runningState.postValue(RUNNING_STATE.RESUME)
-        showToast(resources.getString(R.string.running_resume_when_moving))
-        ttsSpeakAndVibrate(resources.getString(R.string.running_resume_when_moving))
-        pauseLast = false
-    }
-
-
     private fun startTimer() {
         _startTime = System.currentTimeMillis()
         timeStarted = System.currentTimeMillis()
     }
 
 
+    private val ISRUNNING_STATE = setOf(RUNNING_STATE.FIRST_SHOW, RUNNING_STATE.RESUME, RUNNING_STATE.START)
     private fun startTimerJob() {
         lifecycleScope.launch(Dispatchers.Main) {
             // 러닝 중 일 때
-            while (runningState.value == RUNNING_STATE.RESUME || runningState.value == RUNNING_STATE.START) {
+            while (runningState.value in ISRUNNING_STATE) {
                 // 현재 시간 - 시작 시간 => 경과한 시간
                 lapTime = System.currentTimeMillis() - timeStarted
                 // 총시간 (일시정지 시 저장된 시간) + 경과시간 전달
@@ -278,7 +261,6 @@ class RunningService : LifecycleService() {
                 }
                 delay(TIMER_UPDATE_INTERVAL)
             }
-
             // 위치 추적이 종료(정지) 되었을 때 총시간 저장
             totalTime += lapTime
         }
@@ -319,11 +301,11 @@ class RunningService : LifecycleService() {
 
             result?.locations?.let { locations ->
                 for(location in locations){
-
                     when(runningState.value){
                         // 처음 시작할 때
                         RUNNING_STATE.START -> {
                             pauseLatLng = location
+                            addPathPoint(location)
                         }
                         // 러닝 중
                         RUNNING_STATE.RESUME -> {
@@ -338,11 +320,29 @@ class RunningService : LifecycleService() {
 
                         else -> {}
                     }
-
                 }
             }
-
         }
+    }
+
+    private fun checkResume(lastLocation: Location): Boolean {
+        if (stopRunningBeforeRegister) {
+            return false
+        }
+
+        val distance = pauseLatLng!!.distanceTo(lastLocation)
+
+        // 이동이 없어 중지 상태일 때, 8m 이동하면 다시 시작 시킴
+        val isMoving = distance > 8f && ((System.currentTimeMillis() - _startTime) > 3000L)
+
+        return isMoving
+    }
+
+    private fun resumeRunningWhenDetectMove(){
+        runningState.postValue(RUNNING_STATE.RESUME)
+        showToast(resources.getString(R.string.running_resume_when_moving))
+        ttsSpeakAndVibrate(resources.getString(R.string.running_resume_when_moving))
+        pauseLast = false
     }
 
 
@@ -362,14 +362,19 @@ class RunningService : LifecycleService() {
                 }
                 add(it)
                 _pathPoints.postValue(this)
-
             }
         }
     }
 
     private fun isWrongGps(willLatLng: Location): Boolean {
+        // 일시 정지 후 재시작한 경우 -> 일시정지 지점에서 재시작점까지의 거리 계산하지 않기
+        if(isResumeAfterStop){
+            isResumeAfterStop = false
+            return true
+        }
+
         val polylines = pathPoints.value!!
-        if (polylines.size < 2) return true
+        if (polylines.size < 1) return true
 
         val lastLatLng = polylines.last() // 마지막 좌표
 
@@ -421,9 +426,7 @@ class RunningService : LifecycleService() {
         // lastDistance에 따라서 각도 차이(diffBearing)이 checkBearing보다 낮거나 같은 경우 좌표 삭제(거의 직선인 경우)
         if(diffBearing <= checkBearing){
             polyLine.remove(last)
-            return
         }
-
     }
 
     // 4초 이상 이동했는데 이동거리가 2.5m 이하인 경우가 연속 2번인 경우 정지하고, 마지막 위치를 기록함 (최소 오차 3초)
@@ -637,7 +640,6 @@ class RunningService : LifecycleService() {
             tts?.shutdown()
         }
 
-        /** 34버전에서 노티 지울때 destory 호출되는지 확인 **/
         serviceState = SERVICE_NOTSTART
 
         super.onDestroy()

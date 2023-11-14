@@ -60,7 +60,7 @@ class DataStoreDataSourceImpl @Inject constructor(
         emit(dataStore.getDecryptStringValue(REFRESH_TOKEN).first().toString())
     }
 
-    override suspend fun saveRunningChallengSeq(challengSeq: Int) {
+    override suspend fun saveRunningChallengSeq(challengSeq: Long) {
         dataStore.saveValue(CHALLENGE_SEQ, challengSeq)
     }
 
@@ -76,8 +76,8 @@ class DataStoreDataSourceImpl @Inject constructor(
         dataStore.saveValue(CHALLENGE_NAME, challengeName)
     }
 
-    override fun getRunningChallengeSeq(): Flow<Int> = flow {
-        emit(dataStore.getValue(CHALLENGE_SEQ, DATASTORE_KEY.TYPE_INT).first().toString().toInt())
+    override fun getRunningChallengeSeq(): Flow<Long> = flow {
+        emit(dataStore.getValue(CHALLENGE_SEQ, DATASTORE_KEY.TYPE_LONG).first().toString().toLong())
     }
 
     override fun getRunningGoalAmount(): Flow<Long> = flow {

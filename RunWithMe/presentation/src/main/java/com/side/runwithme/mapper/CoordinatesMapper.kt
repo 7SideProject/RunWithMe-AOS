@@ -1,18 +1,17 @@
 package com.side.runwithme.mapper
 
 import com.side.domain.model.Coordinate
-import com.side.runwithme.model.Coordinates
+import com.side.runwithme.model.CoordinatesParcelable
 
-fun List<Coordinate>.mapperToCoordinates() : List<Coordinates> = this.run {
-    return this.map {
-        Coordinates(
-            it.latitude,
-            it.longitude
-        )
+fun ArrayList<Coordinate>.mapperToCoordinatesParcelable() : ArrayList<CoordinatesParcelable> = this.run {
+    val coordinatesParcelableList = arrayListOf<CoordinatesParcelable>()
+    for(coordinate in this){
+        coordinatesParcelableList.add(CoordinatesParcelable(coordinate.latitude, coordinate.longitude))
     }
+    coordinatesParcelableList
 }
 
-fun List<Coordinates>.mapperToCoordinate() : List<Coordinate> = this.run {
+fun List<CoordinatesParcelable>.mapperToCoordinate() : List<Coordinate> = this.run {
     return this.map {
         Coordinate(
             it.latitude,
