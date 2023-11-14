@@ -36,5 +36,6 @@
 
     <string name="check_delete_user">탈퇴하시면 유저 정보가 모두 사라집니다.\n 정말로 탈퇴하시겠습니까?</string>
     <string name="success_delete_user">회원 탈퇴 되었습니다.</string>
+    <string name="success_logout">로그아웃 되었습니다.</string>
 
 </resources>
