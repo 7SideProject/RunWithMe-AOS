@@ -93,8 +93,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         val goal = intent.getLongExtra("goalAmount", 0L)
         val challengeName = intent.getStringExtra("challengeName") ?: ""
 
-        Log.d("test123", "runningactivity start init : ${challengeSeq}, ${type}, ${goal}, ${challengeName}")
-
         initMapView()
 
         initClickListener()
