@@ -1,6 +1,7 @@
 package com.side.runwithme.view.others
 
 import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.seobaseview.base.BaseFragment
@@ -18,6 +19,11 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_oth
 
     private val othersViewModel by viewModels<OthersViewModel>()
 
+    companion object {
+        val questionUri = Uri.parse("http://pf.kakao.com/_DxdWbG")
+        val termsUri = Uri.parse("https://paper-fir-422.notion.site/970bb6b90ac945fa99b6368262dd0c3c?pvs=4")
+    }
+
     override fun init() {
 
 
@@ -32,10 +38,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_oth
                 when(it){
                     is OthersViewModel.DeleteUserEvent.Success -> {
                         showToast(resources.getString(R.string.success_delete_user))
-                        val intent = Intent(requireContext(), LoginActivity::class.java)
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
+                        moveLoginActivity()
                     }
                     else -> {
                         showToast(resources.getString(R.string.fail_server_error))
@@ -43,6 +46,22 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_oth
                 }
             }
         }
+
+        repeatOnStarted {
+            othersViewModel.logoutEventFlow.collectLatest {
+                if(it is OthersViewModel.LogoutEvent.Success){
+                    showToast(resources.getString(R.string.success_logout))
+                    moveLoginActivity()
+                }
+            }
+        }
+    }
+
+    private fun moveLoginActivity(){
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags =
+            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     private fun initClickListener(){
@@ -53,6 +72,24 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_oth
 
             tvDeleteUser.setOnClickListener {
                 initDeleteUserDialog()
+            }
+
+            tvLogout.setOnClickListener {
+                othersViewModel.logOut()
+            }
+
+            tvQuestion.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = questionUri
+                }
+                startActivity(intent)
+            }
+
+            tvTerms.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = termsUri
+                }
+                startActivity(intent)
             }
         }
     }
