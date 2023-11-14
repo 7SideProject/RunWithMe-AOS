@@ -24,6 +24,7 @@ import com.side.runwithme.view.running_list.bottomsheet.RunningListBottomSheet
 import com.side.runwithme.view.running_list.bottomsheet.practice.PracticeSettingClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -64,10 +65,11 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         initClickListener()
 
         runningListViewModel.apply {
-            getMyChallenges()
             getMyScrap()
         }
     }
+
+
 
     private fun initClickListener(){
         binding.apply {

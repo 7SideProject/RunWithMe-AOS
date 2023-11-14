@@ -50,4 +50,12 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     ): Flow<BaseResponse<List<Challenge>>> = flow {
         emit(challengeApi.getAvailableRunningList(cursorSeq, size))
     }
+
+    override fun joinChallenge(challengeSeq: Long, password: String?): Flow<BaseResponse<String?>> = flow {
+        emit(challengeApi.joinChallenge(challengeSeq, password))
+    }
+
+    override fun leaveChallenge(challengeSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(challengeApi.leaveChallenge(challengeSeq))
+    }
 }

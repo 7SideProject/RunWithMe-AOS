@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="weight">몸무게</string>
+    <string name="weight_unit">kg</string>
+    <string name="height">키</string>
+    <string name="height_unit">cm</string>
+
+    <string name="nickname">닉네임</string>
+    <string name="nickname_hint">ex) 런위드미</string>
+    <string name="email">이메일</string>
+    <string name="id">아이디</string>
+    <string name="password">비밀번호</string>
+    <string name="phone">핸드폰 번호</string>
+</resources>

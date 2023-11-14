@@ -6,7 +6,7 @@
     <data>
         <variable
             name="challengeCreateVM"
-            type="com.side.runwithme.view.challenge_list.create.ChallengeCreateViewModel" />
+            type="com.side.runwithme.view.challenge_create.ChallengeCreateViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

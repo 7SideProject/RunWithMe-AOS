@@ -131,3 +131,11 @@ fun TextView.setWeight(weight: Int) {
 fun TextView.setPoint(point: Int) {
     this.text = "${point}P"
 }
+
+@BindingAdapter("setTotalRunningTime")
+fun TextView.setTotalRunningTime(totalTime: Int) {
+    val hour = totalTime / 3600
+    val minute = (totalTime / 60) % 60
+    this.text = "${hour}시간 ${minute}분"
+}
+

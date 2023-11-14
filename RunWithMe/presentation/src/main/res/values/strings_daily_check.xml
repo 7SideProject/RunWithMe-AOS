@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="daily_check">출석 체크</string>
+    <string name="message_daily_check">출석 체크 100P 지급 완료!</string>
+    <string name="message_duplicate_today_daily_check">오늘은 이미 출석했습니다.</string>
+</resources>

@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RunningListBottomSheet(private val intentToRunningActivityClickListener: IntentToRunningActivityClickListener, private val practiceSettingClickListener: PracticeSettingClickListener): BottomSheetDialogFragment() {
+class RunningListBottomSheet(
+    private val intentToRunningActivityClickListener: IntentToRunningActivityClickListener,
+    private val practiceSettingClickListener: PracticeSettingClickListener
+) : BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogRunningListBottomSheetBinding
     private val runningListViewModel by activityViewModels<RunningListViewModel>()
@@ -37,7 +40,12 @@ class RunningListBottomSheet(private val intentToRunningActivityClickListener: I
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_running_list_bottom_sheet, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.dialog_running_list_bottom_sheet,
+            container,
+            false
+        )
         return binding.root
     }
 
@@ -47,7 +55,7 @@ class RunningListBottomSheet(private val intentToRunningActivityClickListener: I
         init()
     }
 
-    private fun init(){
+    private fun init() {
         runningListAdapter = RunningListAdapter(intentToRunningActivityClickListener)
         binding.apply {
             rcvMyChallengeRunningList.adapter = runningListAdapter
@@ -59,24 +67,27 @@ class RunningListBottomSheet(private val intentToRunningActivityClickListener: I
         initViewModelCallbacks()
     }
 
-    private fun initClickListener(){
+    private fun initClickListener() {
         binding.apply {
             layoutPractice.setOnClickListener {
-                PracticeSettingDialog(practiceSettingClickListener).show(parentFragmentManager, "dialog")
+                PracticeSettingDialog(practiceSettingClickListener).show(
+                    parentFragmentManager,
+                    "dialog"
+                )
             }
         }
     }
 
-    private fun initViewModelCallbacks(){
+    private fun initViewModelCallbacks() {
         binding.apply {
             lifecycleScope.launch {
                 runningListViewModel.getMyChallenges().collectLatest {
                     runningListAdapter.submitData(it)
                 }
             }
+
         }
     }
-
 
 
 }

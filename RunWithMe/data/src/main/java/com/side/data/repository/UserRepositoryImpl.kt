@@ -4,22 +4,35 @@ import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.user.UserRemoteDataSource
 import com.side.data.mapper.mapperToDailyCheck
 import com.side.data.mapper.mapperToDuplicateCheck
+import com.side.data.mapper.mapperToEditProfileRequest
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
+import com.side.data.mapper.mapperToTotalRecord
 import com.side.data.mapper.mapperToUser
+import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
+import com.side.data.util.emitResultTypeError
+import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.initKeyStore
 import com.side.domain.base.changeData
 import com.side.domain.base.changeMessageAndData
+import com.side.domain.model.Profile
 import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
 import com.side.domain.repository.DuplicateCheckTypeResponse
+import com.side.domain.repository.NullResponse
+import com.side.domain.repository.TotalRecordTypeResponse
 import com.side.domain.repository.UserRepository
-import com.side.domain.repository.UserResponse
+import com.side.domain.repository.UserTypeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,30 +43,7 @@ class UserRepositoryImpl @Inject constructor(
     private val dataStoreDataSource: DataStoreDataSource,
 ) : UserRepository {
 
-//    override fun login(code: String, state: String): Flow<UserResponse> = flow {
-//        emit(ResultType.Loading)
-//        userRemoteDataSource.login(LoginRequest(code, state)).collectLatest {
-//            emit(
-//                ResultType.Success(
-//                    BaseResponse(
-//                        it.code,
-//                        it.message,
-//                        it.data
-//                    )
-//                )
-//            )
-//
-//
-//        }
-//    }.catch {
-//        emit(
-//            ResultType.Error(
-//                it.cause!!
-//            )
-//        )
-//    }
-
-    override fun join(user: User): Flow<UserResponse> = userRemoteDataSource.join(user.mapperToJoinRequest()).asResultOtherType {
+    override fun join(user: User): Flow<UserTypeResponse> = userRemoteDataSource.join(user.mapperToJoinRequest()).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(it.changeData(it.data.mapperToUser()))
@@ -67,9 +57,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-
-
-    override fun loginWithEmail(user: User): Flow<UserResponse> = userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).asResultOtherType {
+    override fun loginWithEmail(user: User): Flow<UserTypeResponse> = userRemoteDataSource.loginWithEmail(user.mapperToEmailLoginRequest()).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.LOGIN_SUCCESS.code -> {
                 val userResponse = (it.data as EmailLoginResponse).mapperToUser()
@@ -111,7 +99,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getUserProfile(userSeq: Long): Flow<UserResponse> = userRemoteDataSource.getUserProfile(userSeq).asResultOtherType{
+    override fun getUserProfile(userSeq: Long): Flow<UserTypeResponse> = userRemoteDataSource.getUserProfile(userSeq).asResultOtherType{
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(
@@ -173,8 +161,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun changePassword(email: String, password: String): Flow<NullResponse> = userRemoteDataSource.changePassword(email, FindPasswordRequest(password)).asResult {
+        when (it.code) {
+            101 -> {
+                ResultType.Success(it)
+            }
+
+            else -> {
+                ResultType.Fail(it)
+            }
+        }
+    }
+
     override fun dailyCheck(userSeq: Long): Flow<DailyCheckTypeResponse>
-        = userRemoteDataSource.dailyCheck((userSeq)).asResultOtherType {
+        = userRemoteDataSource.dailyCheck(userSeq).asResultOtherType {
         when(it.code){
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(
@@ -211,5 +211,53 @@ class UserRepositoryImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun getTotalRecord(userSeq: Long): Flow<TotalRecordTypeResponse>
+        = userRemoteDataSource.getTotalRecord(userSeq).asResultOtherType {
+            when(it.code) {
+                ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                    ResultType.Success(
+                        it.changeData(it.data.mapperToTotalRecord())
+                    )
+                }
+
+                else -> {
+                    ResultType.Fail(
+                        it.changeData(null)
+                    )
+                }
+            }
+    }
+
+    override fun editProfile(userSeq: Long, profile: Profile): Flow<UserTypeResponse>
+        = userRemoteDataSource.editProfile(userSeq, profile.mapperToEditProfileRequest()).asResultOtherType{
+        when(it.code){
+            ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                ResultType.Success(it.changeData(it.data.mapperToUser()))
+            }
+            else -> {
+                ResultType.Fail(it.changeData(null))
+            }
+        }
+
+    override fun deleteUser(): Flow<NullResponse> = flow {
+        emitResultTypeLoading()
+
+        val userSeq = dataStoreDataSource.getUserSeq().first().toLong()
+
+        userRemoteDataSource.deleteUser(userSeq).collect {
+            when(it.code){
+                101 -> {
+                    emit(ResultType.Success(it))
+                }
+                else -> {
+                    emit(ResultType.Fail(it))
+                }
+            }
+        }
+
+    }.catch {
+        emitResultTypeError(it)
     }
 }

@@ -10,7 +10,6 @@ import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
-import com.side.domain.model.AllRunRecord
 import com.side.domain.model.Coordinate
 import com.side.domain.model.RunRecord
 import com.side.domain.repository.NullResponse
