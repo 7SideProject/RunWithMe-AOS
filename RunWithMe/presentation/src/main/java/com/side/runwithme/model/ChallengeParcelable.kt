@@ -11,7 +11,7 @@ data class ChallengeParcelable(
     val managerName: String,
     val name: String,
     val description: String,
-    val imgSeq: Long,
+    val image: Long,
     val goalDays: Int,
     val goalType: String,
     val goalAmount: Long,
