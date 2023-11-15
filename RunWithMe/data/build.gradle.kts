@@ -77,6 +77,7 @@ dependencies {
 
     implementation(AndroidX.VIEWMODEL)
 
+    implementation(Dependencies.FIREBASE_CRASHLYTICS)
 
 }
 
