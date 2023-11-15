@@ -1,5 +1,6 @@
 package com.side.runwithme.binding
 
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -30,18 +31,18 @@ fun TextView.setRunningResultDay(day: String) {
 }
 
 @BindingAdapter("runningTerm")
-fun TextView.setRunningTerm(challenge: ChallengeParcelable?){
+fun TextView.setRunningTerm(challenge: ChallengeParcelable?) {
     this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
 }
 
 @BindingAdapter("runningTermByChallenge")
-fun TextView.setRunningTerm(challenge: Challenge?){
+fun TextView.setRunningTerm(challenge: Challenge?) {
     this.text = "${challenge!!.dateStart} ~ ${challenge.dateEnd}"
 }
 
 @BindingAdapter("runningDistance")
 fun TextView.setRunnignDistance(distance: Int) {
-    this.text = "${round((1F * distance / 1000) / 100) / 100} km"
+    this.text = "${round((1F * distance / 1000) * 100) / 100} km"
 }
 
 @BindingAdapter("runningTime")
@@ -50,22 +51,15 @@ fun TextView.setRunningTime(time: Int) {
     val minuteInt = (time / 60) % 60
     val secondInt = time % 60
 
-    var hour = hourInt.toString()
-    if (hourInt < 10) {
-        hour = "0" + hour
-    }
+    val text =
+        if (hourInt != 0) "${hourInt}시 ${minuteInt}분 ${secondInt}초" else if (minuteInt == 0) "${secondInt}초" else "${minuteInt}분 ${minuteInt}초"
 
-    var minute = minuteInt.toString()
-    if (minuteInt < 10) {
-        minute = "0" + minute
-    }
-
-    this.text = "${hourInt}시 ${minuteInt}분 ${minuteInt}초"
+    this.text = text
 }
 
 @BindingAdapter("runningAvgSpeed")
 fun TextView.setRunningAvgSpeed(avgSpeed: Double) {
-    if (avgSpeed < 1) {
+    if (avgSpeed < 0.5) {
         this.text = "0.0 km/h"
         return
     }
@@ -75,7 +69,7 @@ fun TextView.setRunningAvgSpeed(avgSpeed: Double) {
 @BindingAdapter("runningStartTime", "runningEndTime")
 fun TextView.setRunningStartToEndTime(startTime: String, endTime: String) {
 
-    this.text = "${getTime(startTime)} ~ ${getTime(endTime)}"
+    this.text = "${startTime} ~ ${endTime}"
 }
 
 fun getTime(time: String): String {

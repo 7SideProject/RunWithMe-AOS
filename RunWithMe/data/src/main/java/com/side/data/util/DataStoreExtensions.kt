@@ -19,6 +19,7 @@ object preferencesKeys {
     val GOAL_AMOUNT = longPreferencesKey("goal_amount")
     val GOAL_TYPE = intPreferencesKey("goal_type")
     val TTS_OPTION = booleanPreferencesKey("tts_option")
+    val PERMISSION_CHECK = booleanPreferencesKey("permission_check")
 }
 
 

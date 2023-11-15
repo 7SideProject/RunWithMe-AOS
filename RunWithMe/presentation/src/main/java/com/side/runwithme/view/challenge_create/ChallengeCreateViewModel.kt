@@ -4,6 +4,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.CreateChallengeUseCase
 import com.side.runwithme.util.GOAL_TYPE
@@ -252,7 +254,7 @@ class ChallengeCreateViewModel @Inject constructor(
             name = challengeName.value,
             managerName = "",
             description = challengeDescription.value,
-            imgSeq = 0,
+            image = 0,
             goalDays = goalDays.value.toInt(),
             goalType = goalType,
             goalAmount = goalAmount,
@@ -264,6 +266,7 @@ class ChallengeCreateViewModel @Inject constructor(
             password = password.value
         )
 
+        Log.d("test123", "create: ${challenge}")
 
         viewModelScope.launch(Dispatchers.IO) {
             createChallengeUseCase(challenge, challengeImgMultiPart.value).collectLatest {
@@ -272,6 +275,7 @@ class ChallengeCreateViewModel @Inject constructor(
                 }.onFailure {
                     _createEventFlow.emit(Event.Fail(it.message))
                 }.onError {
+                    Firebase.crashlytics.recordException(it)
                     Log.e("test123", "Create Challenge Error : ${it.message}  , ${it.cause}")
                 }
             }

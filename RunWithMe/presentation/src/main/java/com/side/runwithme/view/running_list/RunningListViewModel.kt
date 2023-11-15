@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.side.domain.model.Challenge
 import com.side.domain.usecase.challenge.GetAvailableRunningListUseCase
 import com.side.domain.usecase.challenge.GetMyChallengeListUseCase
+import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.domain.usecase.datastore.SaveTTSOptionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RunningListViewModel @Inject constructor(
     private val saveTTSOptionUseCase: SaveTTSOptionUseCase,
-    private val getAvailableRunningListUseCase: GetAvailableRunningListUseCase
+    private val getAvailableRunningListUseCase: GetAvailableRunningListUseCase,
+    private val getTTSOptionUseCase: GetTTSOptionUseCase
 ) : ViewModel() {
 
     private val _ttsClickFlag: MutableStateFlow<Boolean> = MutableStateFlow(true)
@@ -38,6 +40,14 @@ class RunningListViewModel @Inject constructor(
 
     fun getMyScrap() {
 
+    }
+
+    fun getTTSOption(){
+        viewModelScope.launch {
+            getTTSOptionUseCase().collectLatest {
+                _ttsClickFlag.value = it
+            }
+        }
     }
 
     fun onClickTTsBtn(){

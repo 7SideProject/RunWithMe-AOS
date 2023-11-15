@@ -1,8 +1,11 @@
 package com.side.data.interceptor
 
 import android.util.Log
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.token.TokenDataSource
+import com.side.domain.base.BaseResponse
 import com.side.domain.exception.BearerException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -31,6 +34,9 @@ class AccessTokenAuthenticator @Inject constructor(
                     tokenDataSource.refreshingToken(refreshToken)
                 }
 
+                Log.d("test123", "authenticate errorbody: ${(refreshResponse.errorBody()).toString()}")
+                Log.d("test123", "authenticate body : ${refreshResponse.body()}")
+
                 if (refreshResponse.isSuccessful) {
                     val newToken = getToken(refreshResponse)
                     if (newToken.isBlank()) {
@@ -44,9 +50,16 @@ class AccessTokenAuthenticator @Inject constructor(
 
                     return newRequest
                 } else {
+
                     throw BearerException()
                 }
             } catch (exception: Exception) {
+                Firebase.crashlytics.recordException(exception)
+
+                runBlocking {
+                    saveToken("", "")
+                }
+
                 throw BearerException()
             }
         }
@@ -54,7 +67,7 @@ class AccessTokenAuthenticator @Inject constructor(
         return null
     }
 
-    private fun getToken(response: retrofit2.Response<Any?>): String {
+    private fun getToken(response: retrofit2.Response<BaseResponse<Any?>?>): String {
         val allHeaders = response.headers()
         val jwt = allHeaders.get("authorization") ?: ""
         val refreshToken = allHeaders.get("set-cookie")?.let {

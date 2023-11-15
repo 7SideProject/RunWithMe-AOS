@@ -39,7 +39,7 @@ class GoalTypeDistanceDialog: BaseDialogFragment<DialogGoalTypeDistanceBinding>(
     private fun initNumberPicker(){
         binding.apply {
             np.minValue = 1
-            np.maxValue = 60
+            np.maxValue = 40
             np.value = 3
 
             //순환 안되게 막기

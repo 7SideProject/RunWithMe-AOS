@@ -1,5 +1,6 @@
 package com.side.data.interceptor
 
+import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -23,12 +24,15 @@ class XAccessTokenInterceptor @Inject constructor(
             dataStoreDataSource.getJWT().first()
         }
 
+        Log.d("test123", "intercept: ${token}")
+
         val request = chain.request()
             .newBuilder()
             .addHeader(AUTHORIZATION, token)
             .build()
         val response = chain.proceed(request)
 
+        Log.d("test123", "intercept: ${response.code}")
 
         return response
     }

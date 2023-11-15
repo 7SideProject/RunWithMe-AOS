@@ -120,10 +120,16 @@ class RunningViewModel @Inject constructor(
         return true;
     }
 
-    fun postPracticeRunRecord(runRecord: RunRecordParcelable, imgByteArray: ByteArray) {
+    fun postPracticeRunRecord(runRecord: RunRecordParcelable, imgByteArray: ByteArray?) {
         if (!checkIsOver10Seconds(runRecord)) {
             viewModelScope.launch {
                 _postRunRecordEventFlow.emit(Event.Success())
+            }
+        }
+
+        if(imgByteArray == null){
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Fail())
             }
         }
 
@@ -131,7 +137,7 @@ class RunningViewModel @Inject constructor(
             insertPracticeRunRecordUseCase(
                 PracticeRunRecord(
                     seq = 0,
-                    image = imgByteArray,
+                    image = imgByteArray!!,
                     startTime = runRecord.startTime,
                     endTime = runRecord.endTime,
                     runningDay = runRecord.runningDay,
@@ -142,6 +148,7 @@ class RunningViewModel @Inject constructor(
                 )
             ).collect {
                 it.onSuccess {
+                    Log.d("test123", "postPracticeRunRecord: success ")
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
                     Log.d("test123", "postPracticeRunRecord fail: $it")
@@ -156,15 +163,21 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<CoordinatesParcelable>, image: MultipartBody.Part) {
+    fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<CoordinatesParcelable>, image: MultipartBody.Part?) {
         if (!checkIsOver10Seconds(runRecord)) {
             viewModelScope.launch {
                 _postRunRecordEventFlow.emit(Event.Success())
             }
         }
 
+        if(image == null){
+            viewModelScope.launch {
+                _postRunRecordEventFlow.emit(Event.Fail())
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            postRunRecordUseCase(challengeSeq.value, runRecord.mapperToRunRecordWithCoordinates(coordinates.mapperToCoordinate()), image).collect {
+            postRunRecordUseCase(challengeSeq.value, runRecord.mapperToRunRecordWithCoordinates(coordinates.mapperToCoordinate()), image!!).collect {
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {

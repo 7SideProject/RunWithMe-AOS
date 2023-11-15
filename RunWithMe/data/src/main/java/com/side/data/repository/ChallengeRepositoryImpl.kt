@@ -8,6 +8,7 @@ import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.AvailableRunningListPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
+import com.side.data.mapper.mapperToChallengeCreateRequest
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
@@ -61,7 +62,7 @@ class ChallengeRepositoryImpl @Inject constructor(
     ): Flow<ChallengeCreateResponse> = flow {
         emitResultTypeLoading()
 
-        val json = Gson().toJson(challenge)
+        val json = Gson().toJson(challenge.mapperToChallengeCreateRequest())
         val challengeRequestBody =
             json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 

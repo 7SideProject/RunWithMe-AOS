@@ -119,44 +119,44 @@
                 app:srcCompat="@drawable/voice_24"
                 app:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/btn_scrap"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="@dimen/parent_horizontal_margin"
-                android:alpha="0.5"
-                android:background="@drawable/btn_circle_main_color"
-                android:padding="@dimen/padding_regular"
-                app:layout_constraintBottom_toBottomOf="@+id/lottie_start_btn"
-                app:layout_constraintEnd_toStartOf="@+id/lottie_start_btn"
-                app:layout_constraintTop_toTopOf="@+id/lottie_start_btn"
-                app:srcCompat="@drawable/bookmark_24"
-                app:tint="@color/white" />
+<!--            <ImageButton-->
+<!--                android:id="@+id/btn_scrap"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_marginEnd="@dimen/parent_horizontal_margin"-->
+<!--                android:alpha="0.5"-->
+<!--                android:background="@drawable/btn_circle_main_color"-->
+<!--                android:padding="@dimen/padding_regular"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/lottie_start_btn"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/lottie_start_btn"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/lottie_start_btn"-->
+<!--                app:srcCompat="@drawable/bookmark_24"-->
+<!--                app:tint="@color/white" />-->
 
-            <TextView
-                android:id="@+id/tv_weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/parent_horizontal_margin"
-                android:fontFamily="@font/noto_sans_bold"
-                android:textColor="@color/main_black"
-                android:textSize="@dimen/fontsize_h5"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_two"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_nick_name"
-                tools:text="20°C" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_weather"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="@dimen/parent_horizontal_margin"-->
+<!--                android:fontFamily="@font/noto_sans_bold"-->
+<!--                android:textColor="@color/main_black"-->
+<!--                android:textSize="@dimen/fontsize_h5"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/tv_two"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/tv_nick_name"-->
+<!--                tools:text="20°C" />-->
 
-            <ImageView
-                android:id="@+id/iv_weather"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_weather"
-                app:layout_constraintEnd_toStartOf="@+id/tv_weather"
-                app:layout_constraintTop_toTopOf="@+id/tv_weather"
-                android:visibility="gone"
-                tools:visibility="visible"
-                tools:srcCompat="@drawable/sun" />
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_weather"-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:layout_marginEnd="4dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/tv_weather"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/tv_weather"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/tv_weather"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible"-->
+<!--                tools:srcCompat="@drawable/sun" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

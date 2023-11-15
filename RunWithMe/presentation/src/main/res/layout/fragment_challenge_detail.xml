@@ -26,7 +26,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/btn_running"
+            app:layout_constraintBottom_toTopOf="@id/btn_ok"
             app:layout_constraintTop_toBottomOf="@id/toolbar_main">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -191,6 +191,7 @@
                     android:id="@+id/layout_show_my_record"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/view_line1">
 
                     <TextView
@@ -258,15 +259,15 @@
 
 <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-                <View
-                    android:id="@+id/view_line3"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="@dimen/margin_regular"
-                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
-                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
-                    app:layout_constraintTop_toBottomOf="@id/layout_show_my_record"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+<!--                <View-->
+<!--                    android:id="@+id/view_line3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:layout_marginBottom="@dimen/margin_regular"-->
+<!--                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/layout_show_my_record"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 
 
@@ -274,12 +275,11 @@
         </androidx.core.widget.NestedScrollView>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_running"
+            android:id="@+id/btn_ok"
             tools:style="@style/StrongButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="러닝"
-            android:onClick="@{()->challengeDetailVM.onClickButton()}"
             challengeState="@{challengeDetailVM.challengeState}"
             app:layout_constraintBottom_toBottomOf="parent" />
 

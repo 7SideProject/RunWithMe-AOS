@@ -100,26 +100,6 @@ class ChallengeDetailViewModel @Inject constructor(
         }
     }
 
-    fun onClickButton(){
-        Log.d("test123", "onClickButton: ${challengeState.value}")
-        when(challengeState.value){
-            CHALLENGE_STATE.START -> {
-                /** 챌린지 detail 화면에서 러닝은 일단 안되게 하고 배포 후에 추가 예정 **/
-//                goRunning()
-            }
-            CHALLENGE_STATE.NOT_START_AND_ALEADY_JOIN -> {
-                quitChallenge()
-            }
-            CHALLENGE_STATE.NOT_START_AND_NOT_JOIN -> {
-                joinChallenge()
-            }
-            else -> {
-
-            }
-        }
-
-    }
-
     private fun goRunning(){
         viewModelScope.launch {
             /** 러닝 가능한지 확인 후 emit **/
@@ -128,7 +108,7 @@ class ChallengeDetailViewModel @Inject constructor(
     }
 
 
-    private fun joinChallenge(password: String? = null){
+    fun joinChallenge(password: String? = null){
         // join api 성공 시 ChallengeState AleadyJoin으로 변경
         viewModelScope.launch(Dispatchers.IO) {
             joinChallengeUseCase(challenge.value!!.seq, password).collectLatest {
@@ -143,7 +123,7 @@ class ChallengeDetailViewModel @Inject constructor(
         }
     }
 
-    private fun quitChallenge(){
+    fun quitChallenge(){
         // quit api 성공 시 ChallengeState Not_Join으로 변경
         viewModelScope.launch(Dispatchers.IO) {
             leaveChallengeUseCase(challenge.value!!.seq).collectLatest {

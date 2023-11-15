@@ -11,7 +11,7 @@ import com.side.runwithme.R
 fun ImageView.setRunRecordImgFileByByteArray(imgFile: ByteArray?) {
 
     if(imgFile == null) {
-        Glide.with(this.context).load(R.drawable.running_record).into(this)
+        Glide.with(this.context).load(R.drawable.bg_lightgrey).into(this)
         return
     }
 

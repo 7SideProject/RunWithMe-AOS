@@ -4,11 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
 import com.example.seobaseview.base.BaseActivity
 import com.gun0912.tedpermission.PermissionListener
@@ -21,14 +18,13 @@ import com.side.runwithme.view.find_password.FindPasswordActivity
 import com.side.runwithme.view.join.JoinActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.login.LoginViewModel.Event
+import com.side.runwithme.view.permission.PermissionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import initKeyStore
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
@@ -38,6 +34,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
 
     override fun init() {
+
+        checkFirstPermissionAlert()
+
+        checkAutoLogin()
 
         requestPermission()
 
@@ -52,12 +52,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         initViewModelCallBack()
     }
 
+    private fun checkFirstPermissionAlert(){
+        loginViewModel.getPermissionCheck()
+    }
+
+    private fun checkAutoLogin(){
+        loginViewModel.checkAutoLogin()
+    }
+
     private fun initClickListener() {
         binding.apply {
-            btnLoginKakao.setOnClickListener {
-
-            }
-
             btnJoin.setOnClickListener {
                 //회원가입
                 startActivity(Intent(this@LoginActivity, JoinActivity::class.java))
@@ -79,6 +83,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             loginViewModel.loginEventFlow.collectLatest { event ->
                 handleEvent(event)
 
+            }
+        }
+
+        repeatOnStarted {
+            loginViewModel.permissionEventFlow.collectLatest {
+                if(!it){
+                    startActivity(Intent(this@LoginActivity, PermissionActivity::class.java))
+                }
             }
         }
     }

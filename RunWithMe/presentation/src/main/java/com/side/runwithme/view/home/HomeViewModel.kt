@@ -10,6 +10,8 @@ import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +22,8 @@ class HomeViewModel @Inject constructor(
     private val dailyCheckUseCase: DailyCheckUseCase
 ): MoveEventViewModel<HomeViewModel.MoveEvent>() {
 
+    private val _userSeq = MutableStateFlow<Long>(-1L)
+    val userSeq = _userSeq.asStateFlow()
 
     private val _dailyCheckEvent = MutableEventFlow<DailyCheckEvent>()
     val dailyCheckEvent get() = _dailyCheckEvent.asEventFlow()
@@ -49,6 +53,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun dailyCheckRequest(){
+        if(userSeq.value != -1L){
+            dailyCheck()
+            return
+        }
         getUserSeq()
     }
     private fun getUserSeq(){
@@ -56,7 +64,8 @@ class HomeViewModel @Inject constructor(
             getUserSeqDataStoreUseCase().collectLatest {
                 Log.d("getUserProfileError", "getUserProfile: $it")
                 it.onSuccess { userSeq ->
-                    dailyCheck(userSeq)
+                    _userSeq.value = userSeq
+                    dailyCheck()
                 }.onFailure { error->
                     Log.d("getUserSeqError", "${error} ")
                 }.onError { error ->
@@ -65,9 +74,9 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    private fun dailyCheck(userSeq: Long){
+    private fun dailyCheck(){
         viewModelScope.launch(Dispatchers.IO) {
-            dailyCheckUseCase(userSeq).collectLatest {
+            dailyCheckUseCase(userSeq.value).collectLatest {
                 it.onSuccess {success->
                     if(success.data!!.isSuccess){
                         _dailyCheckEvent.emit(DailyCheckEvent.Response(R.string.message_daily_check))
