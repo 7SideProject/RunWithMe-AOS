@@ -40,13 +40,13 @@ class GoalTypeTimeDialog(): BaseDialogFragment<DialogGoalTypeTimeBinding>(
     }
 
     private fun initTimeValues(){
-        timeValues = Array<String>(60, {i -> ((i + 1) * 10).toString()})
+        timeValues = Array<String>(24, {i -> ((i + 1) * 10).toString()})
     }
 
     private fun initNumberPicker(){
         binding.apply {
             np.minValue = 0
-            np.maxValue = 59
+            np.maxValue = 23
             np.value = 3
             np.displayedValues = timeValues
             //순환 안되게 막기
