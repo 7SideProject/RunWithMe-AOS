@@ -1,7 +1,5 @@
 package com.side.data.api
 
-import com.side.data.model.response.ChallengeListResponse
-import com.side.data.model.response.ChallengeResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody

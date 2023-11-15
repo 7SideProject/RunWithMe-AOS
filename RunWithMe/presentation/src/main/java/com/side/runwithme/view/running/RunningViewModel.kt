@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.modedl.PracticeRunRecord
 import com.side.domain.model.Coordinate
 import com.side.domain.usecase.datastore.GetRunningInfoUseCase
@@ -146,6 +148,7 @@ class RunningViewModel @Inject constructor(
                     _postRunRecordEventFlow.emit(Event.Fail())
                 }.onError {
                     Log.d("test123", "postPracticeRunRecord err: $it")
+                    Firebase.crashlytics.recordException(it)
                     _postRunRecordEventFlow.emit(Event.Error())
                 }
             }
@@ -170,6 +173,7 @@ class RunningViewModel @Inject constructor(
                 }.onError {
                     // 서버 에러 분류해줄 수 있으면 좋을듯
                     Log.d("test123", "postPracticeRunRecord err: $it")
+                    Firebase.crashlytics.recordException(it)
                     _postRunRecordEventFlow.emit(Event.ServerError())
                 }
 

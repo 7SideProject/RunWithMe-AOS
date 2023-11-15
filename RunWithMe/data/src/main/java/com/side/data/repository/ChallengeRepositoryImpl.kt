@@ -9,6 +9,7 @@ import com.side.data.datasource.paging.AvailableRunningListPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.util.ResponseCodeStatus
+import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
@@ -17,11 +18,9 @@ import com.side.data.util.emitResultTypeSuccess
 import com.side.domain.model.Challenge
 import com.side.domain.repository.ChallengeCreateResponse
 import com.side.domain.repository.ChallengeRepository
-import com.side.domain.repository.JoinResponse
 import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.NullDataResponse
-import com.side.domain.repository.PagingChallengeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

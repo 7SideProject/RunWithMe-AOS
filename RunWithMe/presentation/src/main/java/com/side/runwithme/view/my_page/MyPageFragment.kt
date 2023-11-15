@@ -25,18 +25,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
             ivEditProfile.setOnClickListener {
                 findNavController().navigate(MyPageFragmentDirections.actionMyPageFragmentToEditProfileFragment())
             }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        myPageViewModel.myPageInitRequest()
-
-        initClickListener()
-    }
-
-    private fun initClickListener(){
-        binding.apply {
             toolbar.apply {
                 setBackButtonClickEvent {
                     findNavController().popBackStack()
@@ -48,4 +36,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        myPageViewModel.myPageInitRequest()
+
+    }
+
 }

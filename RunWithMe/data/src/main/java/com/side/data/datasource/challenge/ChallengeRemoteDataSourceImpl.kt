@@ -1,11 +1,6 @@
 package com.side.data.datasource.challenge
 
-import android.util.Log
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.side.data.api.ChallengeApi
-import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow

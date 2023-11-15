@@ -17,8 +17,6 @@ import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.initKeyStore
-import com.side.domain.base.changeData
-import com.side.domain.base.changeMessageAndData
 import com.side.domain.model.Profile
 import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
@@ -231,15 +229,17 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override fun editProfile(userSeq: Long, profile: Profile): Flow<UserTypeResponse>
-        = userRemoteDataSource.editProfile(userSeq, profile.mapperToEditProfileRequest()).asResultOtherType{
-        when(it.code){
+        = userRemoteDataSource.editProfile(userSeq, profile.mapperToEditProfileRequest()).asResultOtherType {
+        when (it.code) {
             ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
                 ResultType.Success(it.changeData(it.data.mapperToUser()))
             }
+
             else -> {
                 ResultType.Fail(it.changeData(null))
             }
         }
+    }
 
     override fun deleteUser(): Flow<NullResponse> = flow {
         emitResultTypeLoading()
@@ -260,4 +260,5 @@ class UserRepositoryImpl @Inject constructor(
     }.catch {
         emitResultTypeError(it)
     }
+
 }
