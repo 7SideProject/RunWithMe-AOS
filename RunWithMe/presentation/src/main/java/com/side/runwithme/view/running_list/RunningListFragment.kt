@@ -56,6 +56,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
             }
         }
 
+        runningListViewModel.getTTSOption()
     }
 
     override fun init() {
