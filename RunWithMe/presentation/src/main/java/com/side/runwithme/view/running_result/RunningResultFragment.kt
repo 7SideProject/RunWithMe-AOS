@@ -27,15 +27,17 @@ class RunningResultFragment : BaseFragment<FragmentRuuningResultBinding>(R.layou
         }
 
         initClickListener()
+
+
     }
 
 
 
     private fun initClickListener(){
         binding.apply {
-            btnRecommend.setOnClickListener {
-                findNavController().navigate(R.id.action_ruuningResultFragment_to_createRecommendFragment)
-            }
+//            btnRecommend.setOnClickListener {
+//                findNavController().navigate(R.id.action_ruuningResultFragment_to_createRecommendFragment)
+//            }
 
             btnRoute.setOnClickListener {
                 runningResultViewModel.run {

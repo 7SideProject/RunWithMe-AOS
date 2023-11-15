@@ -270,15 +270,15 @@
                         android:layout_weight="1"
                         android:text="@string/ok"/>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_recommend"
-                        style="@style/WeakButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/margin_regular"
-                        android:layout_marginBottom="@dimen/parent_vertical_margin"
-                        android:layout_weight="1"
-                        android:text="@string/recommend"/>
+<!--                    <androidx.appcompat.widget.AppCompatButton-->
+<!--                        android:id="@+id/btn_recommend"-->
+<!--                        style="@style/WeakButton"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginHorizontal="@dimen/margin_regular"-->
+<!--                        android:layout_marginBottom="@dimen/parent_vertical_margin"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:text="@string/recommend"/>-->
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

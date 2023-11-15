@@ -39,6 +39,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="10dp"
             android:checked="true"
+            android:visibility="gone"
             android:text="알림 메세지 받기" />
 
         <TextView
@@ -92,7 +93,7 @@
                 android:textSize="17sp"
                 android:fontFamily="@font/noto_sans_bold"
                 android:textColor="@color/main_black"
-                android:text="1.1"
+                android:text="1.00"
                 android:layout_weight="1"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
