@@ -112,13 +112,13 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 20, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
         return outputStream.toByteArray()
     }
 
     private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
         val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData("imgFile", "running", requestFile)
+        return MultipartBody.Part.createFormData("image", "challenge", requestFile)
     }
 
 }
