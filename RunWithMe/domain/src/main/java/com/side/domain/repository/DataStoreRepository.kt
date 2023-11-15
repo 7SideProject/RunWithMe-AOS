@@ -17,7 +17,7 @@ interface DataStoreRepository {
 
     suspend fun saveToken(jwt: String, refreshToken: String)
 
-//    fun getJWT(): Flow<String>
+    fun getJWT(): Flow<String>
 
 //    fun getRefreshToken(): Flow<String>
 
@@ -35,4 +35,7 @@ interface DataStoreRepository {
 
     fun getTTSOption(): Flow<Boolean>
 
+    suspend fun savePermissionCheck(isCheck: Boolean)
+
+    fun getPermissionCHeck(): Flow<Boolean>
 }

@@ -35,7 +35,12 @@ interface DataStoreDataSource {
     fun getRunningGoalType(): Flow<Int>
 
     fun getRunningChallengeName(): Flow<String>
+
     suspend fun saveTTSOption(option: Boolean)
 
     fun getTTSOption(): Flow<Boolean>
+
+    suspend fun savePemissionCheck(isCheck: Boolean)
+
+    fun getPermissionCheck(): Flow<Boolean>
 }

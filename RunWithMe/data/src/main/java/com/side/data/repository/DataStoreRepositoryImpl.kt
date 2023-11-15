@@ -53,14 +53,11 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun saveToken(jwt: String, refreshToken: String) = dataStoreDataSource.saveToken(jwt, refreshToken)
 
-    //    override fun getJWT(): Flow<ResultType<String>> = flow {
-//        emitResultTypeLoading()
-//        dataStoreDataSource.getJWT().collect {
-//            emitResultTypeSuccess(it)
-//        }
-//    }.catch {
-//        emitResultTypeError(it)
-//    }
+    override fun getJWT(): Flow<String> = flow {
+        dataStoreDataSource.getJWT().collect {
+            emit(it)
+        }
+    }
     override suspend fun saveRunningChallengeSeq(challengeSeq: Long) = dataStoreDataSource.saveRunningChallengSeq(challengeSeq)
 
     override suspend fun saveRunningGoalAmount(goalAmount: Long) = dataStoreDataSource.saveRunningGoalAmount(goalAmount)
@@ -105,4 +102,9 @@ class DataStoreRepositoryImpl @Inject constructor(
 //        emitResultTypeError(it)
 //    }
 
+    override suspend fun savePermissionCheck(isCheck: Boolean) = dataStoreDataSource.savePemissionCheck(isCheck)
+
+    override fun getPermissionCHeck(): Flow<Boolean> = flow {
+        emit(dataStoreDataSource.getPermissionCheck().first())
+    }
 }

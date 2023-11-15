@@ -11,6 +11,7 @@ import com.side.data.util.preferencesKeys.EMAIL
 import com.side.data.util.preferencesKeys.GOAL_AMOUNT
 import com.side.data.util.preferencesKeys.GOAL_TYPE
 import com.side.data.util.preferencesKeys.JWT
+import com.side.data.util.preferencesKeys.PERMISSION_CHECK
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
 import com.side.data.util.preferencesKeys.TTS_OPTION
@@ -98,5 +99,13 @@ class DataStoreDataSourceImpl @Inject constructor(
 
     override fun getTTSOption(): Flow<Boolean> = flow {
         emit(dataStore.getValue(TTS_OPTION, DATASTORE_KEY.TYPE_BOOLEAN).first().toString().toBoolean())
+    }
+
+    override suspend fun savePemissionCheck(isCheck: Boolean) {
+        dataStore.saveValue(PERMISSION_CHECK, isCheck)
+    }
+
+    override fun getPermissionCheck(): Flow<Boolean> = flow {
+        emit(dataStore.getValue(PERMISSION_CHECK, DATASTORE_KEY.TYPE_BOOLEAN).first().toString().toBoolean())
     }
 }
