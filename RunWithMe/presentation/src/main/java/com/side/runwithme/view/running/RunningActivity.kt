@@ -78,13 +78,15 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private var sumDistance: Float = 0f
     private var currentTimeInMillis = 0L
 
-    private lateinit var imgFile: MultipartBody.Part
-    private lateinit var imgByteArray: ByteArray
+    private var imgFile: MultipartBody.Part? = null
+    private var imgByteArray: ByteArray? = null
     private var coordinates: ArrayList<CoordinatesParcelable> = arrayListOf()
     private lateinit var runRecord: RunRecordParcelable
     private var isStopError = false
 
     private lateinit var loadingDialog: LoadingDialog
+
+    private val FOUR_HOURS_IN_MILLIS = 4 * 60 * 60 * 1000
 
     override fun init() {
         val intent = intent
@@ -156,13 +158,13 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun handleEvent(event: RunningViewModel.Event) {
         when (event) {
             is RunningViewModel.Event.Success -> {
+                runningViewModel.saveChallengeInfo(0, -1, 0L, "")
                 loadingDialog.dismiss()
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
 
-                /** refresh 해줄 필요가 있는가? **/
-                runningViewModel.saveChallengeInfo(0, -1, 0L, "")
+                Log.d("test123", "handleEvent: endservice")
 
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord)
@@ -277,6 +279,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 binding.progressBarGoal.progress =
                     if ((it / (runningViewModel.goalAmount.value / 100)).toInt() >= 100) 100 else (it / (runningViewModel.goalAmount.value / 100)).toInt()
             }
+
+            val startTime = runningService.startTime
+            val endTime = System.currentTimeMillis()
+
+            val isRunningAvailableUntilFourHour = (endTime - startTime) >= FOUR_HOURS_IN_MILLIS
+            if(isRunningAvailableUntilFourHour){
+                stopRun()
+            }
         }
 
         // 거리 observe
@@ -368,6 +378,10 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 isStopError = true
             }
 
+            if(isStopError and (imgFile == null)){
+                endToSaveData()
+            }
+
             runningService.stopRunningBeforeRegister = true
 
             if(runningViewModel.challengeSeq.value == -1L){ // 연습러닝
@@ -422,10 +436,14 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     private fun takeSnapShot() {
         moveLatLngBounds()
 
-        naverMap?.takeSnapshot {
-            // image 생성
-            imgByteArray = createByteArray(it)
-            imgFile = createMultiPart(imgByteArray)
+        lifecycleScope.launch {
+            delay(300L)
+
+            naverMap?.takeSnapshot {
+                // image 생성
+                imgByteArray = createByteArray(it)
+                imgFile = createMultiPart(imgByteArray)
+            }
         }
     }
 
@@ -435,7 +453,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         return outputStream.toByteArray()
     }
 
-    private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
+    private fun createMultiPart(imageByteArray: ByteArray?): MultipartBody.Part? {
+        if(imageByteArray == null){
+            return null
+        }
+
         val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", "running", requestFile)
     }
