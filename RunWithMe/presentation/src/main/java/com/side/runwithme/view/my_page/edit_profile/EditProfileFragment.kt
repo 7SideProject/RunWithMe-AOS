@@ -3,6 +3,7 @@ package com.side.runwithme.view.my_page.edit_profile
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -188,7 +189,11 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>(R.layout.fr
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 10, outputStream)
+        }else{
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 10, outputStream)
+        }
         return outputStream.toByteArray()
     }
 
@@ -199,7 +204,6 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>(R.layout.fr
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("test123", "onDestroyView: d")
         myPageViewModel.setProfileImg(null)
         myPageViewModel.setProfileImgUri(null)
     }
