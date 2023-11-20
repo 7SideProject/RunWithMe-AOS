@@ -1,5 +1,6 @@
 package com.side.data.datasource.challenge
 
+import com.side.data.model.response.ChallengeDetailResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +24,6 @@ interface ChallengeRemoteDataSource {
     fun joinChallenge(challengeSeq: Long, password: String?): Flow<BaseResponse<String?>>
 
     fun leaveChallenge(challengeSeq: Long): Flow<BaseResponse<Any?>>
+
+    fun getChallengeDetail(challengeSeq: Long): Flow<BaseResponse<ChallengeDetailResponse>>
 }
