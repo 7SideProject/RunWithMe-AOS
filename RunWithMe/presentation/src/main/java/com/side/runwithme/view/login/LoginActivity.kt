@@ -31,7 +31,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
 
     private val loginViewModel by viewModels<LoginViewModel>()
-
+    private var loadingDialog: LoadingDialog? = null
 
     override fun init() {
 
@@ -52,11 +52,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         initViewModelCallBack()
     }
 
-    private fun checkFirstPermissionAlert(){
+    private fun checkFirstPermissionAlert() {
         loginViewModel.getPermissionCheck()
     }
 
-    private fun checkAutoLogin(){
+    private fun checkAutoLogin() {
         loginViewModel.checkAutoLogin()
     }
 
@@ -69,6 +69,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
             btnLogin.setOnClickListener {
                 initKeyStore(Calendar.getInstance().timeInMillis.toString())
+                loading()
                 loginViewModel.loginWithEmail()
             }
 
@@ -88,7 +89,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
         repeatOnStarted {
             loginViewModel.permissionEventFlow.collectLatest {
-                if(!it){
+                if (!it) {
                     startActivity(Intent(this@LoginActivity, PermissionActivity::class.java))
                 }
             }
@@ -169,17 +170,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             is Event.Success -> {
 
                 lifecycleScope.launch {
-                    // 로딩 0.4초간 정지
-                    // dataStore에 저장하는 과정 기다리기
-                    loading()
 
                     showToast("로그인 성공")
+                    loadingDialog?.dismiss()
 
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
                 }
 
             }
+
             is Event.Fail -> {
                 showToast(event.message)
             }
@@ -187,23 +187,22 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     }
 
 
-
     private fun loading() {
-        val loadingDialog = LoadingDialog(this)
-        loadingDialog.show()
+        loadingDialog = LoadingDialog(this)
+        loadingDialog!!.show()
         // 로딩이 진행되지 않았을 경우
         lifecycleScope.launch {
             delay(500)
-            if (loadingDialog.isShowing) {
-                loadingDialog.dismiss()
+            if (loadingDialog?.isShowing ?: false) {
+                loadingDialog?.dismiss()
             }
         }
     }
 
-    private fun BearerError(){
+    private fun BearerError() {
         val intent = intent
         val errorMsg = intent.getStringExtra("BearerError")
-        if(errorMsg.isNullOrBlank()) return
+        if (errorMsg.isNullOrBlank()) return
 
         showToast(errorMsg)
     }
