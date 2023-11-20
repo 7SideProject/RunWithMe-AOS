@@ -112,8 +112,8 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun checkIsOver10Seconds(runRecord: RunRecordParcelable): Boolean {
-        if (runRecord.runningTime <= 10) {
+    fun checkIsOver15Seconds(runRecord: RunRecordParcelable): Boolean {
+        if (runRecord.runningTime <= 15) {
             return false;
         }
 
@@ -121,9 +121,9 @@ class RunningViewModel @Inject constructor(
     }
 
     fun postPracticeRunRecord(runRecord: RunRecordParcelable, imgByteArray: ByteArray?) {
-        if (!checkIsOver10Seconds(runRecord)) {
+        if (!checkIsOver15Seconds(runRecord)) {
             viewModelScope.launch {
-                _postRunRecordEventFlow.emit(Event.Success())
+                _postRunRecordEventFlow.emit(Event.NotOver15Seconds())
             }
         }
 
@@ -148,13 +148,10 @@ class RunningViewModel @Inject constructor(
                 )
             ).collect {
                 it.onSuccess {
-                    Log.d("test123", "postPracticeRunRecord: success ")
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
-                    Log.d("test123", "postPracticeRunRecord fail: $it")
                     _postRunRecordEventFlow.emit(Event.Fail())
                 }.onError {
-                    Log.d("test123", "postPracticeRunRecord err: $it")
                     Firebase.crashlytics.recordException(it)
                     _postRunRecordEventFlow.emit(Event.Error())
                 }
@@ -164,9 +161,9 @@ class RunningViewModel @Inject constructor(
     }
 
     fun postChallengeRunRecord(runRecord: RunRecordParcelable, coordinates: List<CoordinatesParcelable>, image: MultipartBody.Part?) {
-        if (!checkIsOver10Seconds(runRecord)) {
+        if (!checkIsOver15Seconds(runRecord)) {
             viewModelScope.launch {
-                _postRunRecordEventFlow.emit(Event.Success())
+                _postRunRecordEventFlow.emit(Event.NotOver15Seconds())
             }
         }
 
@@ -181,11 +178,8 @@ class RunningViewModel @Inject constructor(
                 it.onSuccess {
                     _postRunRecordEventFlow.emit(Event.Success())
                 }.onFailure {
-                    Log.d("test123", "postPracticeRunRecord fail: $it")
                     _postRunRecordEventFlow.emit(Event.Fail())
                 }.onError {
-                    // 서버 에러 분류해줄 수 있으면 좋을듯
-                    Log.d("test123", "postPracticeRunRecord err: $it")
                     Firebase.crashlytics.recordException(it)
                     _postRunRecordEventFlow.emit(Event.ServerError())
                 }
@@ -197,6 +191,7 @@ class RunningViewModel @Inject constructor(
 
     sealed class Event {
         class Success : Event()
+        class NotOver15Seconds(): Event()
         class Fail : Event()
         class ServerError : Event()
         class Error : Event()
