@@ -8,9 +8,9 @@ import com.side.domain.model.TotalRecord
 import com.side.domain.model.User
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 
 typealias UserTypeResponse = ResultType<BaseResponse<User?>>
-typealias NullResponse = ResultType<BaseResponse<Any?>>
 typealias DuplicateCheckTypeResponse = ResultType<BaseResponse<DuplicateCheck>>
 typealias DailyCheckTypeResponse = ResultType<BaseResponse<DailyCheck?>>
 typealias TotalRecordTypeResponse = ResultType<BaseResponse<TotalRecord?>>
@@ -36,4 +36,6 @@ interface UserRepository {
     fun editProfile(userSeq: Long, editProfileRequest: Profile): Flow<UserTypeResponse>
 
     fun deleteUser(): Flow<NullResponse>
+
+    fun editProfileImage(userSeq: Long, image: MultipartBody.Part): Flow<ResultType<BaseResponse<Any?>?>>
 }

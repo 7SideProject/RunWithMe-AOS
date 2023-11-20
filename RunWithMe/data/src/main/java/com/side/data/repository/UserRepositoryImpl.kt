@@ -17,6 +17,7 @@ import com.side.data.util.asResultOtherType
 import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.initKeyStore
+import com.side.domain.base.BaseResponse
 import com.side.domain.model.Profile
 import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
@@ -28,9 +29,9 @@ import com.side.domain.repository.UserTypeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import okhttp3.MultipartBody
 import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -261,4 +262,12 @@ class UserRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
+    override fun editProfileImage(userSeq: Long, image: MultipartBody.Part): Flow<ResultType<BaseResponse<Any?>?>> = userRemoteDataSource.editProfileImage(userSeq, image).asResult{
+        if(it == null){
+            ResultType.Success(it)
+        }else {
+            ResultType.Fail(it)
+        }
+
+    }
 }
