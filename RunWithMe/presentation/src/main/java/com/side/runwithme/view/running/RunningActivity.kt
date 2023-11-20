@@ -177,6 +177,18 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 startActivity(intent)
                 finish()
             }
+            is RunningViewModel.Event.NotOver15Seconds -> {
+                runningViewModel.saveChallengeInfo(0, -1, 0L, "")
+                loadingDialog.dismiss()
+                // 서버에 등록이 완료된 후 service를 종료 시킴
+                // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
+                stopService()
+
+                showToast("15초 이하의 기록은 저장되지 않습니다.")
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
             is RunningViewModel.Event.Fail -> {
                 showToast("다시 한 번 시도해주세요.")
             }
@@ -415,7 +427,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             successYN = "Y"
         }
 
-
         runRecord = RunRecordParcelable(
             runRecordSeq = 0,
             startTime = onlyTimeFormatter(runningService.startTime),
@@ -423,7 +434,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             runningDay = runningService.startDay,
             runningTime = runningTime,
             runningDistance = sumDistance.toInt(),
-            avgSpeed = 1.0 * (round(sumDistance / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f,  /** 속도 구하는거 잘못된듯 **/
+            avgSpeed = 1.0 * (sumDistance / 1000f) / (1.0F * runningTime / 3600),
             calorie = caloriesBurned,
             successYN = successYN
         )
@@ -509,7 +520,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun changeCalorie(sumDistance: Float) {
-        caloriesBurned = round((sumDistance / 1000f) * runningViewModel.weight.value).toInt()
+        caloriesBurned = ((sumDistance / 1000f) * runningViewModel.weight.value / 1.036).toInt()
         binding.tvCalorie.text = "$caloriesBurned"
     }
 

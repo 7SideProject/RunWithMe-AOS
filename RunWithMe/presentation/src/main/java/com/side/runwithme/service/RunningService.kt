@@ -303,6 +303,10 @@ class RunningService : LifecycleService() {
                 for(location in locations){
                     when(runningState.value){
                         // 처음 시작할 때
+                        RUNNING_STATE.FIRST_SHOW -> {
+                            pauseLatLng = location
+                            addPathPoint(location)
+                        }
                         RUNNING_STATE.START -> {
                             pauseLatLng = location
                             addPathPoint(location)
@@ -453,9 +457,9 @@ class RunningService : LifecycleService() {
         pauseService(resources.getString(R.string.running_pause_not_moving), resources.getString(R.string.running_pause_not_moving))
     }
 
-    // 4초 이상 이동했는데 이동거리가 52m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
+    // 4초 이상 이동했는데 이동거리가 55m 이상인 경우가 연속 2번인 경우 정지 (최소 오차 3초) -> 너무 빠른 경우
     private fun checkFastMoving(distance: Float): Boolean {
-        val isFastMoving = distance > 52f && (System.currentTimeMillis() - startTime) > 3000L
+        val isFastMoving = distance > 55f && (System.currentTimeMillis() - startTime) > 3000L
         if (isFastMoving) {
             tooFastCount += 1
 
@@ -491,6 +495,7 @@ class RunningService : LifecycleService() {
 
             val distance = lastLatLng.distanceTo(next)
 
+            /** 움직임 멈춤 체크를 다른 곳에 둬야할듯 **/
             if(checkNotMoving(distance)){
                 stopWhenNotMoving(lastLatLng)
                 return
