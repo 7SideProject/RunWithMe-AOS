@@ -39,4 +39,7 @@
     <string name="time_header">소요 시간</string>
     <string name="calorie_header">칼로리</string>
     <string name="speed_header">평균 속도</string>
+
+    <string name="already_running_today">챌린지당 러닝은 하루에 한 번만 가능합니다.</string>
+    <string name="running_check_error">오류입니다. 다시 한번 시도해주세요.</string>
 </resources>

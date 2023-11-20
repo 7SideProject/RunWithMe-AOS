@@ -16,4 +16,5 @@ interface RunningRepository {
                       runRecord: RunRecord,
                       image: MultipartBody.Part): Flow<NullResponse>
 
+    fun isAvailableRunningToday(challengeSeq: Long): Flow<NullResponse>
 }
