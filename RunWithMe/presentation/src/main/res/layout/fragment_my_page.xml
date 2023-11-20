@@ -63,12 +63,13 @@
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/civ_user_profile"
-                            android:layout_width="90dp"
-                            android:layout_height="90dp"
+                            android:layout_width="@dimen/propfile_img_size"
+                            android:layout_height="@dimen/propfile_img_size"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
                             android:layout_gravity="center"
-                            android:background="@android:color/transparent"
+                            profileImg="@{myPageVM.userProfile.seq}"
+                            jwt="@{myPageVM.jwt}"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -256,7 +257,7 @@
                         style="@style/header_text"
                         android:textColor="@color/black_high_emphasis"
                         android:textSize="20sp"
-                        app:runningDistance="@{myPageVM.totalRecord.totalLongestDistance}"
+                        app:runningDistance="@{myPageVM.totalRecord.totalDistance}"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_distance_headers"
                         tools:text="16.5 km" />

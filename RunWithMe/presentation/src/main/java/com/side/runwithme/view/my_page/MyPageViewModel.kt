@@ -1,12 +1,19 @@
 package com.side.runwithme.view.my_page
 
+import android.net.Uri
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.side.data.util.getDecryptStringValue
+import com.side.data.util.preferencesKeys
 import com.side.domain.model.Profile
 import com.side.domain.model.TotalRecord
 import com.side.domain.model.User
+import com.side.domain.usecase.datastore.GetJWTDataStoreUseCase
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
+import com.side.domain.usecase.user.EditProfileImageUseCase
 import com.side.domain.usecase.user.EditProfileUseCase
 import com.side.domain.usecase.user.GetTotalRecordUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
@@ -19,8 +26,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +38,9 @@ class MyPageViewModel @Inject constructor(
     private val getUserSeqDataStoreUseCase: GetUserSeqDataStoreUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getTotalRecordUseCase: GetTotalRecordUseCase,
-    private val editProfileUseCase: EditProfileUseCase
+    private val editProfileUseCase: EditProfileUseCase,
+    private val dataStore: DataStore<Preferences>,
+    private val editProfileImageUseCase: EditProfileImageUseCase
 ): ViewModel() {
 
     private val _userProfile = MutableStateFlow<User>(User("",""))
@@ -40,6 +52,15 @@ class MyPageViewModel @Inject constructor(
     val editNickname = MutableStateFlow<String>("")
     val editHeight = MutableStateFlow<Int>(150)
     val editWeight = MutableStateFlow<Int>(50)
+
+    private val _profileImg = MutableStateFlow<MultipartBody.Part?>(null)
+    val profileImg = _profileImg.asStateFlow()
+
+    private val _profileImgUri = MutableStateFlow<Uri?>(null)
+    val profileImgUri = _profileImgUri.asStateFlow()
+
+    private val _jwt = MutableStateFlow<String>("")
+    val jwt = _jwt.asStateFlow()
 
     private val _editEventFlow = MutableEventFlow<EditEvent>()
     val editEventFlow get() = _editEventFlow.asEventFlow()
@@ -84,6 +105,7 @@ class MyPageViewModel @Inject constructor(
             getTotalRecordUseCase(userSeq).collectLatest {
                 it.onSuccess { success ->
                     _totalRecord.value = success.data!!
+                    Log.d("test123", "getTotalRecord: ${_totalRecord.value}")
                 }.onFailure { error->
                     Log.d("getTotalRecordError", "${error.message} ")
                 }.onError { error ->
@@ -99,6 +121,14 @@ class MyPageViewModel @Inject constructor(
 
     fun setWeight(weight: Int){
         this.editWeight.update { weight }
+    }
+
+    fun setProfileImg(img: MultipartBody.Part?){
+        _profileImg.value = img
+    }
+
+    fun setProfileImgUri(uri: Uri?){
+        _profileImgUri.value = uri
     }
 
     fun editProfileRequest(){
@@ -121,13 +151,40 @@ class MyPageViewModel @Inject constructor(
                 Profile(editNickname.value, editHeight.value, editWeight.value)
             ).collectLatest {
                 it.onSuccess {
+                    if(profileImg.value != null){
+                        editProfileImage()
+                        return@onSuccess
+                    }
                     _editEventFlow.emit(EditEvent.Success(R.string.message_edit_profile_success))
                 }.onFailure {
                     _editEventFlow.emit(EditEvent.Fail(R.string.message_edit_profile_fail))
                 }.onError { error ->
-                    Log.d("editProfileError", "${error.message} ")
+                    Log.d("test123", "editProfile error :${error.message} ")
                 }
             }
+        }
+    }
+
+    private fun editProfileImage(){
+        viewModelScope.launch(Dispatchers.IO) {
+            editProfileImageUseCase(userProfile.value.seq, profileImg.value!!).collectLatest {
+                it.onSuccess {
+                    _editEventFlow.emit(EditEvent.Success(R.string.message_edit_profile_success))
+                }.onFailure {
+                    _editEventFlow.emit(EditEvent.Fail(R.string.message_edit_profile_fail))
+                }.onError {
+                    Log.d("test123", "editProfileImage error ${it.message} ")
+                }
+            }
+        }
+    }
+
+    fun getJwtData(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val flow = dataStore.getDecryptStringValue(preferencesKeys.JWT)
+            flow.onEach {
+                _jwt.value = it.toString()
+            }.launchIn(viewModelScope)
         }
     }
 

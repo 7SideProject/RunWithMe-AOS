@@ -65,12 +65,42 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         }
         initClickListener()
 
-        runningListViewModel.apply {
-            getMyScrap()
-        }
+        runningListViewModel.getJwtData()
+
+        initViewModelCallbacks()
     }
 
-
+    private fun initViewModelCallbacks(){
+        lifecycleScope.launch {
+            runningListViewModel.runningListEventFlow.collectLatest {
+                when(it){
+                    is RunningListViewModel.RunningListEvent.Success -> {
+                        val challenge = it.challenge
+                        val intent = Intent(requireContext(), RunningActivity::class.java)
+                        val goalType = if(challenge.goalType == GOAL_TYPE.TIME.apiName){
+                            GOAL_TYPE.TIME.ordinal
+                        }else {
+                            GOAL_TYPE.DISTANCE.ordinal
+                        }
+                        intent.apply {
+                            putExtra("challengeName", challenge.name)
+                            putExtra("challengeSeq", challenge.seq)
+                            putExtra("goalType", goalType)
+                            putExtra("goalAmount", challenge.goalAmount)
+                        }
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                    is RunningListViewModel.RunningListEvent.Fail -> {
+                        showToast(resources.getString(R.string.already_running_today))
+                    }
+                    is RunningListViewModel.RunningListEvent.Error -> {
+                        showToast(resources.getString(R.string.running_check_error))
+                    }
+                }
+            }
+        }
+    }
 
     private fun initClickListener(){
         binding.apply {
@@ -87,26 +117,7 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
 
     private val intentToRunningActivityClickListener = object : IntentToRunningActivityClickListener {
         override fun onItemClick(challenge: Challenge) {
-            /** 러닝 가능한 지 확인 **/
-            val intent = Intent(requireContext(), RunningActivity::class.java)
-            val goalType = if(challenge.goalType == GOAL_TYPE.TIME.apiName){
-                GOAL_TYPE.TIME.ordinal
-            }else {
-                GOAL_TYPE.DISTANCE.ordinal
-            }
-            intent.apply {
-                putExtra("challengeName", challenge.name)
-                putExtra("challengeSeq", challenge.seq)
-                putExtra("goalType", goalType)
-                putExtra("goalAmount", challenge.goalAmount)
-            }
-            startActivity(intent)
-
-            lifecycleScope.launch {
-                delay(300L)
-                // home 화면으로 돌아가기
-                findNavController().popBackStack()
-            }
+            runningListViewModel.isAvailableRunningToday(challenge)
         }
     }
 
