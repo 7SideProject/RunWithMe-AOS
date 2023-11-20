@@ -82,6 +82,9 @@
         <action
             android:id="@+id/action_MyPageFragment_to_othersFragment"
             app:destination="@id/othersFragment" />
+        <action
+            android:id="@+id/action_MyPageFragment_to_runningListFragment"
+            app:destination="@id/runningListFragment" />
     </fragment>
     <fragment
         android:id="@+id/runningListFragment"
