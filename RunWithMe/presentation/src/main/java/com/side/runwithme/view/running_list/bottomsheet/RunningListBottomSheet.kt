@@ -1,7 +1,9 @@
 package com.side.runwithme.view.running_list.bottomsheet
 
 import android.app.Dialog
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +22,7 @@ import com.side.runwithme.view.running_list.bottomsheet.practice.PracticeSetting
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RunningListBottomSheet(
@@ -56,7 +59,7 @@ class RunningListBottomSheet(
     }
 
     private fun init() {
-        runningListAdapter = RunningListAdapter(intentToRunningActivityClickListener)
+        runningListAdapter = RunningListAdapter(intentToRunningActivityClickListener, runningListViewModel.jwt)
         binding.apply {
             rcvMyChallengeRunningList.adapter = runningListAdapter
             runningListVM = runningListViewModel
@@ -85,9 +88,7 @@ class RunningListBottomSheet(
                     runningListAdapter.submitData(it)
                 }
             }
-
         }
     }
-
 
 }

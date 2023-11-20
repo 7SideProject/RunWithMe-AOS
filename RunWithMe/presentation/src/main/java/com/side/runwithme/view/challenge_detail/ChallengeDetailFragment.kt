@@ -152,6 +152,7 @@ class ChallengeDetailFragment :
 
     private fun initChallenge(challenge: ChallengeParcelable) {
         challengeDetailViewModel.setChallnege(challenge)
+        challengeDetailViewModel.getJwtData()
     }
 
     private fun moveHomeFragment() {

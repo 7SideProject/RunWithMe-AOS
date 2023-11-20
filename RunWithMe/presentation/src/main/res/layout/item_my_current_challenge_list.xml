@@ -7,6 +7,9 @@
         <variable
             name="challenge"
             type="com.side.domain.model.Challenge" />
+        <variable
+            name="token"
+            type="com.side.runwithme.model.Token" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,6 +46,8 @@
                     android:background="@drawable/image_round"
                     android:clipToOutline="true"
                     android:scaleType="fitXY"
+                    challenge_img="@{challenge.seq}"
+                    jwt="@{token.jwt}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
