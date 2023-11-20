@@ -5,7 +5,7 @@
         android:title=""
         android:enabled="true"/>
 
-    <item android:id="@+id/blank"
+    <item android:id="@+id/runningListFragment"
         android:title=""
         android:enabled="false"/>
 

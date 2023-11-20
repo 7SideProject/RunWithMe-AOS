@@ -32,13 +32,11 @@ class ChallengeListFragment :
 
         initClickListener()
 
-        initViewModelCallback()
-
     }
 
     private fun initViewModelCallback() {
         lifecycleScope.launch {
-            challengeViewModel.getRecruitingChallengesPaging().collect{ challengeList ->
+            challengeViewModel.getRecruitingChallengesPaging().collectLatest { challengeList ->
                 challengeListAdapter.submitData(challengeList)
             }
         }
@@ -74,5 +72,11 @@ class ChallengeListFragment :
             val action = ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeDetailFragment(challenge.mapperToChallengeParcelable())
             findNavController().navigate(action)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        initViewModelCallback()
     }
 }
