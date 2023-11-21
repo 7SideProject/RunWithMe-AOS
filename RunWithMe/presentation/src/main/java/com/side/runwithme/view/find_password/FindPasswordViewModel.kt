@@ -92,8 +92,9 @@ class FindPasswordViewModel @Inject constructor(
                 it.onSuccess {
                     _findPasswordEventFlow.emit(Event.Success("비밀번호 변경 성공"))
                 }.onFailure {
-                    _findPasswordEventFlow.emit(Event.Success("변경에 실패했습니다. 잠시 후 다시 시도해주세요."))
+                    _findPasswordEventFlow.emit(Event.Fail("변경에 실패했습니다. 잠시 후 다시 시도해주세요."))
                 }.onError {
+                    _findPasswordEventFlow.emit(Event.Fail("변경에 실패했습니다."))
                     Firebase.crashlytics.recordException(it)
                 }
             }

@@ -1,13 +1,18 @@
 package com.side.runwithme.view.challenge_detail
 
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.side.data.util.getDecryptStringValue
+import com.side.data.util.preferencesKeys
 import com.side.domain.usecase.challenge.IsChallengeAlreadyJoinUseCase
 import com.side.domain.usecase.challenge.JoinChallengeUseCase
 import com.side.domain.usecase.challenge.LeaveChallengeUseCase
+import com.side.domain.usecase.datastore.GetJWTDataStoreUseCase
 import com.side.domain.usecase.user.GetUserProfileUseCase
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.CHALLENGE_STATE
@@ -21,6 +26,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -31,8 +38,12 @@ class ChallengeDetailViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val isChallengeAlreadyJoinUseCase: IsChallengeAlreadyJoinUseCase,
     private val joinChallengeUseCase: JoinChallengeUseCase,
-    private val leaveChallengeUseCase: LeaveChallengeUseCase
+    private val leaveChallengeUseCase: LeaveChallengeUseCase,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
+
+    private val _jwt = MutableStateFlow<String>("")
+    val jwt = _jwt.asStateFlow()
 
     private val _challenge = MutableStateFlow<ChallengeParcelable?>(null)
     val challenge = _challenge.asStateFlow()
@@ -82,6 +93,15 @@ class ChallengeDetailViewModel @Inject constructor(
                     Log.e("test123", "getManagerName: ", it)
                 }
             }
+        }
+    }
+
+    fun getJwtData(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val flow = dataStore.getDecryptStringValue(preferencesKeys.JWT)
+            flow.onEach {
+                _jwt.value = it.toString()
+            }.launchIn(viewModelScope)
         }
     }
 

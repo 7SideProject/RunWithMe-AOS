@@ -1,6 +1,7 @@
 package com.side.data.datasource.challenge
 
 import com.side.data.api.ChallengeApi
+import com.side.data.model.response.ChallengeDetailResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -52,5 +53,9 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
 
     override fun leaveChallenge(challengeSeq: Long): Flow<BaseResponse<Any?>> = flow {
         emit(challengeApi.leaveChallenge(challengeSeq))
+    }
+
+    override fun getChallengeDetail(challengeSeq: Long): Flow<BaseResponse<ChallengeDetailResponse>> = flow {
+        emit(challengeApi.getChallengeDetail(challengeSeq))
     }
 }

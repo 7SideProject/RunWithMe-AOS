@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
+import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -112,7 +114,11 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 10, outputStream)
+        }else{
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 10, outputStream)
+        }
         return outputStream.toByteArray()
     }
 

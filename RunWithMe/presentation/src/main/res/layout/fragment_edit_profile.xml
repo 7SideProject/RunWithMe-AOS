@@ -42,11 +42,11 @@
                 android:layout_height="90dp"
                 android:layout_marginStart="16dp"
                 android:layout_gravity="center"
-                android:background="@android:color/transparent"
+                android:src="@drawable/user_image"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                tools:src="@drawable/ic_launcher_foreground" />
+                tools:src="@drawable/user_image" />
 
 
             <ImageView

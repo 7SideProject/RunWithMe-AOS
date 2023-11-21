@@ -9,12 +9,15 @@ import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
-import com.side.domain.repository.NullResponse
+import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -50,4 +53,8 @@ interface UserApi {
 
     @DELETE("users/{userSeq}")
     suspend fun deleteUser(@Path("userSeq") userSeq: Long): BaseResponse<Any?>
+
+    @Multipart
+    @PUT("/users/{userSeq}/profile-image")
+    suspend fun editProfileImage(@Path("userSeq") userSeq: Long, @Part image: MultipartBody.Part): Response<BaseResponse<Any?>?>
 }

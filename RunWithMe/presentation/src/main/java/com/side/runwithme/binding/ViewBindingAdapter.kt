@@ -6,12 +6,20 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.target.Target
 import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.BASE_URL
+import com.side.runwithme.util.CHALLENGE
+import com.side.runwithme.util.GET_CHALLNEGE_IMG
+import com.side.runwithme.util.GET_PROFILE_IMG
+import com.side.runwithme.util.USER
 import com.side.runwithme.util.costFormatter
+import com.side.runwithme.view.challenge_detail.setChallengeImg
+import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.Math.round
 
 
@@ -105,12 +113,6 @@ fun AppCompatButton.setCostFormat(cost: String) {
     this.setText(costFormatter(cost))
 }
 
-@BindingAdapter("imageSeq")
-fun ImageView.setImageBySeq(imgSeq: Long) {
-    Glide.with(this.context).load(BASE_URL + "/image/${imgSeq}").fitCenter()
-        .override(Target.SIZE_ORIGINAL, R.dimen.challenge_detail_img_height).into(this)
-}
-
 @BindingAdapter("setHeight")
 fun TextView.setHeight(height: Int) {
     this.text = "${height}cm"
@@ -133,3 +135,11 @@ fun TextView.setTotalRunningTime(totalTime: Int) {
     this.text = "${hour}시간 ${minute}분"
 }
 
+@BindingAdapter("profileImg", "jwt")
+fun CircleImageView.setProfileImg(userSeq: Long, jwt: String) {
+    val glideUrl = GlideUrl(BASE_URL + USER + "/${userSeq}/" + GET_PROFILE_IMG) {
+        mapOf(Pair("Authorization", jwt))
+    }
+    Glide.with(this.context).load(glideUrl).override(R.dimen.propfile_img_size).fitCenter()
+        .placeholder(R.drawable.user_image).skipMemoryCache(true).into(this)
+}

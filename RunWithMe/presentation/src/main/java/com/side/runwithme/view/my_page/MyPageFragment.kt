@@ -18,6 +18,8 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         }
 
         initClickListener()
+
+        myPageViewModel.getJwtData()
     }
 
     private fun initClickListener(){

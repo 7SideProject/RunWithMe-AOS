@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.response.ChallengeDetailResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
@@ -39,4 +40,7 @@ interface ChallengeApi {
 
     @DELETE("challenge/{challengeSeq}")
     suspend fun leaveChallenge(@Path("challengeSeq") challengeSeq: Long): BaseResponse<Any?>
+
+    @GET("challenge/{challengeSeq}")
+    suspend fun getChallengeDetail(@Path("challengeSeq") challengeSeq: Long): BaseResponse<ChallengeDetailResponse>
 }

@@ -13,6 +13,7 @@ import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 
 interface UserRemoteDataSource {
     fun login(loginRequest: LoginRequest): Flow<BaseResponse<User>>
@@ -36,4 +37,6 @@ interface UserRemoteDataSource {
     fun editProfile(userSeq: Long, editProfileRequest: EditProfileRequest): Flow<BaseResponse<UserResponse>>
 
     fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>>
+
+    fun editProfileImage(userSeq: Long, image: MultipartBody.Part): Flow<BaseResponse<Any?>?>
 }

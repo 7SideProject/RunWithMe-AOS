@@ -39,6 +39,8 @@
                     android:layout_height="240dp"
                     android:scaleType="fitXY"
                     tools:src="@drawable/img_crew"
+                    challenge_img="@{challengeDetailVM.challenge.seq}"
+                    jwt="@{challengeDetailVM.jwt}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

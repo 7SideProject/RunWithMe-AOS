@@ -2,6 +2,7 @@ package com.side.data.repository
 
 import android.util.Log
 import com.google.gson.Gson
+import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.running.RunningRemoteDataSource
 import com.side.data.mapper.mapperToRunRecordRequest
 import com.side.data.model.request.RunRecordRequest
@@ -28,7 +29,8 @@ import javax.inject.Singleton
 
 @Singleton
 class RunningRepositoryImpl @Inject constructor(
-    private val runningRemoteDataSource: RunningRemoteDataSource
+    private val runningRemoteDataSource: RunningRemoteDataSource,
+    private val challengeRemoteDataSource: ChallengeRemoteDataSource
 ): RunningRepository{
 
     override fun postRunRecord(
@@ -40,9 +42,6 @@ class RunningRepositoryImpl @Inject constructor(
 
         val json = Gson().toJson(runRecord)
         val runRecordRequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-
-        Log.d("test123", "postRunRecord challenge impl: ${runRecord.toString()}")
-        Log.d("test123", "postRunRecord challenge impl: ${runRecordRequestBody.toString()}")
 
         runningRemoteDataSource.postRunRecord(challengeSeq, runRecordRequestBody, image).collect {
             when (it.code) {
@@ -60,6 +59,24 @@ class RunningRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
+    override fun isAvailableRunningToday(challengeSeq: Long): Flow<NullResponse> = flow<NullResponse> {
+        emitResultTypeLoading()
+
+        challengeRemoteDataSource.getChallengeDetail(challengeSeq).collect {
+            Log.d("test123", "isAvailableRunningToday: repoimpl : ${it.data.toString()}")
+            if(it.code == 300){
+                if(it.data.canRunning){
+                    emitResultTypeSuccess(it.changeData(null))
+                }else {
+                    emitResultTypeFail(it.changeData(null))
+                }
+            }else{
+                emitResultTypeFail(it.changeData(null))
+            }
+        }
 
 
+    }.catch {
+        emitResultTypeError(it)
+    }
 }

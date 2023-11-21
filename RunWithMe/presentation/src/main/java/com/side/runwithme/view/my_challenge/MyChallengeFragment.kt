@@ -21,7 +21,7 @@ class MyChallengeFragment : BaseFragment<FragmentMyChallengeBinding>(R.layout.fr
 
     override fun init() {
 
-        myChallengeListAdapter = MyChallengeListAdapter(myChallengeListAdapterClickListener)
+        myChallengeListAdapter = MyChallengeListAdapter(myChallengeListAdapterClickListener, myChallengeViewModel.jwt)
 
         binding.apply {
             myChallengeVM = myChallengeViewModel
@@ -31,6 +31,8 @@ class MyChallengeFragment : BaseFragment<FragmentMyChallengeBinding>(R.layout.fr
         initViewModelCallbacks()
 
         initClickListener()
+
+        myChallengeViewModel.getJwtData()
     }
 
     private fun initClickListener(){

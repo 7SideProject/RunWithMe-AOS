@@ -5,7 +5,10 @@ import com.side.runwithme.BuildConfig
 
 
 const val BASE_URL = BuildConfig.BASEURL
-
+const val CHALLENGE = "challenge"
+const val USER = "users"
+const val GET_CHALLNEGE_IMG = "challenge-image"
+const val GET_PROFILE_IMG = "profile-image"
 
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 

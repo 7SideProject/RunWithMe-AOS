@@ -16,6 +16,7 @@ import com.side.domain.base.BaseResponse
 import com.side.domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MultipartBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -70,5 +71,14 @@ class UserRemoteDataSourceImpl @Inject constructor(
 
      override fun deleteUser(userSeq: Long): Flow<BaseResponse<Any?>> = flow {
         emit(userApi.deleteUser(userSeq))
+    }
+
+    override fun editProfileImage(userSeq: Long, image: MultipartBody.Part): Flow<BaseResponse<Any?>?> = flow {
+        val response = userApi.editProfileImage(userSeq, image)
+        if(response.isSuccessful && response.code() == 204){
+            emit(null)
+        }else{
+            emit(response.body())
+        }
     }
 }
