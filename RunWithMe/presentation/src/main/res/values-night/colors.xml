@@ -16,7 +16,7 @@
 
     <color name="mainColor">#6A7BD9</color>
     <color name="main_border_grey">#0D0D0D</color>
-    <color name="light_grey">#99161310</color>
+    <color name="light_grey">#99E9ECEF</color>
     <color name="main_blue_green">#17A196</color>
 
     <color name="main_red">#EF5350</color>
