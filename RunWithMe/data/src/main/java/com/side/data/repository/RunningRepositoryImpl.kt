@@ -43,9 +43,6 @@ class RunningRepositoryImpl @Inject constructor(
         val json = Gson().toJson(runRecord)
         val runRecordRequestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-        Log.d("test123", "postRunRecord challenge impl: ${runRecord.toString()}")
-        Log.d("test123", "postRunRecord challenge impl: ${runRecordRequestBody.toString()}")
-
         runningRemoteDataSource.postRunRecord(challengeSeq, runRecordRequestBody, image).collect {
             when (it.code) {
                 200 -> {
