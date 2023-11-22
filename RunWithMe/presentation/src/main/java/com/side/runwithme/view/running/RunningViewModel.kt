@@ -134,28 +134,30 @@ class RunningViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            insertPracticeRunRecordUseCase(
-                PracticeRunRecord(
-                    seq = 0,
-                    image = imgByteArray!!,
-                    startTime = runRecord.startTime,
-                    endTime = runRecord.endTime,
-                    runningDay = runRecord.runningDay,
-                    runningTime = runRecord.runningTime,
-                    runningDistance = runRecord.runningDistance,
-                    avgSpeed = runRecord.avgSpeed,
-                    calorie = runRecord.calorie
-                )
-            ).collect {
-                it.onSuccess {
-                    _postRunRecordEventFlow.emit(Event.Success())
-                }.onFailure {
-                    _postRunRecordEventFlow.emit(Event.Fail())
-                }.onError {
-                    Firebase.crashlytics.recordException(it)
-                    _postRunRecordEventFlow.emit(Event.Error())
-                }
-            }
+            /**연습 러닝 기록 등록 yet**/
+            _postRunRecordEventFlow.emit(Event.Success())
+//            insertPracticeRunRecordUseCase(
+//                PracticeRunRecord(
+//                    seq = 0,
+//                    image = imgByteArray!!,
+//                    startTime = runRecord.startTime,
+//                    endTime = runRecord.endTime,
+//                    runningDay = runRecord.runningDay,
+//                    runningTime = runRecord.runningTime,
+//                    runningDistance = runRecord.runningDistance,
+//                    avgSpeed = runRecord.avgSpeed,
+//                    calorie = runRecord.calorie
+//                )
+//            ).collect {
+//                it.onSuccess {
+//                    _postRunRecordEventFlow.emit(Event.Success())
+//                }.onFailure {
+//                    _postRunRecordEventFlow.emit(Event.Fail())
+//                }.onError {
+//                    Firebase.crashlytics.recordException(it)
+//                    _postRunRecordEventFlow.emit(Event.Error())
+//                }
+//            }
 
         }
     }

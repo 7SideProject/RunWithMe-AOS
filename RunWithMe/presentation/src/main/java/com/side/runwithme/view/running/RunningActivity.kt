@@ -164,8 +164,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
 
-                Log.d("test123", "handleEvent: endservice")
-
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord)
                     putParcelableArrayListExtra("coordinates", coordinates)
