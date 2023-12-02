@@ -15,7 +15,7 @@ class ChallengeViewModel @Inject constructor(
     private val getRecruitingChallengeListUseCase: GetRecruitingChallengeListUseCase
 ) : ViewModel() {
 
-    private val CHALLNEGE_SIZE = 20
+    private val CHALLNEGE_SIZE = 200
 
     fun getRecruitingChallengesPaging(
     ) : Flow<PagingData<Challenge>> {

@@ -149,14 +149,6 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
-                ResponseCodeStatus.JOIN_CHALLENGE_FAIL.code -> {
-                    ResultType.Fail(
-                        it.changeMessageAndData(
-                            ResponseCodeStatus.JOIN_CHALLENGE_FAIL.message,
-                            it.data
-                        )
-                    )
-                }
                 else -> {
                     ResultType.Fail(
                         it
