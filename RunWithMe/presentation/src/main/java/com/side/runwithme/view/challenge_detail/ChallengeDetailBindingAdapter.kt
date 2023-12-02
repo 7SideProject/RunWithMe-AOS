@@ -13,6 +13,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.target.Target
 import com.side.domain.usecase.datastore.GetJWTDataStoreUseCase
 import com.side.runwithme.R
+import com.side.runwithme.binding.setProfileImg
 import com.side.runwithme.util.BASE_URL
 import com.side.runwithme.util.CHALLENGE
 import com.side.runwithme.util.CHALLENGE_STATE
@@ -46,6 +47,14 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
                 background = ContextCompat.getDrawable(this.context, R.drawable.border_rectangle_blue)
             }
         }
+        CHALLENGE_STATE.NOT_START_AND_MANAGER -> {
+            this.apply {
+                text = resources.getString(R.string.challenge_break)
+                visibility = View.VISIBLE
+                setTextColor(ContextCompat.getColor(this.context, R.color.black))
+                background = ContextCompat.getDrawable(this.context, R.drawable.border_rectangle_blue)
+            }
+        }
         CHALLENGE_STATE.NOT_START_AND_NOT_JOIN -> {
             this.apply {
                 text = resources.getString(R.string.challenge_join)
@@ -57,7 +66,7 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
         CHALLENGE_STATE.END -> {
             this.visibility = View.GONE
         }
-        else -> {
+        CHALLENGE_STATE.NOTHING -> {
             this.visibility = View.GONE
         }
     }
@@ -65,6 +74,11 @@ fun AppCompatButton.setState(state: CHALLENGE_STATE){
 
 @BindingAdapter("challenge_img", "jwt")
 fun ImageView.setChallengeImg(challengeSeq: Long, jwt: String){
+    if(challengeSeq == 0L){
+        Glide.with(this.context).load(R.drawable.bg_lightgrey).into(this)
+        return
+    }
+
     val glideUrl = GlideUrl(BASE_URL + CHALLENGE + "/${challengeSeq}/" + GET_CHALLNEGE_IMG) {
         mapOf(Pair("Authorization", jwt))
     }

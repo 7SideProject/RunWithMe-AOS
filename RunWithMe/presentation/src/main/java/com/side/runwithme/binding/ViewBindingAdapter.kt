@@ -1,6 +1,5 @@
 package com.side.runwithme.binding
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -8,17 +7,13 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.request.target.Target
 import com.side.domain.model.Challenge
 import com.side.runwithme.R
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.BASE_URL
-import com.side.runwithme.util.CHALLENGE
-import com.side.runwithme.util.GET_CHALLNEGE_IMG
 import com.side.runwithme.util.GET_PROFILE_IMG
 import com.side.runwithme.util.USER
 import com.side.runwithme.util.costFormatter
-import com.side.runwithme.view.challenge_detail.setChallengeImg
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.Math.round
 
@@ -50,7 +45,8 @@ fun TextView.setRunningTerm(challenge: Challenge?) {
 
 @BindingAdapter("runningDistance")
 fun TextView.setRunnignDistance(distance: Int) {
-    this.text = "${round((1F * distance / 1000) * 100) / 100} km"
+    val kmDistance = 1F * distance / 1000F
+    this.text = String.format("%.2f", kmDistance) + "km"
 }
 
 @BindingAdapter("runningTime")
@@ -60,7 +56,9 @@ fun TextView.setRunningTime(time: Int) {
     val secondInt = time % 60
 
     val text =
-        if (hourInt != 0) "${hourInt}시 ${minuteInt}분 ${secondInt}초" else if (minuteInt == 0) "${secondInt}초" else "${minuteInt}분 ${minuteInt}초"
+        if (hourInt != 0) "${hourInt}시간\n${minuteInt}분 ${secondInt}초"
+        else if (minuteInt == 0) "${secondInt}초"
+        else "${minuteInt}분 ${minuteInt}초"
 
     this.text = text
 }
@@ -137,9 +135,19 @@ fun TextView.setTotalRunningTime(totalTime: Int) {
 
 @BindingAdapter("profileImg", "jwt")
 fun CircleImageView.setProfileImg(userSeq: Long, jwt: String) {
+    if(userSeq == 0L){
+        Glide.with(this.context).load(R.drawable.user_image).into(this)
+        return
+    }
+
     val glideUrl = GlideUrl(BASE_URL + USER + "/${userSeq}/" + GET_PROFILE_IMG) {
         mapOf(Pair("Authorization", jwt))
     }
-    Glide.with(this.context).load(glideUrl).override(R.dimen.propfile_img_size).fitCenter()
-        .placeholder(R.drawable.user_image).skipMemoryCache(true).into(this)
+
+    Glide.with(this.context).load(glideUrl)
+        .override(R.dimen.propfile_img_size * 2)
+        .placeholder(R.drawable.user_image)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
+        .skipMemoryCache(true)
+        .into(this)
 }
