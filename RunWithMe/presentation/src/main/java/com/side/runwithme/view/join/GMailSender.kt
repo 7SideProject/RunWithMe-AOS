@@ -15,7 +15,7 @@ class GMailSender(val user: String, val password: String): javax.mail.Authentica
     private val mailHost = "smtp.gmail.com"
     private lateinit var session: Session
     private var emailCode: String = ""
-    private val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private val charset = '0'..'9'
 
     init {
         initProps()

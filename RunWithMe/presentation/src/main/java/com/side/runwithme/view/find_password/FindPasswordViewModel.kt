@@ -1,17 +1,14 @@
 package com.side.runwithme.view.find_password
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.user.ChangePasswordUseCase
-import com.side.runwithme.R
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.asEventFlow
 import com.side.runwithme.util.passwordValidation
-import com.side.runwithme.view.join.JoinViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,37 +51,12 @@ class FindPasswordViewModel @Inject constructor(
     }
 
     fun changePassword(){
-        Log.d("test123", "changePassword: click")
-        if(email.value.isBlank()){
-            viewModelScope.launch {
-                _findPasswordEventFlow.emit(Event.Fail("이메일을 입력해주세요."))
-            }
+        if(!checkEmailValidation()){
             return
         }
 
-        if(email.value != verifiedEmail.value){
-            viewModelScope.launch {
-                _findPasswordEventFlow.emit(Event.Fail("인증한 이메일과 다릅니다."))
-            }
+        if(!checkPasswordValidation()){
             return
-        }
-
-        when(passwordValidation(password.value, passwordConfirm.value)){
-            PasswordVerificationType.LENGTH_ERROR -> {
-                viewModelScope.launch {
-                    _findPasswordEventFlow.emit(Event.Fail("비밀번호는 8~16자로 입력해주세요."))
-                }
-                return
-            }
-            PasswordVerificationType.NOT_EQUAL_ERROR -> {
-                viewModelScope.launch {
-                    _findPasswordEventFlow.emit(Event.Fail("비밀번호가 일치하지 않습니다."))
-                }
-                return
-            }
-            else -> {
-
-            }
         }
 
         viewModelScope.launch(Dispatchers.IO){
@@ -94,9 +66,52 @@ class FindPasswordViewModel @Inject constructor(
                 }.onFailure {
                     _findPasswordEventFlow.emit(Event.Fail("변경에 실패했습니다. 잠시 후 다시 시도해주세요."))
                 }.onError {
-                    _findPasswordEventFlow.emit(Event.Fail("변경에 실패했습니다."))
+                    _findPasswordEventFlow.emit(Event.Fail("변경에 실패했습니다. 잠시 후 다시 시도해주세요."))
                     Firebase.crashlytics.recordException(it)
                 }
+            }
+        }
+    }
+
+    private fun checkEmailValidation() : Boolean {
+        if(email.value.isBlank()){
+            viewModelScope.launch {
+                _findPasswordEventFlow.emit(Event.Fail("이메일을 입력해주세요."))
+            }
+            return false
+        }
+
+        if(email.value != verifiedEmail.value){
+            viewModelScope.launch {
+                _findPasswordEventFlow.emit(Event.Fail("인증한 이메일과 다릅니다."))
+            }
+            return false
+        }
+        return true
+    }
+
+    private fun checkPasswordValidation() : Boolean {
+        when(passwordValidation(password.value, passwordConfirm.value)){
+            PasswordVerificationType.LENGTH_ERROR -> {
+                viewModelScope.launch {
+                    _findPasswordEventFlow.emit(Event.Fail("비밀번호는 8~16자로 입력해주세요."))
+                }
+                return false
+            }
+            PasswordVerificationType.NOT_EQUAL_ERROR -> {
+                viewModelScope.launch {
+                    _findPasswordEventFlow.emit(Event.Fail("비밀번호가 일치하지 않습니다."))
+                }
+                return false
+            }
+            PasswordVerificationType.NOT_VALID -> {
+                viewModelScope.launch {
+                    _findPasswordEventFlow.emit(Event.Fail("비밀번호가 일치하지 않습니다."))
+                }
+                return false
+            }
+            PasswordVerificationType.SUCCESS -> {
+                return true
             }
         }
     }
