@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="calorie">%d kcal</string>
     <string name="running_result_day">%s 년 %d 월 %d 일 러닝</string>
 
-    <string name="challenge_period">%d ~ %d</string>
     <string name="challenge_member_limit">%d / %d</string>
     <string name="challenge_cycle">주 %d회</string>
     <string name="challenge_cost">%dP</string>
@@ -19,9 +17,6 @@
     <string name="minute">분</string>
     <string name="start">시작</string>
 
-
-
-    <string name="running">러닝</string>
 
     <string name="running_pause">일시정지</string>
     <string name="running_resume">다시 시작하기</string>
