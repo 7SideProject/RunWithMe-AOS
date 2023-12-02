@@ -1,7 +1,9 @@
 package com.side.data.datasource.challenge
 
+import android.util.Log
 import com.side.data.api.ChallengeApi
 import com.side.data.model.response.ChallengeDetailResponse
+import com.side.data.model.response.ChallengeListResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -24,9 +26,9 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     }
 
     override fun getRecruitingChallengeList(
-        cursor: Long, size: Int
-    ): Flow<BaseResponse<List<Challenge>>> = flow {
-        emit(challengeApi.getRecruitingChallengeList(cursor, size))
+        cursor: Long, dateStart: String, size: Int
+    ): Flow<BaseResponse<List<ChallengeListResponse>>> = flow {
+        emit(challengeApi.getRecruitingChallengeList(cursor, dateStart, size))
     }
 
     override fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<BaseResponse<String>> = flow {
