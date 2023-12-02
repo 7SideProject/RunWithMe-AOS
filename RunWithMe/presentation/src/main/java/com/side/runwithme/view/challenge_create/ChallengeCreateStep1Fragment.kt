@@ -123,7 +123,8 @@ class ChallengeCreateStep1Fragment : BaseFragment<FragmentChallengeCreate1Bindin
     }
 
     private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
-        val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        imageByteArray.toRequestBody()
+        val requestFile = imageByteArray.toRequestBody("image/webp".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", "challenge", requestFile)
     }
 

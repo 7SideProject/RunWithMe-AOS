@@ -90,6 +90,9 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>(R.layout.fr
                     is MyPageViewModel.EditEvent.Fail-> {
                         showToast(resources.getString(it.message))
                     }
+                    is MyPageViewModel.EditEvent.Error -> {
+                        showToast("서버 에러입니다. 다시 시도해주세요.")
+                    }
                 }
             }
         }
@@ -198,7 +201,7 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>(R.layout.fr
     }
 
     private fun createMultiPart(imageByteArray: ByteArray): MultipartBody.Part {
-        val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val requestFile = imageByteArray.toRequestBody("image/webp".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", "profile", requestFile)
     }
 
