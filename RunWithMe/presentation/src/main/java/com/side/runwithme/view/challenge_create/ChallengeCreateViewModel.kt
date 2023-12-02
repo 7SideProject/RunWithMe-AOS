@@ -25,40 +25,41 @@ import javax.inject.Inject
 @HiltViewModel
 class ChallengeCreateViewModel @Inject constructor(
     private val createChallengeUseCase: CreateChallengeUseCase
-): ViewModel(){
+) : ViewModel() {
 
     // 화면에 binding 하기 위한 Img 객체 (Step2에서 Step1으로 이동해도 이미지가 살아있음)
-    val challengeImg : MutableStateFlow<Uri?> = MutableStateFlow(null)
+    val challengeImg: MutableStateFlow<Uri?> = MutableStateFlow(null)
+
     // 실제 API로 요청하는 MultipartBody.Part
-    val challengeImgMultiPart : MutableStateFlow<MultipartBody.Part?> = MutableStateFlow(null)
+    val challengeImgMultiPart: MutableStateFlow<MultipartBody.Part?> = MutableStateFlow(null)
 
-    val challengeName : MutableStateFlow<String> = MutableStateFlow("")
+    val challengeName: MutableStateFlow<String> = MutableStateFlow("")
 
-    val challengeDescription : MutableStateFlow<String> = MutableStateFlow("")
+    val challengeDescription: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val _goalWeeks : MutableStateFlow<Int> = MutableStateFlow(1)
+    private val _goalWeeks: MutableStateFlow<Int> = MutableStateFlow(1)
     val goalWeeks = _goalWeeks.asStateFlow()
 
-    val dateStart : MutableStateFlow<String> = MutableStateFlow("")
+    val dateStart: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val _dateEnd : MutableStateFlow<String> = MutableStateFlow("")
+    private val _dateEnd: MutableStateFlow<String> = MutableStateFlow("")
     val dateEnd = _dateEnd.asStateFlow()
 
     val goalType = MutableStateFlow(GOAL_TYPE.TIME)
 
-    private val _goalAmount : MutableStateFlow<String> = MutableStateFlow("30")
+    private val _goalAmount: MutableStateFlow<String> = MutableStateFlow("30")
     val goalAmount = _goalAmount.asStateFlow()
 
-    private val goalDistanceAmount : MutableStateFlow<Int> = MutableStateFlow(3)
-    private val goalTimeAmount : MutableStateFlow<Int> = MutableStateFlow(30)
+    private val goalDistanceAmount: MutableStateFlow<Int> = MutableStateFlow(3)
+    private val goalTimeAmount: MutableStateFlow<Int> = MutableStateFlow(30)
 
-    private val _goalDays : MutableStateFlow<String> = MutableStateFlow("3")
+    private val _goalDays: MutableStateFlow<String> = MutableStateFlow("3")
     val goalDays = _goalDays.asStateFlow()
 
     private val _maxMember: MutableStateFlow<String> = MutableStateFlow("7")
     val maxMember = _maxMember.asStateFlow()
 
-    private val _cost : MutableStateFlow<String> = MutableStateFlow("500")
+    private val _cost: MutableStateFlow<String> = MutableStateFlow("500")
     val cost = _cost.asStateFlow()
 
     private val _password: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -93,17 +94,17 @@ class ChallengeCreateViewModel @Inject constructor(
     private val _dialogPasswordEventFlow = MutableEventFlow<Event>()
     val dialogPasswordEventFlow = _dialogPasswordEventFlow.asEventFlow()
 
-    fun setDateStart(year: Int, month: Int, day : Int) {
+    fun setDateStart(year: Int, month: Int, day: Int) {
 
-        val fullMonth = if(month < 10) "0" + month else month.toString()
-        val fullDay = if(day < 10) "0" + day else day.toString()
+        val fullMonth = if (month < 10) "0" + month else month.toString()
+        val fullDay = if (day < 10) "0" + day else day.toString()
 
         dateStart.value = "$year-$fullMonth-$fullDay"
 
         setDateEnd()
     }
 
-    fun setDateEnd(){
+    fun setDateEnd() {
         val tokenizer = StringTokenizer(dateStart.value, "-")
         val year = tokenizer.nextToken().toInt()
         val month = tokenizer.nextToken().toInt()
@@ -121,8 +122,8 @@ class ChallengeCreateViewModel @Inject constructor(
         val endDay = calendar.get(Calendar.DAY_OF_MONTH)
 
 
-        val fullMonth = if(endMonth < 10) "0" + endMonth else endMonth.toString()
-        val fullDay = if(endDay < 10) "0" + endDay else endDay.toString()
+        val fullMonth = if (endMonth < 10) "0" + endMonth else endMonth.toString()
+        val fullDay = if (endDay < 10) "0" + endDay else endDay.toString()
 
         _dateEnd.value = "$endYear-$fullMonth-$fullDay"
     }
@@ -139,7 +140,7 @@ class ChallengeCreateViewModel @Inject constructor(
     }
 
 
-    fun onClickGoalWeeksDialog(weeks: Int){
+    fun onClickGoalWeeksDialog(weeks: Int) {
         _goalWeeks.value = weeks
         setDateEnd()
 
@@ -148,12 +149,12 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun setGoalType(type: GOAL_TYPE){
+    fun setGoalType(type: GOAL_TYPE) {
         goalType.value = type
     }
 
 
-    fun onClickGoalDistance(amount: Int){
+    fun onClickGoalDistance(amount: Int) {
         goalDistanceAmount.value = amount
 
         setGoalAmountByDistance()
@@ -163,7 +164,7 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun onClickGoalTime(amount: Int){
+    fun onClickGoalTime(amount: Int) {
         goalTimeAmount.value = (amount + 1) * 10
 
         setGoalAmountByTime()
@@ -174,15 +175,15 @@ class ChallengeCreateViewModel @Inject constructor(
     }
 
 
-    fun setGoalAmountByDistance(){
+    fun setGoalAmountByDistance() {
         _goalAmount.value = "${goalDistanceAmount.value}"
     }
 
-    fun setGoalAmountByTime(){
+    fun setGoalAmountByTime() {
         _goalAmount.value = goalTimeAmount.value.toString()
     }
 
-    fun onClickGoalDaysDialog(day: Int){
+    fun onClickGoalDaysDialog(day: Int) {
         _goalDays.value = day.toString()
 
         viewModelScope.launch {
@@ -190,7 +191,7 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun onClickMaxMemberDialog(max: Int){
+    fun onClickMaxMemberDialog(max: Int) {
         _maxMember.value = max.toString()
 
         viewModelScope.launch {
@@ -198,7 +199,7 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun onClickCostDialog(cost: Int){
+    fun onClickCostDialog(cost: Int) {
         _cost.value = ((cost + 1) * 500).toString()
 
         viewModelScope.launch {
@@ -206,14 +207,14 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    fun onClickPassWordDialog(password: String?){
+    fun onClickPassWordDialog(password: String?) {
 
-        if(password.isNullOrBlank()){
+        if (password.isNullOrBlank()) {
             failPasswordEvent()
             return
         }
 
-        if(password.length < 4){
+        if (password.length < 4) {
             failPasswordEvent()
             return
         }
@@ -224,25 +225,23 @@ class ChallengeCreateViewModel @Inject constructor(
         }
     }
 
-    private fun failPasswordEvent(){
+    private fun failPasswordEvent() {
         viewModelScope.launch {
             _dialogPasswordEventFlow.emit(Event.Fail("비밀번호는 공백없이 4자리를 입력해주세요."))
         }
     }
 
-
-
-    fun create(){
+    fun create() {
         // amount는 type에 따라 km -> m , 분 -> 초로 변경
 
-        if(!isPasswordChallenge.value){
+        if (!isPasswordChallenge.value) {
             _password.value = null
         }
 
-        val goalType = if(this.goalType.value == GOAL_TYPE.TIME) "time" else "distance"
+        val goalType = if (this.goalType.value == GOAL_TYPE.TIME) "time" else "distance"
 
 
-        val goalAmount = if(this.goalType.value == GOAL_TYPE.TIME) {
+        val goalAmount = if (this.goalType.value == GOAL_TYPE.TIME) {
             this.goalAmount.value.toLong() * 60
         } else {
             this.goalAmount.value.toLong() * 1000
@@ -266,8 +265,6 @@ class ChallengeCreateViewModel @Inject constructor(
             password = password.value
         )
 
-        Log.d("test123", "create: ${challenge}")
-
         viewModelScope.launch(Dispatchers.IO) {
             createChallengeUseCase(challenge, challengeImgMultiPart.value).collectLatest {
                 it.onSuccess {
@@ -276,19 +273,18 @@ class ChallengeCreateViewModel @Inject constructor(
                     _createEventFlow.emit(Event.Fail(it.message))
                 }.onError {
                     Firebase.crashlytics.recordException(it)
-                    Log.e("test123", "Create Challenge Error : ${it.message}  , ${it.cause}")
+                    _createEventFlow.emit(Event.Fail("다시 시도해주세요."))
                 }
             }
         }
     }
 
 
-
     sealed class Event {
         data class Success(val message: String) : Event()
         data class Fail(val message: String) : Event()
 
-        class Error(): Event()
+        class Error() : Event()
     }
 
 }
