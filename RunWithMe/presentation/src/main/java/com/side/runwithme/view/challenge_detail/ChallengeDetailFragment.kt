@@ -59,6 +59,15 @@ class ChallengeDetailFragment :
                         )
                     }
 
+                    CHALLENGE_STATE.NOT_START_AND_MANAGER -> {
+                        initChallengeDetailDialog(
+                            resources.getString(
+                                R.string.quit_challenge_content,
+                                challengeDetailViewModel.challenge.value!!.cost
+                            ), quitChallengeClickListener
+                        )
+                    }
+
                     CHALLENGE_STATE.NOT_START_AND_NOT_JOIN -> {
                         initChallengeDetailDialog(
                             resources.getString(
@@ -130,25 +139,16 @@ class ChallengeDetailFragment :
                     }
 
                     is ChallengeDetailViewModel.Event.Fail -> {
-                        // 실패 시 메세지
+                        showToast(it.message)
+                    }
+
+                    is ChallengeDetailViewModel.Event.JoinSuccess -> {
+                        showToast("가입 완료했습니다.")
                     }
                 }
             }
         }
     }
-
-//    private fun goRunning() {
-//        val intent = Intent(requireContext(), RunningActivity::class.java)
-//        intent.apply {
-//            val challenge = challengeDetailViewModel.challenge.value!!
-//            val goalType =
-//                if (challenge.goalType == GOAL_TYPE.DISTANCE.apiName) GOAL_TYPE.DISTANCE.ordinal else GOAL_TYPE.TIME.ordinal
-//            putExtra("challengeSeq", challenge.seq)
-//            putExtra("goalType", goalType)
-//            putExtra("goalAmount", challenge.goalAmount)
-//        }
-//        startActivity(intent)
-//    }
 
     private fun initChallenge(challenge: ChallengeParcelable) {
         challengeDetailViewModel.setChallnege(challenge)
