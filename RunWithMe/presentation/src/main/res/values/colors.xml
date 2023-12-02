@@ -10,23 +10,19 @@
     <color name="grey">#FF888888</color>
 
     <color name="black_high_emphasis">#D9000000</color>
-    <color name="black_medium_emphasis">#99000000</color>
     <color name="black_low_emphasis">#66000000</color>
 
     <color name="mainColor">#6A7BD9</color>
     <color name="main_border_grey">#F2F2F2</color>
     <color name="light_grey">#99E9ECEF</color>
-    <color name="main_blue_green">#17A196</color>
 
     <color name="main_red">#EF5350</color>
-    <color name="main_beige">#F6F7D7</color>
     <color name="main_sky">#A0ACF2</color>
     <color name="main_blue">#6A7BD9</color>
     <color name="main_black">#232323</color>
     <color name="main_grey">#666666</color>
     <color name="sub_white">#EBEEF2</color>
     <color name="main_light_grey">#99E9ECEF</color>
-    <color name="main_medium_grey">#66D0D3D5</color>
 
 
 </resources>
