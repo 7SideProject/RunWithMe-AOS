@@ -26,8 +26,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun initViewModelCallbacks() {
 
         repeatOnStarted {
-            homeViewModel.moveScreenEventFlow.collectLatest { event ->
-                Log.d("test123", "initViewModelCallbacks: ${event}")
+            homeViewModel.msgEventFlow.collectLatest { event ->
                 when (event) {
                     HomeViewModel.MoveEvent.ChallengeListAction -> {
                         moveChallengeList()
@@ -65,7 +64,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initClickListener() {
         binding.apply {
-            /** CardView에는 onClick binding이 작동하지 않는 현상 발생 **/
             cvChallenge.setOnClickListener {
                 homeViewModel.onClickChallengeList()
             }

@@ -72,9 +72,9 @@ class MyPageViewModel @Inject constructor(
                     getUserProfile(userSeq)
                     getTotalRecord(userSeq)
                 }.onFailure { error->
-                    Log.d("myPageInitRequest", "${error} ")
+
                 }.onError { error ->
-                    Log.d("myPageInitRequest", "${error.message} ")
+
                 }
             }
         }
@@ -92,9 +92,9 @@ class MyPageViewModel @Inject constructor(
                         editHeight.value = height
                     }
                 }.onFailure { error->
-                    Log.d("getUserProfileError", "${error.message} ")
+
                 }.onError { error ->
-                    Log.d("getUserProfileError", "${error.message} ")
+
                 }
             }
         }
@@ -105,11 +105,10 @@ class MyPageViewModel @Inject constructor(
             getTotalRecordUseCase(userSeq).collectLatest {
                 it.onSuccess { success ->
                     _totalRecord.value = success.data!!
-                    Log.d("test123", "getTotalRecord: ${_totalRecord.value}")
                 }.onFailure { error->
-                    Log.d("getTotalRecordError", "${error.message} ")
+
                 }.onError { error ->
-                    Log.d("getTotalRecordError", "${error.message} ")
+
                 }
             }
         }
@@ -159,7 +158,7 @@ class MyPageViewModel @Inject constructor(
                 }.onFailure {
                     _editEventFlow.emit(EditEvent.Fail(R.string.message_edit_profile_fail))
                 }.onError { error ->
-                    Log.d("test123", "editProfile error :${error.message} ")
+                    _editEventFlow.emit(EditEvent.Error())
                 }
             }
         }
@@ -173,7 +172,7 @@ class MyPageViewModel @Inject constructor(
                 }.onFailure {
                     _editEventFlow.emit(EditEvent.Fail(R.string.message_edit_profile_fail))
                 }.onError {
-                    Log.d("test123", "editProfileImage error ${it.message} ")
+                    _editEventFlow.emit(EditEvent.Error())
                 }
             }
         }
@@ -191,5 +190,6 @@ class MyPageViewModel @Inject constructor(
     sealed class EditEvent {
         data class Success(val message: Int) : EditEvent()
         data class Fail(val message: Int) : EditEvent()
+        class Error : EditEvent()
     }
 }
