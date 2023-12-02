@@ -3,6 +3,7 @@ package com.side.data.datasource.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.side.data.util.DATASTORE_KEY
+import com.side.data.util.NOT_YET_REFRESH_EXPIRED
 import com.side.data.util.getDecryptStringValue
 import com.side.data.util.getValue
 import com.side.data.util.preferencesKeys.CHALLENGE_NAME
@@ -50,7 +51,9 @@ class DataStoreDataSourceImpl @Inject constructor(
 
     override suspend fun saveToken(jwt: String, refreshToken: String) {
         dataStore.saveEncryptStringValue(JWT, jwt)
-        dataStore.saveEncryptStringValue(REFRESH_TOKEN, refreshToken)
+        if(refreshToken != NOT_YET_REFRESH_EXPIRED) {
+            dataStore.saveEncryptStringValue(REFRESH_TOKEN, refreshToken)
+        }
     }
 
     override fun getJWT(): Flow<String> = flow {

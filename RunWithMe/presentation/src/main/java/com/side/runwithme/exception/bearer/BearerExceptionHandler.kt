@@ -23,7 +23,6 @@ class BearerExceptionHandler(
             object : Application.ActivityLifecycleCallbacks {
 
                 override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                    Log.d("test123", "Application onActivityCreated: ${activity}")
                     if(activity is TedPermissionActivity) return
                     lastActivity = activity
                 }
@@ -60,9 +59,7 @@ class BearerExceptionHandler(
             })
     }
     override fun uncaughtException(thread: Thread, exception: Throwable) {
-        Log.d("test123", "uncaughtException: ${exception}")
         if(exception is BearerException || exception.cause is BearerException || exception.cause?.cause is BearerException){
-            Log.d("test123", "uncaughtException: bearerexception")
             handleBearerException()
         }else {
             bearerExceptionHandler.uncaughtException(thread,exception)

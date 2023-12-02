@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.side.data.datasource.datastore.DataStoreDataSource
 import com.side.data.datasource.token.TokenDataSource
+import com.side.data.util.NOT_YET_REFRESH_EXPIRED
 import com.side.domain.base.BaseResponse
 import com.side.domain.exception.BearerException
 import kotlinx.coroutines.flow.first
@@ -27,6 +28,7 @@ class AccessTokenAuthenticator @Inject constructor(
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
+        Log.d("test123", "authenticate: start")
         if(response.code == 401) {
             try {
                 val refreshResponse = runBlocking {
@@ -34,8 +36,6 @@ class AccessTokenAuthenticator @Inject constructor(
                     tokenDataSource.refreshingToken(refreshToken)
                 }
 
-                Log.d("test123", "authenticate errorbody: ${(refreshResponse.errorBody()).toString()}")
-                Log.d("test123", "authenticate body : ${refreshResponse.body()}")
 
                 if (refreshResponse.isSuccessful) {
                     val newToken = getToken(refreshResponse)
@@ -72,7 +72,7 @@ class AccessTokenAuthenticator @Inject constructor(
         val jwt = allHeaders.get("authorization") ?: ""
         val refreshToken = allHeaders.get("set-cookie")?.let {
             it.split("; ").get(0).split("=").get(1)
-        } ?: ""
+        } ?: NOT_YET_REFRESH_EXPIRED
 
         /** refresh token 갱신되는지 확인해야함 **/
         Log.d("test123", "authenticator : headers : ${allHeaders}")
