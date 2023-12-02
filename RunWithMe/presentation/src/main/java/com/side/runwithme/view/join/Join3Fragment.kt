@@ -14,7 +14,7 @@ import com.side.runwithme.databinding.FragmentJoin3Binding
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.flow.collectLatest
 
-class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3) {
+class Join3Fragment : BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3) {
 
     private val joinViewModel by activityViewModels<JoinViewModel>()
 
@@ -42,29 +42,20 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
         }
     }
 
-    private fun hideKeyboard(editText: EditText){
-        val manager: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        manager.hideSoftInputFromWindow(editText.applicationWindowToken, 0)
-    }
-
-    private fun showKeyboard(editText: EditText){
-        val manager: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        manager.showSoftInput(editText.rootView, InputMethodManager.SHOW_IMPLICIT)
-        editText.requestFocus()
-    }
-
-
-
-    private fun initSpinner(){
+    private fun initSpinner() {
         initWeightSpinner()
         initHeightSpinner()
     }
 
-    private fun initWeightSpinner(){
+    private fun initWeightSpinner() {
         val weightList = Array(231) { i -> i + 20 }
 
         binding.spinnerEditWeight.apply {
-            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, weightList)
+            adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                weightList
+            )
             setSelection(30)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
                 AdapterView.OnItemClickListener {
@@ -92,11 +83,16 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
             }
         }
     }
-    private fun initHeightSpinner(){
+
+    private fun initHeightSpinner() {
         val heightList = Array(131) { i -> i + 120 }
 
         binding.spinnerEditHeight.apply {
-            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, heightList)
+            adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                heightList
+            )
             setSelection(30)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
                 AdapterView.OnItemClickListener {
@@ -139,11 +135,16 @@ class Join3Fragment: BaseFragment<FragmentJoin3Binding>(R.layout.fragment_join3)
                 showToast(resources.getString(joinEvent.message))
                 requireActivity().finish()
             }
-            is JoinViewModel.JoinEvent.Check ->{
+
+            is JoinViewModel.JoinEvent.Check -> {
                 joinViewModel.join()
             }
+
             is JoinViewModel.JoinEvent.Fail -> {
                 showToast(resources.getString(joinEvent.message))
+            }
+            is JoinViewModel.JoinEvent.Error -> {
+                showToast("서버 에러입니다. 다시 시도해주세요.")
             }
         }
     }
