@@ -50,7 +50,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main){
     private fun initClickListener(){
         binding.apply {
             floatingActionButton.setOnClickListener {
-//                startActivity(Intent(this@MainActivity, RunningListActivity::class.java))
                 navController.navigate(R.id.runningListFragment)
             }
         }
