@@ -1,5 +1,6 @@
 package com.side.runwithme.view.route_detail
 
+import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -31,6 +32,10 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
     private val routeDetailViewModel by viewModels<RouteDetailViewModel>()
 
     override fun init() {
+
+        binding.apply {
+            routeDetailVM = routeDetailViewModel
+        }
 
         initMapView()
 
@@ -120,10 +125,6 @@ class RouteDetailFragment : BaseFragment<FragmentRouteDetailBinding>(R.layout.fr
         polyline.color = requireActivity().getColor(R.color.mainColor)
         polyline.map = naverMap
 //        zoomToLatLng(naverLatLngs.last())
-    }
-
-    private fun zoomToLatLng(naverLatLng: LatLng){
-        naverMap.moveCamera(CameraUpdate.scrollTo(naverLatLng))
     }
 
     private fun initMapView(){

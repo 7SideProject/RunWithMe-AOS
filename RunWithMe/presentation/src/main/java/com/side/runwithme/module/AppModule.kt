@@ -20,11 +20,6 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreferences(app: Application) =
-        app.getSharedPreferences("pref", Context.MODE_PRIVATE)!!
-
-    @Singleton
-    @Provides
     fun provideDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             produceFile = { appContext.preferencesDataStoreFile(DATASTORE_NAME) })

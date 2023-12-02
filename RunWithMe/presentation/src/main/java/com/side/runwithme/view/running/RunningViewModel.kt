@@ -1,13 +1,10 @@
 package com.side.runwithme.view.running
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.side.domain.modedl.PracticeRunRecord
-import com.side.domain.model.Coordinate
 import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
@@ -71,7 +68,7 @@ class RunningViewModel @Inject constructor(
                 }.onFailure {
                     _weight.value = 65
                 }.onError {
-                    Log.d("test123", "getMyWeight error:  $it")
+
                 }
             }
         }

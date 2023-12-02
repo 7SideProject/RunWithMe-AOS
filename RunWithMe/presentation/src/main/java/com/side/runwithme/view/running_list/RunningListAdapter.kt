@@ -1,19 +1,14 @@
 package com.side.runwithme.view.running_list
 
-import android.content.SharedPreferences
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.side.domain.model.Challenge
 import com.side.runwithme.databinding.ItemMyCurrentChallengeListBinding
 import com.side.runwithme.model.Token
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
 
 class RunningListAdapter(private val listener: IntentToRunningActivityClickListener, private val jwt: StateFlow<String>) : PagingDataAdapter<Challenge, RunningListAdapter.ViewHolder>(diffUtil) {
