@@ -74,11 +74,6 @@ class AccessTokenAuthenticator @Inject constructor(
             it.split("; ").get(0).split("=").get(1)
         } ?: NOT_YET_REFRESH_EXPIRED
 
-        /** refresh token 갱신되는지 확인해야함 **/
-        Log.d("test123", "authenticator : headers : ${allHeaders}")
-        Log.d("test123", "authenticator: jwt : ${jwt}")
-        Log.d("test123", "authenticator: refreshtoken : ${refreshToken}")
-
         runBlocking {
             saveToken(jwt, refreshToken)
         }
