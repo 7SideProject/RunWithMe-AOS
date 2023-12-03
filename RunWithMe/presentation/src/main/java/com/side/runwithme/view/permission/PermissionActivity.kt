@@ -2,8 +2,8 @@ package com.side.runwithme.view.permission
 
 import android.content.Intent
 import android.net.Uri
-import com.example.seobaseview.base.BaseActivity
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityPermissionBinding
 import dagger.hilt.android.AndroidEntryPoint
 

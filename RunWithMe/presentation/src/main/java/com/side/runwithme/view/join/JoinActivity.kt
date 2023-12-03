@@ -3,8 +3,8 @@ package com.side.runwithme.view.join
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.seobaseview.base.BaseActivity
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityJoinBinding
 import dagger.hilt.android.AndroidEntryPoint
 

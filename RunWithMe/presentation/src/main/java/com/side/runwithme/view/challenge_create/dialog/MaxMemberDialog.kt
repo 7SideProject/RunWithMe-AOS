@@ -4,8 +4,8 @@ import android.os.Build
 import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseDialogFragment
 import com.side.runwithme.databinding.DialogMaxMemberBinding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel

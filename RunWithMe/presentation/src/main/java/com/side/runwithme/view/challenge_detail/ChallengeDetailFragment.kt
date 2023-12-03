@@ -1,18 +1,14 @@
 package com.side.runwithme.view.challenge_detail
 
-import android.content.Intent
-import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentChallengeDetailBinding
 import com.side.runwithme.model.ChallengeParcelable
 import com.side.runwithme.util.CHALLENGE_STATE
-import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.view.running.RunningActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

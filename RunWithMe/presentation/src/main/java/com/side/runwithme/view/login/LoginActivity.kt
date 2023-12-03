@@ -7,10 +7,10 @@ import android.os.Build
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
-import com.example.seobaseview.base.BaseActivity
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityLoginBinding
 import com.side.runwithme.util.*
 import com.side.runwithme.view.MainActivity

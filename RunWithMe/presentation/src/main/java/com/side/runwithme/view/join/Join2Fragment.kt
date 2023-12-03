@@ -2,8 +2,8 @@ package com.side.runwithme.view.join
 
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentJoin2Binding
 import com.side.runwithme.util.PasswordVerificationType
 import com.side.runwithme.util.repeatOnStarted

@@ -36,6 +36,15 @@ class LoginViewModel @Inject constructor(
     val permissionEventFlow = _permissionEventFlow.asEventFlow()
 
     fun loginWithEmail() {
+
+        if(email.value.isBlank() || password.value.isBlank()){
+            viewModelScope.launch {
+                _loginEventFlow.emit(Event.Fail("이메일, 비밀번호를 입력해주세요."))
+            }
+            return
+        }
+
+
         val user = User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {

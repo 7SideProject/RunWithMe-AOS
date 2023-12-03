@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,14 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentEditProfileBinding
-import com.side.runwithme.util.BASE_URL
-import com.side.runwithme.util.GET_PROFILE_IMG
-import com.side.runwithme.util.USER
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.util.resizeBitmapFormUri
 import com.side.runwithme.view.my_page.MyPageViewModel

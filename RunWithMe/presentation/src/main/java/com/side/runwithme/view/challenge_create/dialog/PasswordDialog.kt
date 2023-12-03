@@ -1,8 +1,8 @@
 package com.side.runwithme.view.challenge_create.dialog
 
 import androidx.fragment.app.activityViewModels
-import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseDialogFragment
 import com.side.runwithme.databinding.DialogPasswordBinding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge_create.ChallengeCreateViewModel

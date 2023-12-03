@@ -1,15 +1,12 @@
 package com.side.runwithme.view.join
 
-import android.content.Context
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentJoin3Binding
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.flow.collectLatest

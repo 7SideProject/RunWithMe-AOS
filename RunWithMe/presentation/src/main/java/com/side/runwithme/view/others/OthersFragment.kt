@@ -4,8 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentOthersBinding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.login.LoginActivity
