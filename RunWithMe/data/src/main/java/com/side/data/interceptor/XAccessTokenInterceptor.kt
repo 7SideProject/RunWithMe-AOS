@@ -24,16 +24,11 @@ class XAccessTokenInterceptor @Inject constructor(
             dataStoreDataSource.getJWT().first()
         }
 
-
         val request = chain.request()
             .newBuilder()
             .addHeader(AUTHORIZATION, token)
             .build()
         val response = chain.proceed(request)
-
-        Log.d("test123", "intercept: ${response.code}, ${response.body.toString()}")
-        Log.d("test123", "intercept: ${response.headers}")
-        Log.d("test123", "intercept: ${response.message}")
 
         return response
     }
