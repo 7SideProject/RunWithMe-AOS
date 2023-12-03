@@ -1,7 +1,7 @@
 package com.side.runwithme.view.challenge_create
 
-import com.example.seobaseview.base.BaseActivity
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityCreateChallengeBinding
 import dagger.hilt.android.AndroidEntryPoint
 

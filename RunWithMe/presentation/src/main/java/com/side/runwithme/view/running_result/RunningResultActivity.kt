@@ -6,8 +6,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.seobaseview.base.BaseActivity
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityRunningResultBinding
 import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable

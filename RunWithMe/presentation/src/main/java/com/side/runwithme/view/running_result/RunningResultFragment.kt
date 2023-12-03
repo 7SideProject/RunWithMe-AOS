@@ -3,10 +3,8 @@ package com.side.runwithme.view.running_result
 import android.content.Intent
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentRuuningResultBinding
 import com.side.runwithme.view.MainActivity
 

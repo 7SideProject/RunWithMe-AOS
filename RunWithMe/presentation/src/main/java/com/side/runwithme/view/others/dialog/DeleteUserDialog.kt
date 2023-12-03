@@ -2,8 +2,8 @@ package com.side.runwithme.view.others.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseDialogFragment
 import com.side.runwithme.databinding.DialogDeleteUserBinding
 
 class DeleteUserDialog(private val deleteUserDialogClickListener: DeleteUserDialogClickListener) :
