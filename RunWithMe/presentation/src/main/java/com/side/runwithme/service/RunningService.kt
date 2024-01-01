@@ -16,7 +16,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -27,6 +26,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.datastore.GetTTSOptionUseCase
 import com.side.runwithme.R
 import com.side.runwithme.util.FASTEST_LOCATION_UPDATE_INTERVAL
@@ -153,7 +155,7 @@ class RunningService : LifecycleService() {
                             return@TextToSpeech
                         }
                     } else {
-                        Log.e("test123", "initTextToSpeech Initialize Failed")
+                        Firebase.crashlytics.recordException(IllegalArgumentException("음성 안내 오류"))
                     }
                 }
             }
@@ -274,12 +276,13 @@ class RunningService : LifecycleService() {
         }
 
         if (isTracking and TrackingUtility.hasLocationPermissions(this)) {
-            val request = LocationRequest.create().apply {
-                interval = LOCATION_UPDATE_INTERVAL
-                fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                maxWaitTime = LOCATION_UPDATE_INTERVAL
-            }
+            val request = LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                LOCATION_UPDATE_INTERVAL
+            ).setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(FASTEST_LOCATION_UPDATE_INTERVAL)
+                .setMaxUpdateDelayMillis(LOCATION_UPDATE_INTERVAL)
+                .build()
             fusedLocationProviderClient.requestLocationUpdates(
                 request,
                 locationCallback,
@@ -296,7 +299,9 @@ class RunningService : LifecycleService() {
     }
 
     private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
+
+        override fun onLocationResult(result: LocationResult) {
+
             super.onLocationResult(result)
 
             result?.locations?.let { locations ->

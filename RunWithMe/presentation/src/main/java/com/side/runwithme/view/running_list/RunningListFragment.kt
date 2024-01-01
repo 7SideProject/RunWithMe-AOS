@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fragment_running_list), OnMapReadyCallback {
+class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fragment_running_list) ,OnMapReadyCallback {
 
     private var locationSource: FusedLocationSource? = null
     private var naverMap: NaverMap? = null
@@ -136,17 +136,15 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         }
     }
 
-
     private fun initMapView(){
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+
         val fm = childFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
             ?: MapFragment.newInstance().also {
                 fm.beginTransaction().add(R.id.map_view, it).commit()
             }
         mapFragment.getMapAsync(this)
-
-
-        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
 
     override fun onMapReady(naverMap: NaverMap) {
