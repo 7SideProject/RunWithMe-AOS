@@ -1,9 +1,7 @@
 package com.side.data.entity
 
-import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import okhttp3.MultipartBody
 
 @Entity(tableName = "run_table")
 data class RunRecordEntity(

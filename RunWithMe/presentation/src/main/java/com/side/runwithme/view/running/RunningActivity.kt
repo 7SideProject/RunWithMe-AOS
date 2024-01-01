@@ -486,7 +486,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun stopService(){
-        unbindService(serviceConnection)
         sendCommandToService(RUNNING_STATE.STOP.name)
     }
 

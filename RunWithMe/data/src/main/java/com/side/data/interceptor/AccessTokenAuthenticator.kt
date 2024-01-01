@@ -28,7 +28,6 @@ class AccessTokenAuthenticator @Inject constructor(
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        Log.d("test123", "authenticate: start")
         if(response.code == 401) {
             try {
                 val refreshResponse = runBlocking {

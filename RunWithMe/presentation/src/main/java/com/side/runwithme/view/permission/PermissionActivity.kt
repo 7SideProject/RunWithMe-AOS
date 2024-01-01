@@ -5,6 +5,7 @@ import android.net.Uri
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityPermissionBinding
+import com.side.runwithme.util.PERMISSON_RESULT_OK
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -18,6 +19,7 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(R.layout.acti
     private fun initClickListener(){
         binding.apply {
             btnOk.setOnClickListener {
+                setResult(PERMISSON_RESULT_OK)
                 finish()
             }
             tvTerms.setOnClickListener {
