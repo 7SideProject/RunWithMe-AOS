@@ -32,10 +32,10 @@ interface ChallengeApi {
     suspend fun isChallengeAlreadyJoin(@Path("challengeSeq") challengeSeq: Long): BaseResponse<String>
 
     @GET("challenge/my")
-    suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+    suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeListResponse>>
 
     @GET("challenge/my/running")
-    suspend fun getAvailableRunningList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+    suspend fun getAvailableRunningList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeListResponse>>
 
     @POST("challenge/{challengeSeq}/join")
     suspend fun joinChallenge(@Path("challengeSeq") challengeSeq: Long, @Query("password") password: String?): BaseResponse<String?>

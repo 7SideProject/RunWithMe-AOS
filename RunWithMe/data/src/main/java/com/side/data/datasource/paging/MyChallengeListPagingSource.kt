@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
+import com.side.data.mapper.mapperToChallengeList
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -13,27 +14,42 @@ import javax.inject.Singleton
 class MyChallengeListPagingSource @Inject constructor(
     private val size: Int,
     private val challengeRemoteDataSource: ChallengeRemoteDataSource
-) : PagingSource<Long, Challenge>() {
+) : PagingSource<Challenge, Challenge>() {
 
-    override fun getRefreshKey(state: PagingState<Long, Challenge>): Long? {
+    override fun getRefreshKey(state: PagingState<Challenge, Challenge>): Challenge? {
         return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+            state.closestPageToPosition(anchorPosition)?.prevKey
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey
         }
     }
 
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Challenge> {
+    override suspend fun load(params: LoadParams<Challenge>): LoadResult<Challenge, Challenge> {
         return try {
-            val nextCursor = params.key ?: 0
+            val nextCursor = params.key ?: Challenge(
+                seq = 0,
+                managerSeq = 0,
+                managerName = "",
+                name = "",
+                description = "",
+                image = 0,
+                goalDays = 0,
+                goalType = "",
+                goalAmount = 0,
+                dateStart = "",
+                dateEnd = "",
+                nowMember = 0,
+                maxMember = 0,
+                cost = 0,
+                password = null
+            )
+            val response = challengeRemoteDataSource.getMyChallengeList(nextCursor.seq, size)
 
-            val response = challengeRemoteDataSource.getMyChallengeList(nextCursor, size)
-
-            val challengeList = response.first().data
+            val challengeList = response.first().data.mapperToChallengeList()
 
             val nextKey = if (challengeList.size < size) {
                 null
             } else {
-                challengeList.last().seq
+                challengeList.last()
             }
 
             LoadResult.Page(
