@@ -44,7 +44,6 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-
         val user = User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -86,7 +85,6 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getPermissionCheckUseCase().collectLatest {
                 if(!it){
-                    savePermissionCheck()
                     _permissionEventFlow.emit(false)
                 }
             }
