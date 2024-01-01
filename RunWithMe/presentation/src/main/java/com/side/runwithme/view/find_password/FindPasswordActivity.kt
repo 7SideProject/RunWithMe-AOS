@@ -6,9 +6,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
-import com.example.seobaseview.base.BaseActivity
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityFindPasswordBinding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.join.SendMail

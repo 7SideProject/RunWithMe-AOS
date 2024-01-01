@@ -7,9 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
-import com.example.seobaseview.base.BaseDialogFragment
 import com.side.runwithme.R
-import com.side.runwithme.databinding.DialogLoadingBinding
 import com.side.runwithme.databinding.DialogRunningLoadingBinding
 import com.side.runwithme.util.dialogResize
 

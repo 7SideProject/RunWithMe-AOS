@@ -53,32 +53,20 @@ class RunningListViewModel @Inject constructor(
     private val _runningListEventFlow = MutableEventFlow<RunningListEvent>()
     val runningListEventFlow = _runningListEventFlow.asEventFlow()
 
-    private val CHALLENGE_SIZE = 20
+    private val CHALLENGE_SIZE = 200
 
     fun getMyChallenges() : Flow<PagingData<Challenge>> {
         return getAvailableRunningListUseCase(CHALLENGE_SIZE).cachedIn(viewModelScope)
-    }
-
-    fun getCoordinates() {
-
-    }
-
-    fun getMyScrap() {
-
     }
 
     fun isAvailableRunningToday(challenge: Challenge){
         viewModelScope.launch(Dispatchers.IO) {
             isAvailableRunningTodayUseCase(challenge.seq).collectLatest {
                 it.onSuccess {
-                    Log.d("test123", "isAvailableRunningToday success: ${it.code}")
                     _runningListEventFlow.emit(RunningListEvent.Success(challenge))
                 }.onFailure {
-                    Log.d("test123", "isAvailableRunningToday fail: ${it.code}")
                     _runningListEventFlow.emit(RunningListEvent.Fail())
                 }.onError {
-
-                    Log.d("test123", "isAvailableRunningToday error: ${it}")
                     _runningListEventFlow.emit(RunningListEvent.Error())
                 }
             }

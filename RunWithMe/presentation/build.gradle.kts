@@ -38,12 +38,10 @@ android {
 //        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
 
         buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
-        buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
         buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
         buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
         buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
 
-        manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
         manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
 
     }
@@ -79,17 +77,29 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled  =  false
+            isMinifyEnabled  =  true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
+            buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
+            buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+            buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
+            buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
+
+            manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
+
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -111,7 +121,6 @@ dependencies {
     implementation(files("libs\\activation.jar"))
     implementation(files("libs\\additionnal.jar"))
     implementation(files("libs\\mail.jar"))
-
 //    implementation("androidx.lifecycle:lifecycle-viewmodel:${Versions.VIEWMODEL}")
 
     // Test
@@ -171,10 +180,10 @@ dependencies {
     kapt(Dependencies.KAPT_GLIDE)
 
     // Kakao
-    implementation(Dependencies.KAKAO_USER)
+//    implementation(Dependencies.KAKAO_USER)
 
     // BaseView and SingleLiveEvent
-    implementation(Dependencies.SEOBASEVIEW)
+//    implementation(Dependencies.SEOBASEVIEW)
 
     // Naver Map
     implementation(Dependencies.NAVER_MAP)
@@ -219,5 +228,10 @@ dependencies {
     implementation(Dependencies.FIREBASE_ANALYTICS)
     implementation(Dependencies.FIREBASE_AUTH)
     implementation(Dependencies.FIREBASE_CRASHLYTICS)
+
+    // PlayStore Integerity
+    implementation(Dependencies.PLAY_INTEGRITY)
+
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }

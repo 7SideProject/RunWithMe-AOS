@@ -3,8 +3,8 @@ package com.side.runwithme.view.challenge_create
 import android.app.DatePickerDialog
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentChallengeCreate2Binding
 import com.side.runwithme.view.challenge_create.dialog.GoalWeeksDialog
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,6 +1,7 @@
 package com.side.data.datasource.challenge
 
 import com.side.data.model.response.ChallengeDetailResponse
+import com.side.data.model.response.ChallengeListResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -12,14 +13,14 @@ interface ChallengeRemoteDataSource {
     fun createChallenge(challengeRequestBody: RequestBody, imgFile: MultipartBody.Part?): Flow<BaseResponse<Any?>>
 
     fun getRecruitingChallengeList(
-        cursor:Long, size: Int
-    ): Flow<BaseResponse<List<Challenge>>>
+        cursor:Long, dateStart: String, size: Int
+    ): Flow<BaseResponse<List<ChallengeListResponse>>>
 
     fun isChallengeAlreadyJoin(challengeSeq: Long): Flow<BaseResponse<String>>
 
-    fun getMyChallengeList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<Challenge>>>
+    fun getMyChallengeList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeListResponse>>>
 
-    fun getAvailableRunningList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<Challenge>>>
+    fun getAvailableRunningList(cursorSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeListResponse>>>
 
     fun joinChallenge(challengeSeq: Long, password: String?): Flow<BaseResponse<String?>>
 

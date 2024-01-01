@@ -1,10 +1,14 @@
 package com.side.runwithme.view.recomend
 
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
-import com.naver.maps.map.*
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentRecommendBinding
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
 

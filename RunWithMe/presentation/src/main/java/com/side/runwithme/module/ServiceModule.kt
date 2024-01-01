@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.side.runwithme.R
 import com.side.runwithme.util.NOTIFICATION_CHANNEL_ID
 import com.side.runwithme.view.running.RunningActivity
@@ -25,7 +26,7 @@ object ServiceModule {
     @Provides
     fun providesFusedLocationProviderClient(
         @ApplicationContext context:Context
-    ) = FusedLocationProviderClient(context)
+    ) = LocationServices.getFusedLocationProviderClient(context)
 
     // PendingIntent DI
     @RequiresApi(Build.VERSION_CODES.S)
@@ -51,7 +52,7 @@ object ServiceModule {
     ) = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
         .setAutoCancel(false)   // 자동 꺼짐 false
         .setOngoing(true)       // 유지
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.drawable.rwm_logo)
         .setContentTitle("달리기 기록을 측정 중입니다.")
         .setContentText("00:00:00")
         .setContentIntent(pendingIntent)

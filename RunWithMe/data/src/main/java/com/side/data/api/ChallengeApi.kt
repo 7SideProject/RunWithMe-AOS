@@ -1,6 +1,7 @@
 package com.side.data.api
 
 import com.side.data.model.response.ChallengeDetailResponse
+import com.side.data.model.response.ChallengeListResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
@@ -15,11 +16,12 @@ import retrofit2.http.Query
 
 interface ChallengeApi {
 
-    @GET("challenge/all")
+    @GET("challenge/all/recruit")
     suspend fun getRecruitingChallengeList(
         @Query("cursorSeq") cursorSeq: Long,
+        @Query("dateStart") dateStart: String,
         @Query("size") size: Int,
-    ): BaseResponse<List<Challenge>>
+    ): BaseResponse<List<ChallengeListResponse>>
 
 
     @Multipart
@@ -30,10 +32,10 @@ interface ChallengeApi {
     suspend fun isChallengeAlreadyJoin(@Path("challengeSeq") challengeSeq: Long): BaseResponse<String>
 
     @GET("challenge/my")
-    suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+    suspend fun getMyChallengeList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeListResponse>>
 
     @GET("challenge/my/running")
-    suspend fun getAvailableRunningList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<Challenge>>
+    suspend fun getAvailableRunningList(@Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeListResponse>>
 
     @POST("challenge/{challengeSeq}/join")
     suspend fun joinChallenge(@Path("challengeSeq") challengeSeq: Long, @Query("password") password: String?): BaseResponse<String?>

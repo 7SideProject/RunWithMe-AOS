@@ -36,23 +36,28 @@ class LoginViewModel @Inject constructor(
     val permissionEventFlow = _permissionEventFlow.asEventFlow()
 
     fun loginWithEmail() {
-        val user = if(email.value.isBlank()) User("test@naver.com", "12341234") else User(email.value, password.value)
+
+        if(email.value.isBlank() || password.value.isBlank()){
+            viewModelScope.launch {
+                _loginEventFlow.emit(Event.Fail("이메일, 비밀번호를 입력해주세요."))
+            }
+            return
+        }
+
+        val user = User(email.value, password.value)
 
         viewModelScope.launch(Dispatchers.IO) {
             loginWithEmailUseCase(user).collectLatest {
                 when (it) {
                     is ResultType.Success -> {
-                        Log.d("test123", "loginWithEmail: Success : ${it.data.message}")
                         _loginEventFlow.emit(Event.Success())
                     }
                     is ResultType.Fail -> {
-                        Log.d("test123", "loginWithEmail: fail : code ${it.data.code}, message : ${it.data.message}")
                         _loginEventFlow.emit(Event.Fail(it.data.message))
                     }
 
                     is ResultType.Error -> {
-                        Log.d("test123", "${it.exception.message} ")
-                        Log.d("test123", "${it.exception.cause} ")
+                        _loginEventFlow.emit(Event.Fail("서버 에러입니다. 다시 시도해주세요."))
                     }
                     else -> {}
                 }
@@ -80,7 +85,6 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getPermissionCheckUseCase().collectLatest {
                 if(!it){
-                    savePermissionCheck()
                     _permissionEventFlow.emit(false)
                 }
             }
@@ -90,7 +94,5 @@ class LoginViewModel @Inject constructor(
     sealed class Event {
         class Success() : Event()
         data class Fail(val message: String) : Event()
-
     }
-
 }

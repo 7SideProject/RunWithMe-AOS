@@ -7,15 +7,14 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.lifecycleScope
-import com.example.seobaseview.base.BaseActivity
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
@@ -25,11 +24,10 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
-import com.side.domain.model.Coordinate
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseActivity
 import com.side.runwithme.databinding.ActivityRunningBinding
 import com.side.runwithme.mapper.mapperToCoordinateList
-import com.side.runwithme.mapper.mapperToCoordinatesParcelable
 import com.side.runwithme.model.CoordinatesParcelable
 import com.side.runwithme.model.RunRecordParcelable
 import com.side.runwithme.service.RunningService
@@ -40,7 +38,6 @@ import com.side.runwithme.util.RUNNING_STATE
 import com.side.runwithme.util.TrackingUtility
 import com.side.runwithme.util.onlyTimeFormatter
 import com.side.runwithme.util.repeatOnStarted
-import com.side.runwithme.util.timeFormatter
 import com.side.runwithme.view.MainActivity
 import com.side.runwithme.view.loading.LoadingDialog
 import com.side.runwithme.view.running_result.RunningResultActivity
@@ -52,7 +49,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
-import java.lang.Math.round
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -163,8 +159,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
                 // 서버에 등록이 완료된 후 service를 종료 시킴
                 // 서버에 등록하기 전에 acitivity가 파괴되면 기록을 잃을 우려
                 stopService()
-
-                Log.d("test123", "handleEvent: endservice")
 
                 val intent = Intent(this, RunningResultActivity::class.java).apply {
                     putExtra("runRecord", runRecord)
@@ -460,7 +454,11 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
 
     private fun createByteArray(bitmap: Bitmap): ByteArray{
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 10, outputStream)
+        }else{
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 10, outputStream)
+        }
         return outputStream.toByteArray()
     }
 
@@ -469,7 +467,7 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
             return null
         }
 
-        val requestFile = imageByteArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val requestFile = imageByteArray.toRequestBody("image/webp".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", "running", requestFile)
     }
 
@@ -488,7 +486,6 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
     }
 
     private fun stopService(){
-        unbindService(serviceConnection)
         sendCommandToService(RUNNING_STATE.STOP.name)
     }
 
@@ -576,27 +573,12 @@ class RunningActivity : BaseActivity<ActivityRunningBinding>(R.layout.activity_r
         }
     }
 
-//    // 뒤로가기 버튼 눌렀을 때
-//    @Deprecated("Deprecated in Java")
-//    override fun onBackPressed() {
-//        val builder = AlertDialog.Builder(this)
-//        builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
-//            .setPositiveButton("네"){ _,_ ->
-//                stopRun()
-//            }
-//            .setNegativeButton("아니오"){_,_ ->
-//                // 다시 시작
-//            }.create()
-//        builder.show()
-//    }
-
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val builder = AlertDialog.Builder(this@RunningActivity)
             builder.setTitle("달리기를 종료할까요? 10초 이하의 기록은 저장되지 않습니다.")
                 .setPositiveButton("네"){ _,_ ->
                     stopRun()
-                    /** 한번 더 다이얼로그 띄워서 물어야함 or 꾹 누르기 **/
                 }
                 .setNegativeButton("아니오"){_,_ ->
                     // 다시 시작

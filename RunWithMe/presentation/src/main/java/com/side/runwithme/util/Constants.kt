@@ -10,6 +10,8 @@ const val USER = "users"
 const val GET_CHALLNEGE_IMG = "challenge-image"
 const val GET_PROFILE_IMG = "profile-image"
 
+const val PERMISSON_RESULT_OK = 200
+
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
@@ -49,6 +51,6 @@ enum class GOAL_TYPE(val apiName: String) {
 
 // Challenge 상태 (챌린지 시작, 시작 안했지만 가입 되어있음, 시작 안했지만 가입 안함, 챌린지 끝남)
 enum class CHALLENGE_STATE {
-    START, NOT_START_AND_ALEADY_JOIN, NOT_START_AND_NOT_JOIN, END, NOTHING
+    START, NOT_START_AND_ALEADY_JOIN, NOT_START_AND_MANAGER, NOT_START_AND_NOT_JOIN, END, NOTHING
 }
 

@@ -3,6 +3,8 @@ package com.side.runwithme.view.join
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.model.User
 import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
 import com.side.domain.usecase.user.CheckNicknameIsDuplicateUseCase
@@ -50,7 +52,6 @@ class JoinViewModel @Inject constructor(
     val verifyNumber = MutableStateFlow<String>("")
 
     val allDone : StateFlow<Boolean> = combine(height, nickname, weight){ height, nickname, weight ->
-            Log.d("test123", "combine: ${height}, ${nickname}, $weight")
             height != 0 && weight != 0 && nickname.isNotBlank()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
@@ -105,7 +106,7 @@ class JoinViewModel @Inject constructor(
                 }.onFailure {
                     _join3EventFlow.emit(JoinEvent.Fail(R.string.message_fail_join))
                 }.onError { error ->
-                    Log.d("joinError", "${error.message} ")
+                    _join3EventFlow.emit(JoinEvent.Error())
                 }
             }
         }
@@ -122,9 +123,10 @@ class JoinViewModel @Inject constructor(
                         _idIsDuplicateEventFlow.emit(IdCheckEvent.Success())
                     }
                 }.onFailure {fail ->
-                    Log.d("checkIdError", fail.message)
+
                 }.onError {error->
-                    Log.d("checkIdError", "${error.message}")
+                    Firebase.crashlytics.recordException(error)
+                    _join3EventFlow.emit(JoinEvent.Error())
                 }
             }
         }
@@ -141,9 +143,9 @@ class JoinViewModel @Inject constructor(
                         _join3EventFlow.emit(JoinEvent.Check())
                     }
                 }.onFailure {fail ->
-                    Log.d("checkNickNameError", fail.message)
+                    _join3EventFlow.emit(JoinEvent.Fail(R.string.join_error))
                 }.onError {error->
-                    Log.d("checkNickNameError", "${error.message}")
+                    _join3EventFlow.emit(JoinEvent.Error())
                 }
             }
         }
@@ -153,6 +155,7 @@ class JoinViewModel @Inject constructor(
         data class Success(val message: Int) : JoinEvent()
         data class Check(val check: Boolean = true): JoinEvent()
         data class Fail(val message: Int) : JoinEvent()
+        class Error : JoinEvent()
     }
 
     sealed class IdCheckEvent {

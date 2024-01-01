@@ -2,12 +2,10 @@ package com.side.runwithme.view.running_list
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
@@ -16,6 +14,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.util.FusedLocationSource
 import com.side.domain.model.Challenge
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentRunningListBinding
 import com.side.runwithme.util.GOAL_TYPE
 import com.side.runwithme.util.LOCATION_PERMISSION_REQUEST_CODE
@@ -28,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fragment_running_list), OnMapReadyCallback {
+class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fragment_running_list) ,OnMapReadyCallback {
 
     private var locationSource: FusedLocationSource? = null
     private var naverMap: NaverMap? = null
@@ -137,17 +136,15 @@ class RunningListFragment : BaseFragment<FragmentRunningListBinding>(R.layout.fr
         }
     }
 
-
     private fun initMapView(){
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+
         val fm = childFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
             ?: MapFragment.newInstance().also {
                 fm.beginTransaction().add(R.id.map_view, it).commit()
             }
         mapFragment.getMapAsync(this)
-
-
-        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
 
     override fun onMapReady(naverMap: NaverMap) {

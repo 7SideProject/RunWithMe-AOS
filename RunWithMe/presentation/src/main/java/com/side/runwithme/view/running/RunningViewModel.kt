@@ -1,13 +1,10 @@
 package com.side.runwithme.view.running
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.side.domain.modedl.PracticeRunRecord
-import com.side.domain.model.Coordinate
 import com.side.domain.usecase.datastore.GetRunningInfoUseCase
 import com.side.domain.usecase.datastore.GetUserWeightDataStoreUseCase
 import com.side.domain.usecase.datastore.SaveRunningChallengeGoalAmountUseCase
@@ -71,7 +68,7 @@ class RunningViewModel @Inject constructor(
                 }.onFailure {
                     _weight.value = 65
                 }.onError {
-                    Log.d("test123", "getMyWeight error:  $it")
+
                 }
             }
         }
@@ -134,28 +131,30 @@ class RunningViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            insertPracticeRunRecordUseCase(
-                PracticeRunRecord(
-                    seq = 0,
-                    image = imgByteArray!!,
-                    startTime = runRecord.startTime,
-                    endTime = runRecord.endTime,
-                    runningDay = runRecord.runningDay,
-                    runningTime = runRecord.runningTime,
-                    runningDistance = runRecord.runningDistance,
-                    avgSpeed = runRecord.avgSpeed,
-                    calorie = runRecord.calorie
-                )
-            ).collect {
-                it.onSuccess {
-                    _postRunRecordEventFlow.emit(Event.Success())
-                }.onFailure {
-                    _postRunRecordEventFlow.emit(Event.Fail())
-                }.onError {
-                    Firebase.crashlytics.recordException(it)
-                    _postRunRecordEventFlow.emit(Event.Error())
-                }
-            }
+            /**연습 러닝 기록 등록 yet**/
+            _postRunRecordEventFlow.emit(Event.Success())
+//            insertPracticeRunRecordUseCase(
+//                PracticeRunRecord(
+//                    seq = 0,
+//                    image = imgByteArray!!,
+//                    startTime = runRecord.startTime,
+//                    endTime = runRecord.endTime,
+//                    runningDay = runRecord.runningDay,
+//                    runningTime = runRecord.runningTime,
+//                    runningDistance = runRecord.runningDistance,
+//                    avgSpeed = runRecord.avgSpeed,
+//                    calorie = runRecord.calorie
+//                )
+//            ).collect {
+//                it.onSuccess {
+//                    _postRunRecordEventFlow.emit(Event.Success())
+//                }.onFailure {
+//                    _postRunRecordEventFlow.emit(Event.Fail())
+//                }.onError {
+//                    Firebase.crashlytics.recordException(it)
+//                    _postRunRecordEventFlow.emit(Event.Error())
+//                }
+//            }
 
         }
     }

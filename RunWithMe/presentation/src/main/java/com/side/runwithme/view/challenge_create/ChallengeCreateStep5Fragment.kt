@@ -5,8 +5,8 @@ import android.widget.RadioGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentChallengeCreate5Binding
 import com.side.runwithme.util.repeatOnStarted
 import com.side.runwithme.view.challenge_create.dialog.PasswordDialog

@@ -4,9 +4,9 @@ import android.content.Intent
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.domain.model.Challenge
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentChallengeListBinding
 import com.side.runwithme.mapper.mapperToChallengeParcelable
 import com.side.runwithme.view.challenge_create.ChallengeCreateActivity
@@ -74,8 +74,8 @@ class ChallengeListFragment :
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         initViewModelCallback()
     }

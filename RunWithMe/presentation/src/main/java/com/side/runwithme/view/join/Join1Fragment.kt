@@ -8,8 +8,8 @@ import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.seobaseview.base.BaseFragment
 import com.side.runwithme.R
+import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentJoin1Binding
 import com.side.runwithme.util.repeatOnStarted
 import kotlinx.coroutines.Dispatchers

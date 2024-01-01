@@ -10,6 +10,5 @@ class GetRecruitingChallengeListUseCase @Inject constructor(
 ) {
     operator fun invoke(
         size: Int,
-
     ) = challengeRepository.getRecruitingChallengeList(size)
 }

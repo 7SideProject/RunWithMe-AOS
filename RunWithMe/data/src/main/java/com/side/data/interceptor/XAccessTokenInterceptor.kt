@@ -19,20 +19,15 @@ class XAccessTokenInterceptor @Inject constructor(
     }
 
     override fun intercept(chain: Interceptor.Chain): Response = synchronized(chain) {
-
         val token = runBlocking {
             dataStoreDataSource.getJWT().first()
         }
-
-        Log.d("test123", "intercept: ${token}")
 
         val request = chain.request()
             .newBuilder()
             .addHeader(AUTHORIZATION, token)
             .build()
         val response = chain.proceed(request)
-
-        Log.d("test123", "intercept: ${response.code}")
 
         return response
     }

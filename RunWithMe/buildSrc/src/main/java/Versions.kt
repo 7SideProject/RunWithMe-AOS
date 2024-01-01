@@ -1,7 +1,7 @@
 object Versions {
 
     // Projects
-    const val AGP = "7.4.0"
+    const val AGP = "8.1.4"
     const val KOTLIN = "1.8.0"
     const val SECRETS_GRALDE = "2.0.1"
     const val GOOGLE_SERVICE = "4.3.15"
@@ -10,8 +10,8 @@ object Versions {
 
 
     // Androidx
-    const val CORE_KTX = "1.7.0"
-    const val APP_COMPAT = "1.6.0"
+    const val CORE_KTX = "1.12.0"
+    const val APP_COMPAT = "1.6.1"
     const val MATERIAL = "1.7.0"
     const val CONSTRAINT_LAYOUT = "2.1.4"
     const val LEGACY_SUPPORT = "1.0.0"
@@ -29,7 +29,7 @@ object Versions {
 
     // Library
     const val LIVEDATA = "2.5.1"
-    const val HILT = "2.44"
+    const val HILT = "2.45"
     const val RETROFIT = "2.9.0"
     const val GSON = "2.9.0"
     const val OKHTTP = "4.10.0"
@@ -40,8 +40,8 @@ object Versions {
     const val GLIDE = "4.13.2"
     const val KAKAO_USER = "2.12.0"
     const val SEOBASEVIEW = "1.3"
-    const val NAVER_MAP = "3.16.1"
-    const val GOOGLE_LOCATION = "15.0.1"
+    const val NAVER_MAP = "3.17.0"
+    const val GOOGLE_LOCATION = "21.0.1"
     const val SIMPLE_RATING_BAR = "1.5.1"
     const val LOTTIE = "5.2.0"
     const val CIRCLE_IMAGE_VIEW = "3.1.0"
@@ -55,5 +55,5 @@ object Versions {
     const val FIREBASE_AUTH = "22.1.1"
     const val FIREBASE_CRASHLYTICS_DEPENDENCY = "18.3.2"
     const val FIREBASE_ANALYTICS = "21.2.0"
-
+    const val PLAY_INTEGRITY = "1.1.0"
 }

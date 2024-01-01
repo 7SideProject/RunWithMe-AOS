@@ -62,7 +62,7 @@
                     android:textColor="@color/main_grey"
                     android:textSize="@dimen/fontsize_caption"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintStart_toEndOf="@id/iv_my_challenge"
                     app:layout_constraintTop_toTopOf="@id/iv_my_challenge"
                     tools:text="2022/07/21 ~ 2022/08/21" />
@@ -77,7 +77,6 @@
                     android:textColor="@color/main_black"
                     android:textSize="@dimen/fontsize_h4"
                     android:fontFamily="@font/noto_sans_bold"
-                    app:layout_constraintBottom_toTopOf="@id/tv_goal_amount_header"
                     app:layout_constraintStart_toEndOf="@id/iv_my_challenge"
                     app:layout_constraintTop_toBottomOf="@id/tv_my_challenge_duration"
                     tools:text="김크루" />
@@ -92,7 +91,7 @@
                     android:text="@string/goal"
                     android:textColor="@color/main_grey"
                     android:textSize="@dimen/fontsize_h5"
-                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginBottom="4dp"
                     app:layout_constraintStart_toStartOf="@id/tv_my_challenge_name"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 

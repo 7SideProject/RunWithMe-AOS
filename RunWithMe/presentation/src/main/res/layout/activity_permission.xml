@@ -171,7 +171,7 @@
         <TextView
             android:id="@+id/tv_terms"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:text="개인정보 처리방침"
             style="@style/Hyperlink"

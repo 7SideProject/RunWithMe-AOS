@@ -1,6 +1,5 @@
 package com.side.data.interceptor
 
-import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -24,7 +23,7 @@ class LoginInterceptor @Inject constructor(
                     getToken(response)
                 }
                 else -> {
-                    Log.e("test123", "login intercept error")
+
                 }
             }
 
@@ -38,10 +37,6 @@ class LoginInterceptor @Inject constructor(
         val refreshToken = allHeaders.get("set-cookie")?.let {
             it.split("; ").get(0).split("=").get(1)
         } ?: ""
-
-        Log.d("test123", "intercept: headers : ${allHeaders}")
-        Log.d("test123", "intercept: jwt : ${jwt}")
-        Log.d("test123", "intercept: refreshtoken : ${refreshToken}")
 
         runBlocking {
             saveToken(jwt, refreshToken)

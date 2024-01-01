@@ -78,7 +78,7 @@ object RemoteDataModule {
         accessTokenAuthenticator: AccessTokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(xAccessTokenInterceptor)
+            .addNetworkInterceptor(xAccessTokenInterceptor)
             .authenticator(accessTokenAuthenticator)
             .build()
     }
