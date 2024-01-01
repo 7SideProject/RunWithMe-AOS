@@ -38,14 +38,14 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     override fun getMyChallengeList(
         cursorSeq: Long,
         size: Int
-    ): Flow<BaseResponse<List<Challenge>>> = flow {
+    ): Flow<BaseResponse<List<ChallengeListResponse>>> = flow {
         emit(challengeApi.getMyChallengeList(cursorSeq, size))
     }
 
     override fun getAvailableRunningList(
         cursorSeq: Long,
         size: Int
-    ): Flow<BaseResponse<List<Challenge>>> = flow {
+    ): Flow<BaseResponse<List<ChallengeListResponse>>> = flow {
         emit(challengeApi.getAvailableRunningList(cursorSeq, size))
     }
 
