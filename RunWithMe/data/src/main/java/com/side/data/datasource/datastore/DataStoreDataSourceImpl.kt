@@ -1,5 +1,6 @@
 package com.side.data.datasource.datastore
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.side.data.util.DATASTORE_KEY
@@ -15,6 +16,7 @@ import com.side.data.util.preferencesKeys.JWT
 import com.side.data.util.preferencesKeys.PERMISSION_CHECK
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
+import com.side.data.util.preferencesKeys.TOKEN_EXPIRED_TIMESTAMP
 import com.side.data.util.preferencesKeys.TTS_OPTION
 import com.side.data.util.preferencesKeys.WEIGHT
 import com.side.data.util.saveEncryptStringValue
@@ -54,6 +56,16 @@ class DataStoreDataSourceImpl @Inject constructor(
         if(refreshToken != NOT_YET_REFRESH_EXPIRED) {
             dataStore.saveEncryptStringValue(REFRESH_TOKEN, refreshToken)
         }
+    }
+
+    override suspend fun saveTokenExpired(expired: Long) {
+        dataStore.saveValue(TOKEN_EXPIRED_TIMESTAMP, expired)
+    }
+
+    override fun getTokenExpired(): Flow<Long> = flow {
+        val long = dataStore.getValue(TOKEN_EXPIRED_TIMESTAMP, DATASTORE_KEY.TYPE_LONG).first().toString()
+        Log.d("test123", "getTokenExpired: ${long}")
+        emit(dataStore.getValue(TOKEN_EXPIRED_TIMESTAMP, DATASTORE_KEY.TYPE_LONG).first().toString().toLong())
     }
 
     override fun getJWT(): Flow<String> = flow {

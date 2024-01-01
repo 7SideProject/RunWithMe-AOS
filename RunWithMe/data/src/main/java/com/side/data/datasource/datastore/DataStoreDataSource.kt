@@ -16,6 +16,10 @@ interface DataStoreDataSource {
 
     suspend fun saveToken(jwt: String, refreshToken: String)
 
+    suspend fun saveTokenExpired(expired: Long)
+
+    fun getTokenExpired(): Flow<Long>
+
     fun getJWT(): Flow<String>
 
     fun getRefreshToken(): Flow<String>
