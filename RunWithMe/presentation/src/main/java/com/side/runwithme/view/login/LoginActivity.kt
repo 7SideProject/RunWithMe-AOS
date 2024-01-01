@@ -1,11 +1,16 @@
 package com.side.runwithme.view.login
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -39,7 +44,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
         checkAutoLogin()
 
-        requestPermission()
+//        requestPermission()
 
         BearerError()
 
@@ -90,27 +95,37 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         repeatOnStarted {
             loginViewModel.permissionEventFlow.collectLatest {
                 if (!it) {
-                    startActivity(Intent(this@LoginActivity, PermissionActivity::class.java))
+                    getResult.launch(Intent(this@LoginActivity, PermissionActivity::class.java))
+                } else {
+                    requestPermission()
                 }
             }
         }
     }
 
+    val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == PERMISSON_RESULT_OK) {
+            requestPermission()
+            loginViewModel.savePermissionCheck()
+        }
+    }
 
     private fun requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkPermissionUpTo33()
-        } else {
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             checkPermissionUnder33()
+        } else {
+            checkPermissionUnder29()
         }
     }
 
-    private fun checkPermissionUnder33() {
+    private fun checkPermissionUnder29() {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
 
                 override fun onPermissionGranted() {
-
+                    loginViewModel.savePermissionCheck()
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
@@ -123,14 +138,55 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                     ) {
                         showToast("인터넷 권한을 허가해주세요.")
                     } else {
-                        showToast("파일 읽기, 인터넷 권한을 허가해주세요.")
+                        showToast("위치 권한을 허가해주세요.")
                     }
                 }
             })
             .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
             .setPermissions(
                 Manifest.permission.INTERNET,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            .check()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun checkPermissionUnder33() {
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+
+                override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        == PackageManager.PERMISSION_DENIED) {
+                        permissionDialog()
+                        return
+                    }
+
+                    loginViewModel.savePermissionCheck()
+                }
+
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("파일 읽기 권한을 허가해주세요.")
+                    } else if (checkSelfPermission(Manifest.permission.INTERNET)
+                        == PackageManager.PERMISSION_DENIED
+                    ) {
+                        showToast("인터넷 권한을 허가해주세요.")
+                    } else {
+                        showToast("위치 권한을 허가해주세요.")
+                    }
+                }
+            })
+            .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
+            .setPermissions(
+                Manifest.permission.INTERNET,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
             .check()
     }
@@ -140,29 +196,66 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
+                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        == PackageManager.PERMISSION_DENIED) {
 
+                        permissionDialog()
+                        return
+                    }
+
+                    loginViewModel.savePermissionCheck()
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    Log.d("test123", "onPermissionDenied: ${deniedPermissions}")
                     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
                         == PackageManager.PERMISSION_DENIED
                     ) {
                         showToast("이미지 읽기 권한을 허가해주세요.")
                     }
-                    if (checkSelfPermission(Manifest.permission.INTERNET)
+                    else if (checkSelfPermission(Manifest.permission.INTERNET)
                         == PackageManager.PERMISSION_DENIED
                     ) {
                         showToast("인터넷 권한을 허가해주세요.")
+                    } else {
+                        showToast("위치 권한을 허가해주세요.")
                     }
-                    showToast("파일 읽기, 인터넷 권한을 허가해주세요.")
                 }
             })
             .setDeniedMessage("앱 사용을 위해 권한을 허용으로 설정해주세요. [설정] > [앱 및 알림] > [고급] > [앱 권한]")
             .setPermissions(
                 Manifest.permission.INTERNET,
-                Manifest.permission.READ_MEDIA_IMAGES
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
             )
             .check()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun permissionDialog(){
+        var builder = AlertDialog.Builder(this)
+        builder.setTitle("백그라운드 위치 권한을 위해 항상 허용으로 설정해주세요.")
+
+        var listener = DialogInterface.OnClickListener { _, type ->
+            when (type) {
+                DialogInterface.BUTTON_POSITIVE -> backgroundPermission()
+            }
+        }
+        builder.setPositiveButton("네", listener)
+        builder.setNegativeButton("아니오", null)
+
+        builder.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun backgroundPermission(){
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+            ), 2)
     }
 
     private fun handleEvent(event: Event) {
