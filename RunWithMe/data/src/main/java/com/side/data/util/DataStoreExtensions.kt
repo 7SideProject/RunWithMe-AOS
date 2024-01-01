@@ -10,6 +10,7 @@ import java.io.IOException
 // DataStore 확장 함수
 object preferencesKeys {
     val JWT = stringPreferencesKey("jwt")
+    val TOKEN_EXPIRED_TIMESTAMP = longPreferencesKey("token_expired")
     val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
     val EMAIL = stringPreferencesKey("email")
     val SEQ = stringPreferencesKey("seq")
@@ -26,9 +27,6 @@ object preferencesKeys {
 enum class DATASTORE_KEY {
     TYPE_INT, TYPE_STRING, TYPE_BOOLEAN, TYPE_LONG
 }
-//const val DATASTORE_KEY_TYPE_INT = 0
-//const val DATASTORE_KEY_TYPE_STRING = 1
-//const val DATASTORE_KEY_TYPE_BOOLEAN = 2
 
 suspend fun <T> DataStore<Preferences>.saveValue(key: Preferences.Key<T>, value: T) {
     edit { prefs -> prefs[key] = value }
