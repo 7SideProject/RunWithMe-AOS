@@ -28,7 +28,7 @@
             tools:context=".view.running.list.RunningListFragment"
             tools:visibility="visible">
 
-            <fragment
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/map_view"
                 android:name="com.naver.maps.map.MapFragment"
                 android:layout_width="match_parent"

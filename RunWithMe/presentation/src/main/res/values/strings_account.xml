@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="join_error">다시 시도해주세요.</string>
+
     <string name="email_hint">이메일 형태로 입력해주세요.</string>
 
     <string name="verify_mail_title">[RunWithMe] 회원가입 인증번호 안내</string>
