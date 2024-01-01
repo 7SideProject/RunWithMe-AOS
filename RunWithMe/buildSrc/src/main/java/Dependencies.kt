@@ -62,4 +62,5 @@ object Dependencies {
     const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val FIREBASE_AUTH = "com.google.firebase:firebase-auth-ktx:${Versions.FIREBASE_AUTH}"
     const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-ktx:${Versions.FIREBASE_CRASHLYTICS_DEPENDENCY}"
+    const val PLAY_INTEGRITY = "com.google.android.play:integrity:${Versions.PLAY_INTEGRITY}"
 }
