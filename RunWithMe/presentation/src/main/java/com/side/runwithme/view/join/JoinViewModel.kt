@@ -3,6 +3,8 @@ package com.side.runwithme.view.join
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.model.User
 import com.side.domain.usecase.user.CheckIdIsDuplicateUseCase
 import com.side.domain.usecase.user.CheckNicknameIsDuplicateUseCase
@@ -123,6 +125,7 @@ class JoinViewModel @Inject constructor(
                 }.onFailure {fail ->
 
                 }.onError {error->
+                    Firebase.crashlytics.recordException(error)
                     _join3EventFlow.emit(JoinEvent.Error())
                 }
             }
@@ -140,7 +143,7 @@ class JoinViewModel @Inject constructor(
                         _join3EventFlow.emit(JoinEvent.Check())
                     }
                 }.onFailure {fail ->
-
+                    _join3EventFlow.emit(JoinEvent.Fail(R.string.join_error))
                 }.onError {error->
                     _join3EventFlow.emit(JoinEvent.Error())
                 }

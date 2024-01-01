@@ -19,12 +19,9 @@ class SendMail: AppCompatActivity() {
         try {
             gMailSender.createEmailCode()
             gMailSender.sendMail(context.resources.getString(R.string.verify_mail_title), returnMailBody(), sendTo)
-            Toast.makeText(context, context.resources.getString(R.string.message_send_mail), Toast.LENGTH_SHORT)
-                .show()
         } catch (e: SendFailedException) {
             Log.d("test5", "1sendSecurityCode: $e")
         } catch (e: MessagingException) {
-            Log.d("test5", "2sendSecurityCode: $e")
         } catch (e: Exception) {
             Log.d("test5", "3sendSecurityCode: $e")
             e.printStackTrace()

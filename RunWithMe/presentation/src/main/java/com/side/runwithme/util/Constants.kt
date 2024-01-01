@@ -10,6 +10,8 @@ const val USER = "users"
 const val GET_CHALLNEGE_IMG = "challenge-image"
 const val GET_PROFILE_IMG = "profile-image"
 
+const val PERMISSON_RESULT_OK = 200
+
 const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
 const val DATASTORE_NAME = "preferences_datastore"
