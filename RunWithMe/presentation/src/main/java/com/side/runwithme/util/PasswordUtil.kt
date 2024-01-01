@@ -8,7 +8,7 @@ fun passwordValidation(password: String, passwordConfirm: String): PasswordVerif
         PasswordVerificationType.NOT_EQUAL_ERROR
     }else if(password.length < 8 || password.length > 16){
         PasswordVerificationType.LENGTH_ERROR
-    }else if(passwordPattern.matches(password)){
+    }else if(!passwordPattern.matches(password)){
         PasswordVerificationType.NOT_VALID
     }else {
         PasswordVerificationType.SUCCESS
