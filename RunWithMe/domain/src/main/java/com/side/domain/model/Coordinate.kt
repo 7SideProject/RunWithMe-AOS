@@ -4,6 +4,6 @@ import java.io.Serializable
 
 
 data class Coordinate(
-    val latitude: Double,
-    val longitude: Double
+    val latitude: Int,
+    val longitude: Int
 )
