@@ -84,9 +84,7 @@ class LoginViewModel @Inject constructor(
     fun getPermissionCheck(){
         viewModelScope.launch(Dispatchers.IO) {
             getPermissionCheckUseCase().collectLatest {
-                if(!it){
-                    _permissionEventFlow.emit(false)
-                }
+                _permissionEventFlow.emit(it)
             }
         }
     }
