@@ -193,8 +193,9 @@
                     android:id="@+id/layout_show_my_record"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/view_line1">
+                    android:paddingVertical="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/view_line1"
+                    app:layout_constraintBottom_toTopOf="@id/view_line2">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -221,56 +222,96 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--                <View-->
-<!--                    android:id="@+id/view_line2"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="1dp"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/layout_show_my_record"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/layout_challenge_board"/>-->
+                <View
+                    android:id="@+id/view_line2"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
+                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
+                    app:layout_constraintTop_toBottomOf="@id/layout_show_my_record"
+                    app:layout_constraintBottom_toTopOf="@id/layout_challenge_records"/>
 
 
-<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                    android:id="@+id/layout_challenge_board"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/view_line2">-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_challenge_records"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/view_line2"
+                    app:layout_constraintBottom_toTopOf="@id/view_line3">
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/challegne_board"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textSize="@dimen/fontsize_h5"-->
-<!--                        android:textStyle="bold"-->
-<!--                        android:gravity="center"-->
-<!--                        android:layout_marginStart="@dimen/margin_regular"-->
-<!--                        app:layout_constraintStart_toStartOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent" />-->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/challegne_records"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fontsize_h5"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginStart="@dimen/margin_regular"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-<!--                    <ImageView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginEnd="@dimen/margin_regular"-->
-<!--                        android:src="@drawable/baseline_keyboard_arrow_right_24"-->
-<!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent" />-->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin_regular"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--                <View-->
-<!--                    android:id="@+id/view_line3"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="1dp"-->
-<!--                    android:layout_marginBottom="@dimen/margin_regular"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/layout_show_my_record"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"/>-->
+                <View
+                    android:id="@+id/view_line3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
+                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
+                    app:layout_constraintTop_toBottomOf="@id/layout_challenge_records"
+                    app:layout_constraintBottom_toTopOf="@id/layout_challenge_board"/>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_challenge_board"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/view_line3"
+                    app:layout_constraintBottom_toTopOf="@id/view_line4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/challegne_board"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fontsize_h5"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginStart="@dimen/margin_regular"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin_regular"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/view_line4"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/margin_regular"
+                    app:layout_constraintStart_toStartOf="@id/tv_challegne_name"
+                    app:layout_constraintEnd_toEndOf="@id/tv_manager_name"
+                    app:layout_constraintTop_toBottomOf="@id/layout_challenge_board"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
