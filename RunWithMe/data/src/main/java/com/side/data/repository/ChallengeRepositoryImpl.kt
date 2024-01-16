@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.AvailableRunningListPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
+import com.side.data.datasource.paging.ChallengeRecordsListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.mapper.mapperToChallengeCreateRequest
 import com.side.data.util.ResponseCodeStatus
@@ -17,6 +18,7 @@ import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
 import com.side.domain.model.Challenge
+import com.side.domain.model.ChallengeRunRecord
 import com.side.domain.repository.ChallengeCreateResponse
 import com.side.domain.repository.ChallengeRepository
 import com.side.domain.repository.IsChallengeJoinResponse
@@ -192,6 +194,22 @@ class ChallengeRepositoryImpl @Inject constructor(
                     challengeRemoteDataSource = challengeRemoteDataSource
                 )
             }
+        return Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
+
+    override fun getRecordsList(size: Int): Flow<PagingData<ChallengeRunRecord>> {
+        val pagingSourceFactory = {
+            ChallengeRecordsListPagingSource(
+                size,
+                challengeRemoteDataSource
+            )
+        }
         return Pager(
             config = PagingConfig(
                 pageSize = size,

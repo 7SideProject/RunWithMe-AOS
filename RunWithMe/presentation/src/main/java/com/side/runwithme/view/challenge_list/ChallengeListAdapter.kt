@@ -20,7 +20,6 @@ class ChallengeListAdapter(private val challengeListAdapterClickListener: Challe
                 root.setOnClickListener {
                     challengeListAdapterClickListener.onClick(challenge)
                 }
-                executePendingBindings()
             }
 
         }

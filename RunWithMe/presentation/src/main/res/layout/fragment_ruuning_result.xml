@@ -130,7 +130,7 @@
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
-                                android:id="@+id/tv_calorie_header"
+                                android:id="@+id/tv_calorie_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/calorie_header"
@@ -157,7 +157,7 @@
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
-                                android:id="@+id/tv_time_header"
+                                android:id="@+id/tv_time_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/time_header"
@@ -184,7 +184,7 @@
                                 android:textSize="@dimen/fontsize_h5" />
 
                             <TextView
-                                android:id="@+id/tv_speed_header"
+                                android:id="@+id/tv_speed_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/speed_header"

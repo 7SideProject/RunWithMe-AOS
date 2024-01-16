@@ -2,8 +2,10 @@ package com.side.data.mapper
 
 import com.side.data.model.request.ChallengeCreateRequest
 import com.side.data.model.response.ChallengeListResponse
+import com.side.data.model.response.ChallengeRecordsResponse
 import com.side.data.model.response.ChallengeResponse
 import com.side.domain.model.Challenge
+import com.side.domain.model.ChallengeRunRecord
 
 fun List<ChallengeListResponse>.mapperToChallengeList(): List<Challenge> = this.run {
     this.map {
@@ -62,4 +64,18 @@ fun Challenge.mapperToChallengeCreateRequest(): ChallengeCreateRequest = this.ru
     )
 }
 
-
+fun List<ChallengeRecordsResponse>.mapperToChallengeRunRecordList(): List<ChallengeRunRecord> = this.run {
+    this.map {
+        ChallengeRunRecord(
+            it.seq,
+            it.userSeq,
+            it.nickname,
+            it.runningDay,
+            it.startTime,
+            it.runningDistance,
+            it.runningTime,
+            it.calorie,
+            it.avgSpeed
+        )
+    }
+}
