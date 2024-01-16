@@ -331,7 +331,7 @@
                                 android:nestedScrollingEnabled="false"
                                 android:orientation="vertical"
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                tools:listitem="@layout/item_my_running_record" />
+                                tools:listitem="@layout/item_running_record" />
                         </LinearLayout>
 
                     </LinearLayout>
