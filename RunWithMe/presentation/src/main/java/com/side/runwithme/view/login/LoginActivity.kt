@@ -158,13 +158,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             .setPermissionListener(object : PermissionListener {
 
                 override fun onPermissionGranted() {
-                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                        == PackageManager.PERMISSION_DENIED) {
-                        permissionDialog()
-                        return
-                    }
-
-                    loginViewModel.savePermissionCheck()
+                                        loginViewModel.savePermissionCheck()
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
@@ -196,18 +190,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
-                    if (checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                        == PackageManager.PERMISSION_DENIED) {
-
-                        permissionDialog()
-                        return
-                    }
 
                     loginViewModel.savePermissionCheck()
                 }
 
                 override fun onPermissionDenied(deniedPermissions: List<String>) {
-                    Log.d("test123", "onPermissionDenied: ${deniedPermissions}")
                     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
                         == PackageManager.PERMISSION_DENIED
                     ) {
@@ -231,31 +218,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 Manifest.permission.POST_NOTIFICATIONS
             )
             .check()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun permissionDialog(){
-        var builder = AlertDialog.Builder(this)
-        builder.setTitle("백그라운드 위치 권한을 위해 항상 허용으로 설정해주세요.")
-
-        var listener = DialogInterface.OnClickListener { _, type ->
-            when (type) {
-                DialogInterface.BUTTON_POSITIVE -> backgroundPermission()
-            }
-        }
-        builder.setPositiveButton("네", listener)
-        builder.setNegativeButton("아니오", null)
-
-        builder.show()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun backgroundPermission(){
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-            ), 2)
     }
 
     private fun handleEvent(event: Event) {
