@@ -10,5 +10,5 @@ data class RunRecord(
     val avgSpeed: Double,
     val calorie: Int,
     val successYN: String,
-    val coordinates: List<Coordinate>
+    val coordinates: List<Coordinate> = listOf()
 )

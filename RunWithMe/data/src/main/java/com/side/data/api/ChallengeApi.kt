@@ -2,6 +2,7 @@ package com.side.data.api
 
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
+import com.side.data.model.response.ChallengeRecordsResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
@@ -45,4 +46,7 @@ interface ChallengeApi {
 
     @GET("challenge/{challengeSeq}")
     suspend fun getChallengeDetail(@Path("challengeSeq") challengeSeq: Long): BaseResponse<ChallengeDetailResponse>
+
+    @GET("challenge/{challengeSeq}/all")
+    suspend fun getRecordsList(@Path("challengeSeq") challengeSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeRecordsResponse>>
 }
