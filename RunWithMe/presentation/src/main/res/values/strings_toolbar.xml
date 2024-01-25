@@ -10,6 +10,7 @@
     <string name="my_record">내 러닝 기록</string>
     <string name="create_challenge">챌린지 생성</string>
     <string name="challegne_detail">챌린지 정보</string>
+    <string name="challenge_my_record">내 러닝 기록</string>
     <string name="my_page">마이페이지</string>
     <string name="edit_profile">프로필 수정</string>
     <string name="register_profile">프로필 등록</string>
