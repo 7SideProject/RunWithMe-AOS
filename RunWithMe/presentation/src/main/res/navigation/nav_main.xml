@@ -104,6 +104,9 @@
             app:destination="@id/HomeFragment"
             app:popUpTo="@id/HomeFragment"
             />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_challengeMyRecordFragment"
+            app:destination="@id/challengeMyRecordFragment" />
     </fragment>
     <fragment
         android:id="@+id/myChallengeFragment"
@@ -122,5 +125,14 @@
         android:id="@+id/othersFragment"
         android:name="com.side.runwithme.view.others.OthersFragment"
         android:label="OthersFragment" />
+    <fragment
+        android:id="@+id/challengeMyRecordFragment"
+        android:name="com.side.runwithme.view.challenge_my_record.ChallengeMyRecordFragment"
+        android:label="ChallengeMyRecordFragment" >
+        <argument
+            android:name="challengeSeq"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
 
 </navigation>
