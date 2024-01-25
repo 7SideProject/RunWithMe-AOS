@@ -5,6 +5,7 @@ import com.side.data.api.ChallengeApi
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
+import com.side.data.model.response.MyTotalRecordInChallengeResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -64,5 +65,9 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
 
     override fun getRecordsList(challengeSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeRecordsResponse>>> = flow {
         emit(challengeApi.getRecordsList(challengeSeq, size))
+    }
+
+    override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<BaseResponse<MyTotalRecordInChallengeResponse>> = flow {
+        emit(challengeApi.getMyTotalRecordInChallenge(challengeSeq))
     }
 }

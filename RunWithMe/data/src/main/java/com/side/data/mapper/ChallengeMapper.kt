@@ -4,8 +4,10 @@ import com.side.data.model.request.ChallengeCreateRequest
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
 import com.side.data.model.response.ChallengeResponse
+import com.side.data.model.response.MyTotalRecordInChallengeResponse
 import com.side.domain.model.Challenge
 import com.side.domain.model.ChallengeRunRecord
+import com.side.domain.model.TotalRecord
 
 fun List<ChallengeListResponse>.mapperToChallengeList(): List<Challenge> = this.run {
     this.map {
@@ -78,4 +80,15 @@ fun List<ChallengeRecordsResponse>.mapperToChallengeRunRecordList(): List<Challe
             it.avgSpeed
         )
     }
+}
+
+fun MyTotalRecordInChallengeResponse.mapperToTotalRecord(): TotalRecord = this.run {
+    TotalRecord(
+        this.totalTime,
+        this.totalDistance,
+        this.totalCalorie,
+        this.totalLongestTime,
+        this.totalLongestDistance,
+        this.totalAvgSpeed
+    )
 }
