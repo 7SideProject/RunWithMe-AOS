@@ -104,6 +104,12 @@
             app:destination="@id/HomeFragment"
             app:popUpTo="@id/HomeFragment"
             />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_challengeBoardFragment"
+            app:destination="@id/challengeBoardFragment" />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_challengeRecordsFragment"
+            app:destination="@id/challengeRecordsFragment" />
     </fragment>
     <fragment
         android:id="@+id/myChallengeFragment"
@@ -122,5 +128,30 @@
         android:id="@+id/othersFragment"
         android:name="com.side.runwithme.view.others.OthersFragment"
         android:label="OthersFragment" />
+    <fragment
+        android:id="@+id/challengeBoardFragment"
+        android:name="com.side.runwithme.view.challenge_board.ChallengeBoardFragment"
+        android:label="ChallengeBoardFragment" >
+        <action
+            android:id="@+id/action_challengeBoardFragment_to_createBoardFragment"
+            app:destination="@id/createBoardFragment" />
+        <argument
+            android:name="challengeSeq"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/challengeRecordsFragment"
+        android:name="com.side.runwithme.view.challenge_records.ChallengeRecordsFragment"
+        android:label="ChallengeRecordsFragment" />
+    <fragment
+        android:id="@+id/createBoardFragment"
+        android:name="com.side.runwithme.view.create_board.CreateBoardFragment"
+        android:label="CreateBoardFragment" >
+        <argument
+            android:name="challengeSeq"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
 
 </navigation>
