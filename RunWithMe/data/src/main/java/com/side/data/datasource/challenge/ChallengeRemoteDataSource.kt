@@ -3,6 +3,7 @@ package com.side.data.datasource.challenge
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
+import com.side.data.model.response.CreateBoardResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -30,4 +31,6 @@ interface ChallengeRemoteDataSource {
     fun getChallengeDetail(challengeSeq: Long): Flow<BaseResponse<ChallengeDetailResponse>>
 
     fun getRecordsList(challengeSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeRecordsResponse>>>
+
+    fun createBoard(challengeSeq: Long, content: RequestBody, image: MultipartBody.Part?): Flow<BaseResponse<CreateBoardResponse>>
 }

@@ -3,11 +3,13 @@ package com.side.data.api
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
+import com.side.data.model.response.CreateBoardResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.DELETE
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -49,4 +51,8 @@ interface ChallengeApi {
 
     @GET("challenge/{challengeSeq}/all")
     suspend fun getRecordsList(@Path("challengeSeq") challengeSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeRecordsResponse>>
+
+    @Multipart
+    @POST("challenge/{challengeSeq}/board")
+    suspend fun createBoard(@Path("challengeSeq") challengeSeq: Long, @Part("challengeBoardContent") challengeBoardContent: RequestBody, @Part image: MultipartBody.Part?): BaseResponse<CreateBoardResponse>
 }

@@ -21,6 +21,7 @@ import com.side.domain.model.Challenge
 import com.side.domain.model.ChallengeRunRecord
 import com.side.domain.repository.ChallengeCreateResponse
 import com.side.domain.repository.ChallengeRepository
+import com.side.domain.repository.CreateBoardResponse
 import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.NullDataResponse
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -218,4 +220,31 @@ class ChallengeRepositoryImpl @Inject constructor(
             ), pagingSourceFactory = pagingSourceFactory
         ).flow
     }
+
+    override fun createBoard(
+        challengeSeq: Long,
+        content: String,
+        image: MultipartBody.Part?
+    ): Flow<CreateBoardResponse> = flow {
+        emitResultTypeLoading()
+
+        content.toRequestBody()
+
+        challengeRemoteDataSource.createBoard(challengeSeq, content.toRequestBody(), image).collect {
+            when(it.code){
+                ResponseCodeStatus.CREATE_BOARD_SUCCESS.code -> {
+                    emitResultTypeSuccess(
+                        it.changeData(true)
+                    )
+                }
+                else -> {
+                    emitResultTypeFail(it.changeData(false))
+                }
+            }
+        }
+
+    }.catch {
+        emitResultTypeError(it)
+    }
+
 }

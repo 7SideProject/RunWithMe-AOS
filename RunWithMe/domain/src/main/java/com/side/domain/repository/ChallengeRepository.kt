@@ -13,6 +13,7 @@ typealias ChallengeCreateResponse = ResultType<BaseResponse<Any?>>
 typealias PagingChallengeResponse = Flow<PagingData<Challenge>>
 typealias JoinChallengeResponse = ResultType<BaseResponse<String?>>
 typealias IsChallengeJoinResponse = ResultType<BaseResponse<Boolean>>
+typealias CreateBoardResponse = ResultType<BaseResponse<Boolean>>
 typealias NullDataResponse = ResultType<BaseResponse<Any?>>
 
 interface ChallengeRepository {
@@ -39,4 +40,6 @@ interface ChallengeRepository {
     fun leaveChallenge(challengeSeq: Long): Flow<NullDataResponse>
 
     fun getRecordsList(size: Int): Flow<PagingData<ChallengeRunRecord>>
+
+    fun createBoard(challengeSeq: Long, content: String, image: MultipartBody.Part?): Flow<CreateBoardResponse>
 }

@@ -5,6 +5,7 @@ import com.side.data.api.ChallengeApi
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
+import com.side.data.model.response.CreateBoardResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -64,5 +65,13 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
 
     override fun getRecordsList(challengeSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeRecordsResponse>>> = flow {
         emit(challengeApi.getRecordsList(challengeSeq, size))
+    }
+
+    override fun createBoard(
+        challengeSeq: Long,
+        content: RequestBody,
+        image: MultipartBody.Part?
+    ): Flow<BaseResponse<CreateBoardResponse>> = flow {
+        emit(challengeApi.createBoard(challengeSeq, content, image))
     }
 }
