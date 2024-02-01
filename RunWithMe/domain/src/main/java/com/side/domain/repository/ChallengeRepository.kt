@@ -2,6 +2,7 @@ package com.side.domain.repository
 
 import androidx.paging.PagingData
 import com.side.domain.base.BaseResponse
+import com.side.domain.model.Board
 import com.side.domain.model.Challenge
 import com.side.domain.model.ChallengeRunRecord
 import com.side.domain.utils.ResultType
@@ -42,4 +43,6 @@ interface ChallengeRepository {
     fun getRecordsList(size: Int): Flow<PagingData<ChallengeRunRecord>>
 
     fun createBoard(challengeSeq: Long, content: String, image: MultipartBody.Part?): Flow<CreateBoardResponse>
+
+    fun getBoards(challengeSeq: Long, size: Int): Flow<PagingData<Board>>
 }

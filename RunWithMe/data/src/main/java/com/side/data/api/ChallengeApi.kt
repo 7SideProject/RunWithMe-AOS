@@ -1,5 +1,6 @@
 package com.side.data.api
 
+import com.side.data.model.response.ChallengeBoardsResponse
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
@@ -55,4 +56,7 @@ interface ChallengeApi {
     @Multipart
     @POST("challenge/{challengeSeq}/board")
     suspend fun createBoard(@Path("challengeSeq") challengeSeq: Long, @Part("challengeBoardContent") challengeBoardContent: RequestBody, @Part image: MultipartBody.Part?): BaseResponse<CreateBoardResponse>
+
+    @GET("challenge/{challengeSeq}/board")
+    suspend fun getChallengeBoards(@Path("challengeSeq") challengeSeq: Long, @Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeBoardsResponse>>
 }

@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.AvailableRunningListPagingSource
+import com.side.data.datasource.paging.ChallengeBoardsPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.ChallengeRecordsListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
@@ -17,6 +18,7 @@ import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
+import com.side.domain.model.Board
 import com.side.domain.model.Challenge
 import com.side.domain.model.ChallengeRunRecord
 import com.side.domain.repository.ChallengeCreateResponse
@@ -247,4 +249,20 @@ class ChallengeRepositoryImpl @Inject constructor(
         emitResultTypeError(it)
     }
 
+    override fun getBoards(challengeSeq: Long, size: Int): Flow<PagingData<Board>> {
+        val pagingSourceFactory = {
+            ChallengeBoardsPagingSource(
+                challengeSeq,
+                size,
+                challengeRemoteDataSource
+            )
+        }
+        return Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
 }

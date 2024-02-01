@@ -2,6 +2,7 @@ package com.side.data.datasource.challenge
 
 import android.util.Log
 import com.side.data.api.ChallengeApi
+import com.side.data.model.response.ChallengeBoardsResponse
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
@@ -73,5 +74,13 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
         image: MultipartBody.Part?
     ): Flow<BaseResponse<CreateBoardResponse>> = flow {
         emit(challengeApi.createBoard(challengeSeq, content, image))
+    }
+
+    override fun getChallengeBoards(
+        challengeSeq: Long,
+        cursorSeq: Long,
+        size: Int
+    ): Flow<BaseResponse<List<ChallengeBoardsResponse>>> = flow {
+        emit(challengeApi.getChallengeBoards(challengeSeq, cursorSeq, size))
     }
 }

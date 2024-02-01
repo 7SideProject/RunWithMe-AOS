@@ -1,5 +1,6 @@
 package com.side.data.datasource.challenge
 
+import com.side.data.model.response.ChallengeBoardsResponse
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
@@ -33,4 +34,6 @@ interface ChallengeRemoteDataSource {
     fun getRecordsList(challengeSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeRecordsResponse>>>
 
     fun createBoard(challengeSeq: Long, content: RequestBody, image: MultipartBody.Part?): Flow<BaseResponse<CreateBoardResponse>>
+
+    fun getChallengeBoards(challengeSeq: Long, cursorSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeBoardsResponse>>>
 }
