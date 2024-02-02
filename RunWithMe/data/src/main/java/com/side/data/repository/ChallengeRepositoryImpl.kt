@@ -273,4 +273,12 @@ class ChallengeRepositoryImpl @Inject constructor(
             ResultType.Fail(it)
         }
     }
+
+    override fun reportBoard(boardSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.reportBoard(boardSeq).asResult{
+        if(it.code == 404){
+            ResultType.Success(it)
+        } else {
+            ResultType.Fail(it)
+        }
+    }
 }

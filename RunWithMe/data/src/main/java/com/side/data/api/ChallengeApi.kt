@@ -62,4 +62,7 @@ interface ChallengeApi {
 
     @DELETE("challenge/board/{boardSeq}")
     suspend fun deleteBoard(@Path("boardSeq") boardSeq: Long): BaseResponse<Any?>
+
+    @POST("challenge/warn/{boardSeq}")
+    suspend fun reportBoard(@Path("boardSeq") boardSeq: Long): BaseResponse<Any?>
 }

@@ -47,4 +47,6 @@ interface ChallengeRepository {
     fun getBoards(challengeSeq: Long, size: Int): Flow<PagingData<Board>>
 
     fun deleteBoard(boardSeq: Long): Flow<NullDataResponse>
+
+    fun reportBoard(boardSeq: Long): Flow<NullDataResponse>
 }
