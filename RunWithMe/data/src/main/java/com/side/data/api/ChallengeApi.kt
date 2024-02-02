@@ -5,6 +5,7 @@ import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
 import com.side.data.model.response.CreateBoardResponse
+import com.side.data.model.response.MyTotalRecordInChallengeResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import okhttp3.MultipartBody
@@ -65,4 +66,8 @@ interface ChallengeApi {
 
     @POST("challenge/warn/{boardSeq}")
     suspend fun reportBoard(@Path("boardSeq") boardSeq: Long): BaseResponse<Any?>
+
+    @GET("challenge/{challengeSeq}/record/my-total")
+    suspend fun getMyTotalRecordInChallenge(@Path("challengeSeq") challengeSeq: Long): BaseResponse<MyTotalRecordInChallengeResponse>
+
 }

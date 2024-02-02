@@ -11,6 +11,7 @@ import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.ChallengeRecordsListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
 import com.side.data.mapper.mapperToChallengeCreateRequest
+import com.side.data.mapper.mapperToTotalRecord
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
 import com.side.data.util.asResultOtherType
@@ -27,6 +28,7 @@ import com.side.domain.repository.CreateBoardResponse
 import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.NullDataResponse
+import com.side.domain.repository.TotalRecordTypeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -84,6 +86,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+
                 else -> {
                     emitResultTypeFail(
                         it.changeMessage(
@@ -146,7 +149,7 @@ class ChallengeRepositoryImpl @Inject constructor(
 
     override fun joinChallenge(challengeSeq: Long, password: String?): Flow<JoinChallengeResponse> =
         challengeRemoteDataSource.joinChallenge(challengeSeq, password).asResult {
-            when(it.code) {
+            when (it.code) {
                 ResponseCodeStatus.JOIN_CHALLENGE_SUCCESS.code -> {
                     ResultType.Success(
                         it.changeMessageAndData(
@@ -155,6 +158,7 @@ class ChallengeRepositoryImpl @Inject constructor(
                         )
                     )
                 }
+
                 else -> {
                     ResultType.Fail(
                         it
@@ -163,32 +167,33 @@ class ChallengeRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun leaveChallenge(challengeSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.leaveChallenge(challengeSeq).asResult {
-        when(it.code){
-            ResponseCodeStatus.DELETE_CHALLENGE_SUCCESS.code -> {
-                ResultType.Success(
-                    it
-                )
-            }
+    override fun leaveChallenge(challengeSeq: Long): Flow<NullDataResponse> =
+        challengeRemoteDataSource.leaveChallenge(challengeSeq).asResult {
+            when (it.code) {
+                ResponseCodeStatus.DELETE_CHALLENGE_SUCCESS.code -> {
+                    ResultType.Success(
+                        it
+                    )
+                }
 
-            ResponseCodeStatus.LEAVE_CHALLENGE_SUCCESS.code -> {
-                ResultType.Success(it)
-            }
+                ResponseCodeStatus.LEAVE_CHALLENGE_SUCCESS.code -> {
+                    ResultType.Success(it)
+                }
 
-            ResponseCodeStatus.CHALLENGE_NOT_FOUND.code -> {
-                ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_NOT_FOUND.message))
-            }
+                ResponseCodeStatus.CHALLENGE_NOT_FOUND.code -> {
+                    ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_NOT_FOUND.message))
+                }
 
-            ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.code -> {
-                ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.message))
-            }
+                ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.code -> {
+                    ResultType.Fail(it.changeMessage(ResponseCodeStatus.CHALLENGE_IS_NOT_MY_CHALLENGE.message))
+                }
 
-            else -> {
-                ResultType.Fail(it)
-            }
+                else -> {
+                    ResultType.Fail(it)
+                }
 
+            }
         }
-    }
 
     override fun getAvailableRunningList(size: Int): Flow<PagingData<Challenge>> {
         val pagingSourceFactory =
@@ -281,4 +286,17 @@ class ChallengeRepositoryImpl @Inject constructor(
             ResultType.Fail(it)
         }
     }
+
+    override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<TotalRecordTypeResponse> =
+        challengeRemoteDataSource.getMyTotalRecordInChallenge(challengeSeq).asResultOtherType {
+            when(it.code){
+                201 -> {
+                    ResultType.Success(it.changeData(it.data.mapperToTotalRecord()))
+                }
+                else -> {
+                    ResultType.Fail(it.changeData(null))
+                }
+            }
+        }
+
 }

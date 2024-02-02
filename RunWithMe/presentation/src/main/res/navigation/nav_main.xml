@@ -110,6 +110,9 @@
         <action
             android:id="@+id/action_challengeDetailFragment_to_challengeRecordsFragment"
             app:destination="@id/challengeRecordsFragment" />
+        <action
+            android:id="@+id/action_challengeDetailFragment_to_challengeMyRecordFragment"
+            app:destination="@id/challengeMyRecordFragment" />
     </fragment>
     <fragment
         android:id="@+id/myChallengeFragment"
@@ -148,6 +151,9 @@
         android:id="@+id/createBoardFragment"
         android:name="com.side.runwithme.view.create_board.CreateBoardFragment"
         android:label="CreateBoardFragment" >
+        android:id="@+id/challengeMyRecordFragment"
+        android:name="com.side.runwithme.view.challenge_my_record.ChallengeMyRecordFragment"
+        android:label="ChallengeMyRecordFragment" >
         <argument
             android:name="challengeSeq"
             app:argType="long"

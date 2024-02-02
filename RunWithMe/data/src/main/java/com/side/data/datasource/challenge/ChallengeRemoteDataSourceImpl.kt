@@ -7,6 +7,7 @@ import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
 import com.side.data.model.response.CreateBoardResponse
+import com.side.data.model.response.MyTotalRecordInChallengeResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
 import kotlinx.coroutines.flow.Flow
@@ -90,5 +91,8 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
 
     override fun reportBoard(boardSeq: Long): Flow<BaseResponse<Any?>> = flow {
         emit(challengeApi.reportBoard(boardSeq))
+
+    override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<BaseResponse<MyTotalRecordInChallengeResponse>> = flow {
+        emit(challengeApi.getMyTotalRecordInChallenge(challengeSeq))
     }
 }

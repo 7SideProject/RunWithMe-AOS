@@ -9,6 +9,5 @@ import javax.inject.Singleton
 class GetMyTotalRecordInChallengeUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ) {
-    operator fun invoke(challengeSeq: Long, content: String, image: MultipartBody.Part?) =
-        challengeRepository.createBoard(challengeSeq, content, image)
+    operator fun invoke(challengeSeq: Long) = challengeRepository.getMyTotalRecordInChallenge(challengeSeq)
 }
