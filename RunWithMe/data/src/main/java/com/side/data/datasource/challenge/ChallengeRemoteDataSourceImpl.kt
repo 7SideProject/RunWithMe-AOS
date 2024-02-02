@@ -2,9 +2,11 @@ package com.side.data.datasource.challenge
 
 import android.util.Log
 import com.side.data.api.ChallengeApi
+import com.side.data.model.response.ChallengeBoardsResponse
 import com.side.data.model.response.ChallengeDetailResponse
 import com.side.data.model.response.ChallengeListResponse
 import com.side.data.model.response.ChallengeRecordsResponse
+import com.side.data.model.response.CreateBoardResponse
 import com.side.data.model.response.MyTotalRecordInChallengeResponse
 import com.side.domain.base.BaseResponse
 import com.side.domain.model.Challenge
@@ -66,6 +68,29 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     override fun getRecordsList(challengeSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeRecordsResponse>>> = flow {
         emit(challengeApi.getRecordsList(challengeSeq, size))
     }
+
+    override fun createBoard(
+        challengeSeq: Long,
+        content: RequestBody,
+        image: MultipartBody.Part?
+    ): Flow<BaseResponse<CreateBoardResponse>> = flow {
+        emit(challengeApi.createBoard(challengeSeq, content, image))
+    }
+
+    override fun getChallengeBoards(
+        challengeSeq: Long,
+        cursorSeq: Long,
+        size: Int
+    ): Flow<BaseResponse<List<ChallengeBoardsResponse>>> = flow {
+        emit(challengeApi.getChallengeBoards(challengeSeq, cursorSeq, size))
+    }
+
+    override fun deleteBoard(boardSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(challengeApi.deleteBoard(boardSeq))
+    }
+
+    override fun reportBoard(boardSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(challengeApi.reportBoard(boardSeq))
 
     override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<BaseResponse<MyTotalRecordInChallengeResponse>> = flow {
         emit(challengeApi.getMyTotalRecordInChallenge(challengeSeq))

@@ -44,6 +44,13 @@ class ChallengeDetailFragment :
             toolbarMain.setBackButtonClickEvent {
                 findNavController().popBackStack()
             }
+            layoutChallengeRecords.setOnClickListener {
+                findNavController().navigate(R.id.action_challengeDetailFragment_to_challengeRecordsFragment)
+            }
+            layoutChallengeBoard.setOnClickListener {
+                val action = ChallengeDetailFragmentDirections.actionChallengeDetailFragmentToChallengeBoardFragment(challengeDetailViewModel.challenge.value?.seq ?: 0L)
+                findNavController().navigate(action)
+            }
 
             btnOk.setOnClickListener {
                 when (challengeDetailViewModel.challengeState.value) {

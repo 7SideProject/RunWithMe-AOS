@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="board"
+            type="com.side.domain.model.Board" />
+        <variable
+            name="jwt"
+            type="String" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,6 +41,7 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center"
                     android:layout_marginStart="16dp"
+                    profileImg="@{board.userSeq}"
                     android:background="@android:color/transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -44,6 +54,7 @@
                     android:layout_marginStart="16dp"
                     android:fontFamily="@font/noto_sans_bold"
                     android:includeFontPadding="false"
+                    android:text="@{board.nickname}"
                     android:textColor="@color/black_high_emphasis"
                     android:textSize="18sp"
 
@@ -91,8 +102,10 @@
                         android:layout_height="250dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
+                        boardContentImage="@{board.image}"
+                        boardSeq="@{board.boardSeq}"
+                        jwt="@{jwt}"
                         app:layout_constraintEnd_toEndOf="parent"
-
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:src="@drawable/crew_image" />
@@ -104,6 +117,7 @@
                         android:layout_marginTop="8dp"
                         android:maxLines="10"
                         android:textColor="@color/black_high_emphasis"
+                        android:text="@{board.content}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

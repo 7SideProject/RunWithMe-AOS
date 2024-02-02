@@ -1,13 +1,12 @@
 package com.side.domain.usecase.challenge
 
 import com.side.domain.repository.ChallengeRepository
-import okhttp3.MultipartBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetMyTotalRecordInChallengeUseCase @Inject constructor(
+class DeleteChallengeBoardUseCase @Inject constructor(
     private val challengeRepository: ChallengeRepository
-) {
-    operator fun invoke(challengeSeq: Long) = challengeRepository.getMyTotalRecordInChallenge(challengeSeq)
+){
+    operator fun invoke(boardSeq: Long) = challengeRepository.deleteBoard(boardSeq)
 }

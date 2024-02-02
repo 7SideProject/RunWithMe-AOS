@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.side.data.datasource.challenge.ChallengeRemoteDataSource
 import com.side.data.datasource.paging.AvailableRunningListPagingSource
+import com.side.data.datasource.paging.ChallengeBoardsPagingSource
 import com.side.data.datasource.paging.ChallengeListPagingSource
 import com.side.data.datasource.paging.ChallengeRecordsListPagingSource
 import com.side.data.datasource.paging.MyChallengeListPagingSource
@@ -18,10 +19,12 @@ import com.side.data.util.emitResultTypeError
 import com.side.data.util.emitResultTypeFail
 import com.side.data.util.emitResultTypeLoading
 import com.side.data.util.emitResultTypeSuccess
+import com.side.domain.model.Board
 import com.side.domain.model.Challenge
 import com.side.domain.model.ChallengeRunRecord
 import com.side.domain.repository.ChallengeCreateResponse
 import com.side.domain.repository.ChallengeRepository
+import com.side.domain.repository.CreateBoardResponse
 import com.side.domain.repository.IsChallengeJoinResponse
 import com.side.domain.repository.JoinChallengeResponse
 import com.side.domain.repository.NullDataResponse
@@ -32,6 +35,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -224,6 +228,65 @@ class ChallengeRepositoryImpl @Inject constructor(
         ).flow
     }
 
+    override fun createBoard(
+        challengeSeq: Long,
+        content: String,
+        image: MultipartBody.Part?
+    ): Flow<CreateBoardResponse> = flow {
+        emitResultTypeLoading()
+
+        content.toRequestBody()
+
+        challengeRemoteDataSource.createBoard(challengeSeq, content.toRequestBody(), image).collect {
+            when(it.code){
+                ResponseCodeStatus.CREATE_BOARD_SUCCESS.code -> {
+                    emitResultTypeSuccess(
+                        it.changeData(true)
+                    )
+                }
+                else -> {
+                    emitResultTypeFail(it.changeData(false))
+                }
+            }
+        }
+
+    }.catch {
+        emitResultTypeError(it)
+    }
+
+    override fun getBoards(challengeSeq: Long, size: Int): Flow<PagingData<Board>> {
+        val pagingSourceFactory = {
+            ChallengeBoardsPagingSource(
+                challengeSeq,
+                size,
+                challengeRemoteDataSource
+            )
+        }
+        return Pager(
+            config = PagingConfig(
+                pageSize = size,
+                enablePlaceholders = false,
+                maxSize = size * 3
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
+
+    override fun deleteBoard(boardSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.deleteBoard(boardSeq).asResult{
+        if(it.code == 403){
+            ResultType.Success(it)
+        } else {
+            ResultType.Fail(it)
+        }
+    }
+
+    override fun reportBoard(boardSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.reportBoard(boardSeq).asResult{
+        if(it.code == 404){
+            ResultType.Success(it)
+        } else {
+            ResultType.Fail(it)
+        }
+    }
+
     override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<TotalRecordTypeResponse> =
         challengeRemoteDataSource.getMyTotalRecordInChallenge(challengeSeq).asResultOtherType {
             when(it.code){
@@ -235,4 +298,5 @@ class ChallengeRepositoryImpl @Inject constructor(
                 }
             }
         }
+
 }
