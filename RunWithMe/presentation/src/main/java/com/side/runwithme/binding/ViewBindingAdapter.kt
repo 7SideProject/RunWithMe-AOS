@@ -151,3 +151,20 @@ fun CircleImageView.setProfileImg(userSeq: Long, jwt: String) {
         .skipMemoryCache(true)
         .into(this)
 }
+
+@BindingAdapter("profileImg")
+fun CircleImageView.setProfileImg(userSeq: Long) {
+    if(userSeq == 0L){
+        Glide.with(this.context).load(R.drawable.user_image).into(this)
+        return
+    }
+
+    val glideUrl = GlideUrl(BASE_URL + USER + "/${userSeq}/" + GET_PROFILE_IMG)
+
+    Glide.with(this.context).load(glideUrl)
+        .override(R.dimen.propfile_img_size * 2)
+        .placeholder(R.drawable.user_image)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
+        .skipMemoryCache(true)
+        .into(this)
+}
