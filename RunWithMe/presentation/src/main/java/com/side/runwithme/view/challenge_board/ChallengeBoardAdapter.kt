@@ -41,6 +41,7 @@ class ChallengeBoardAdapter (
                 if (userSeq != board.userSeq) {
                     imgDelete.visibility = View.GONE
                 } else {
+                    imgDelete.visibility = View.VISIBLE
                     this.imgDelete.setOnClickListener {
                         deleteBoardClickListener.onClick(board.boardSeq)
                     }

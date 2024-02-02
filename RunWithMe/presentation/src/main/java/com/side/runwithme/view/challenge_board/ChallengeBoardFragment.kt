@@ -9,6 +9,7 @@ import com.side.runwithme.base.BaseFragment
 import com.side.runwithme.databinding.FragmentChallengeBoardBinding
 import com.side.runwithme.util.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -17,6 +18,8 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
 
     private val args by navArgs<ChallengeBoardFragmentArgs>()
     private val challengeBoardViewModel : ChallengeBoardViewModel by viewModels()
+    private lateinit var challengeBoardAdapter: ChallengeBoardAdapter
+    private lateinit var job: Job
 
     override fun init() {
 
@@ -54,19 +57,46 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
                     }
                 }
             }
+
+            repeatOnStarted {
+                boardEventFlow.collectLatest {
+                    when(it){
+                        is ChallengeBoardViewModel.Event.DeleteBoard -> {
+                            showToast("게시글 삭제 완료")
+                            updateList()
+                        }
+                        is ChallengeBoardViewModel.Event.Fail -> {
+                            showToast(it.message)
+                        }
+                        is ChallengeBoardViewModel.Event.ReportBoard -> {
+
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun initChallengeBoardAdapter(){
-        val challengeBoardAdapter = ChallengeBoardAdapter(
-            userSeq = challengeBoardViewModel.challengeSeq.value,
+        challengeBoardAdapter = ChallengeBoardAdapter(
+            userSeq = challengeBoardViewModel.userSeq.value,
             deleteBoardClickListener = deleteBoardClickListener,
             reportBoardClickListener = reportBoardClickListener,
             challengeBoardViewModel.jwt
         )
         binding.rcvChallengeBoard.adapter = challengeBoardAdapter
 
-        lifecycleScope.launch {
+        job = lifecycleScope.launch {
+            challengeBoardViewModel.getBoards().collectLatest {boards ->
+                challengeBoardAdapter.submitData(boards)
+            }
+        }
+    }
+
+    private fun updateList() {
+        job.cancel()
+
+        job = lifecycleScope.launch {
             challengeBoardViewModel.getBoards().collectLatest {boards ->
                 challengeBoardAdapter.submitData(boards)
             }
@@ -75,7 +105,7 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
 
     private val deleteBoardClickListener = object : DeleteBoardClickListener {
         override fun onClick(boardSeq: Long) {
-            /** TODO delete **/
+            challengeBoardViewModel.deleteBoard(boardSeq)
         }
     }
 

@@ -1,14 +1,18 @@
 package com.side.runwithme.view.challenge_board
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.data.util.getDecryptStringValue
 import com.side.data.util.preferencesKeys
 import com.side.domain.model.Board
+import com.side.domain.usecase.challenge.DeleteChallengeBoardUseCase
 import com.side.domain.usecase.challenge.GetChallengeBoardsUseCase
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
 import com.side.runwithme.util.MutableEventFlow
@@ -28,7 +32,8 @@ import javax.inject.Inject
 class ChallengeBoardViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val getUserSeqDataStoreUseCase: GetUserSeqDataStoreUseCase,
-    private val getChallengeBoardsUseCase: GetChallengeBoardsUseCase
+    private val getChallengeBoardsUseCase: GetChallengeBoardsUseCase,
+    private val deleteChallengeBoardUseCase: DeleteChallengeBoardUseCase
 ): ViewModel() {
 
     private val _jwt = MutableStateFlow<String>("")
@@ -39,6 +44,9 @@ class ChallengeBoardViewModel @Inject constructor(
 
     private val _getUserSeqEventFlow = MutableEventFlow<Boolean>()
     val getUserSeqEventFlow = _getUserSeqEventFlow.asEventFlow()
+
+    private val _boardEventFlow = MutableEventFlow<Event>()
+    val boardEventFlow = _boardEventFlow.asEventFlow()
 
     fun setChallengeSeq(challengeSeq: Long){
         _challengeSeq.value = challengeSeq
@@ -73,4 +81,24 @@ class ChallengeBoardViewModel @Inject constructor(
         return getChallengeBoardsUseCase(challengeSeq.value, BOARDS_SIZE).cachedIn(viewModelScope)
     }
 
+    fun deleteBoard(boardSeq: Long){
+        viewModelScope.launch {
+            deleteChallengeBoardUseCase(boardSeq).collectLatest {
+                it.onSuccess {
+                    _boardEventFlow.emit(Event.DeleteBoard())
+                }.onFailure {
+                    _boardEventFlow.emit(Event.Fail("게시글 삭제에 실패했습니다. 다시 시도해주세요."))
+                }.onError {
+                    _boardEventFlow.emit(Event.Fail("서버 에러 입니다. 다시 시도해주세요."))
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
+    }
+
+    sealed interface Event {
+        class DeleteBoard : Event
+        data class Fail(val message: String) : Event
+        class ReportBoard : Event
+    }
 }
