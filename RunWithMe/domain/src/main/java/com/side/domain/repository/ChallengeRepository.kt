@@ -45,4 +45,6 @@ interface ChallengeRepository {
     fun createBoard(challengeSeq: Long, content: String, image: MultipartBody.Part?): Flow<CreateBoardResponse>
 
     fun getBoards(challengeSeq: Long, size: Int): Flow<PagingData<Board>>
+
+    fun deleteBoard(boardSeq: Long): Flow<NullDataResponse>
 }

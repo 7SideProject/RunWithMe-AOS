@@ -59,4 +59,7 @@ interface ChallengeApi {
 
     @GET("challenge/{challengeSeq}/board")
     suspend fun getChallengeBoards(@Path("challengeSeq") challengeSeq: Long, @Query("cursorSeq") cursorSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeBoardsResponse>>
+
+    @DELETE("challenge/board/{boardSeq}")
+    suspend fun deleteBoard(@Path("boardSeq") boardSeq: Long): BaseResponse<Any?>
 }

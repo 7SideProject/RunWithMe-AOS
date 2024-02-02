@@ -83,4 +83,8 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
     ): Flow<BaseResponse<List<ChallengeBoardsResponse>>> = flow {
         emit(challengeApi.getChallengeBoards(challengeSeq, cursorSeq, size))
     }
+
+    override fun deleteBoard(boardSeq: Long): Flow<BaseResponse<Any?>> = flow {
+        emit(challengeApi.deleteBoard(boardSeq))
+    }
 }

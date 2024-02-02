@@ -265,4 +265,12 @@ class ChallengeRepositoryImpl @Inject constructor(
             ), pagingSourceFactory = pagingSourceFactory
         ).flow
     }
+
+    override fun deleteBoard(boardSeq: Long): Flow<NullDataResponse> = challengeRemoteDataSource.deleteBoard(boardSeq).asResult{
+        if(it.code == 403){
+            ResultType.Success(it)
+        } else {
+            ResultType.Fail(it)
+        }
+    }
 }

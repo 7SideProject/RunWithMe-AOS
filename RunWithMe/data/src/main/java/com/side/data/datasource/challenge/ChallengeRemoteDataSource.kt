@@ -36,4 +36,6 @@ interface ChallengeRemoteDataSource {
     fun createBoard(challengeSeq: Long, content: RequestBody, image: MultipartBody.Part?): Flow<BaseResponse<CreateBoardResponse>>
 
     fun getChallengeBoards(challengeSeq: Long, cursorSeq: Long, size: Int): Flow<BaseResponse<List<ChallengeBoardsResponse>>>
+
+    fun deleteBoard(boardSeq: Long): Flow<BaseResponse<Any?>>
 }
