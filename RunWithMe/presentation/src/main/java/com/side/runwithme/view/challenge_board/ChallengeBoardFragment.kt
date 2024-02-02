@@ -43,6 +43,9 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
                 val action = ChallengeBoardFragmentDirections.actionChallengeBoardFragmentToCreateBoardFragment(challengeBoardViewModel.challengeSeq.value)
                 findNavController().navigate(action)
             }
+            toolbarChallengeBoard.setBackButtonClickEvent {
+                findNavController().popBackStack()
+            }
         }
     }
 
@@ -69,7 +72,8 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
                             showToast(it.message)
                         }
                         is ChallengeBoardViewModel.Event.ReportBoard -> {
-
+                            showToast("게시글 신고 완료")
+                            updateList()
                         }
                     }
                 }
@@ -103,16 +107,38 @@ class ChallengeBoardFragment : BaseFragment<FragmentChallengeBoardBinding>(R.lay
         }
     }
 
-    private val deleteBoardClickListener = object : DeleteBoardClickListener {
+    private val deleteBoardClickListener = object : BoardConfirmClickListener {
+        override fun onClick(boardSeq: Long) {
+            initBoardDeleteConfirmDialog(boardSeq)
+        }
+    }
+
+    private val reportBoardClickListener = object : BoardConfirmClickListener {
+        override fun onClick(boardSeq: Long) {
+            initBoardReportConfirmDialog(boardSeq)
+        }
+    }
+
+    private val deleteBoardConfirmDetailDialogClickListener = object : BoardConfirmClickListener {
         override fun onClick(boardSeq: Long) {
             challengeBoardViewModel.deleteBoard(boardSeq)
         }
     }
 
-    private val reportBoardClickListener = object : ReportBoardClickListener {
+    private val reportBoardConfirmDetailDialogClickListener = object : BoardConfirmClickListener {
         override fun onClick(boardSeq: Long) {
-            /** TODO report **/
+            challengeBoardViewModel.reportBoard(boardSeq)
         }
+    }
+
+    private fun initBoardDeleteConfirmDialog(boardSeq: Long){
+        val dialog = BoardConfirmDialog("정말 게시글을 삭제하시겠습니까?", boardSeq, deleteBoardConfirmDetailDialogClickListener)
+        dialog.show(childFragmentManager, "BoardDeleteConfirmDialog")
+    }
+
+    private fun initBoardReportConfirmDialog(boardSeq: Long){
+        val dialog = BoardConfirmDialog("게시글을 신고하시겠습니까?", boardSeq, reportBoardConfirmDetailDialogClickListener)
+        dialog.show(childFragmentManager, "BoardReportConfirmDialog")
     }
 
 }

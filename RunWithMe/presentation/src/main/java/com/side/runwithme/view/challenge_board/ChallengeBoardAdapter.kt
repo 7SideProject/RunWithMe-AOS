@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
 
 class ChallengeBoardAdapter (
     private val userSeq: Long,
-    private val deleteBoardClickListener: DeleteBoardClickListener,
-    private val reportBoardClickListener: ReportBoardClickListener,
+    private val deleteBoardClickListener: BoardConfirmClickListener,
+    private val reportBoardClickListener: BoardConfirmClickListener,
     private val jwt: StateFlow<String>
 ) : PagingDataAdapter<Board, ChallengeBoardAdapter.ChallengeBoardViewHolder>(
     diffUtil
@@ -28,8 +28,8 @@ class ChallengeBoardAdapter (
         fun bind(
             userSeq: Long,
             board: Board,
-            deleteBoardClickListener: DeleteBoardClickListener,
-            reportBoardClickListener: ReportBoardClickListener
+            deleteBoardClickListener: BoardConfirmClickListener,
+            reportBoardClickListener: BoardConfirmClickListener
         ) {
             binding.apply {
                 this.board = board

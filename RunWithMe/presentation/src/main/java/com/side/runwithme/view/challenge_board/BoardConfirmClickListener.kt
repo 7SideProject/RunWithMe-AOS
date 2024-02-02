@@ -1,5 +1,5 @@
 package com.side.runwithme.view.challenge_board
 
-interface ReportBoardClickListener {
+interface BoardConfirmClickListener {
     fun onClick(boardSeq: Long)
 }

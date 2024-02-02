@@ -19,7 +19,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 fun ImageView.setBoardContentImage(boardContentImage: Boolean, boardSeq: Long, jwt: String){
     if(boardContentImage){
         this.visibility = View.VISIBLE
-        Log.d("test123", "setBoardContentImage: ${jwt}")
         val glideUrl = GlideUrl(BASE_URL + CHALLENGE + "/${boardSeq}/" + GET_BOARD_IMG){
             mapOf(Pair("Authorization", jwt))
         }

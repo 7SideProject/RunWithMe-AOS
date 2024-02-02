@@ -14,6 +14,7 @@ import com.side.data.util.preferencesKeys
 import com.side.domain.model.Board
 import com.side.domain.usecase.challenge.DeleteChallengeBoardUseCase
 import com.side.domain.usecase.challenge.GetChallengeBoardsUseCase
+import com.side.domain.usecase.challenge.ReportBoardUseCase
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
 import com.side.runwithme.util.MutableEventFlow
 import com.side.runwithme.util.asEventFlow
@@ -33,7 +34,8 @@ class ChallengeBoardViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val getUserSeqDataStoreUseCase: GetUserSeqDataStoreUseCase,
     private val getChallengeBoardsUseCase: GetChallengeBoardsUseCase,
-    private val deleteChallengeBoardUseCase: DeleteChallengeBoardUseCase
+    private val deleteChallengeBoardUseCase: DeleteChallengeBoardUseCase,
+    private val reportBoardUseCase: ReportBoardUseCase
 ): ViewModel() {
 
     private val _jwt = MutableStateFlow<String>("")
@@ -88,6 +90,21 @@ class ChallengeBoardViewModel @Inject constructor(
                     _boardEventFlow.emit(Event.DeleteBoard())
                 }.onFailure {
                     _boardEventFlow.emit(Event.Fail("게시글 삭제에 실패했습니다. 다시 시도해주세요."))
+                }.onError {
+                    _boardEventFlow.emit(Event.Fail("서버 에러 입니다. 다시 시도해주세요."))
+                    Firebase.crashlytics.recordException(it)
+                }
+            }
+        }
+    }
+
+    fun reportBoard(boardSeq: Long){
+        viewModelScope.launch {
+            reportBoardUseCase(boardSeq).collectLatest {
+                it.onSuccess {
+                    _boardEventFlow.emit(Event.ReportBoard())
+                }.onFailure {
+                    _boardEventFlow.emit(Event.Fail("게시글 신고에 실패했습니다. 다시 시도해주세요."))
                 }.onError {
                     _boardEventFlow.emit(Event.Fail("서버 에러 입니다. 다시 시도해주세요."))
                     Firebase.crashlytics.recordException(it)
