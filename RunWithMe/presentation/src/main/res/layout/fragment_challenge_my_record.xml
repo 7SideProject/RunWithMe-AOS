@@ -63,7 +63,7 @@
                         style="@style/header_text"
                         android:textColor="@color/black_high_emphasis"
                         android:textSize="20sp"
-                        app:runningDistance="@{challengeMyRecordVM.totalRecord.totalDistance}"
+                        runningDistance="@{challengeMyRecordVM.totalRecord.totalDistance}"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_distance_headers"
                         tools:text="16.5 km" />

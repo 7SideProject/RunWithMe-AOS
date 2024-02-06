@@ -94,6 +94,7 @@ fun List<ChallengeBoardsResponse>.mapperToBoardList(): List<Board> = this.run {
             image = it.image
         )
     }
+}
 
 fun MyTotalRecordInChallengeResponse.mapperToTotalRecord(): TotalRecord = this.run {
     TotalRecord(

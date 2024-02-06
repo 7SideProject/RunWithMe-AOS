@@ -91,6 +91,7 @@ class ChallengeRemoteDataSourceImpl @Inject constructor(
 
     override fun reportBoard(boardSeq: Long): Flow<BaseResponse<Any?>> = flow {
         emit(challengeApi.reportBoard(boardSeq))
+    }
 
     override fun getMyTotalRecordInChallenge(challengeSeq: Long): Flow<BaseResponse<MyTotalRecordInChallengeResponse>> = flow {
         emit(challengeApi.getMyTotalRecordInChallenge(challengeSeq))
