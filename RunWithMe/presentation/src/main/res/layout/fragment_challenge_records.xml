@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/rcv_challenge_records"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="challegne_records" />
+            app:title="@string/challegne_records" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_challenge_records"

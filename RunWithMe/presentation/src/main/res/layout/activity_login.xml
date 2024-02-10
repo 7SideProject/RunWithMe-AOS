@@ -26,31 +26,76 @@
             app:layout_constraintVertical_bias="0.13" />
 
 
-        <EditText
-            android:id="@+id/et_email"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_email"
             android:layout_width="340dp"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:hint="@string/email"
-            android:text="@={loginVM.email}"
-            android:inputType="textEmailAddress"
+            android:layout_height="60dp"
+            app:boxBackgroundColor="@color/white"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
 
-        <EditText
-            android:id="@+id/et_password"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/te_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email_hint"
+                android:text="@={loginVM.email}"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_password"
             android:layout_width="340dp"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:hint="@string/password"
-            android:text="@={loginVM.password}"
-            android:inputType="textPassword"
+            android:layout_height="60dp"
+            app:boxBackgroundColor="@color/white"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginTop="@dimen/margin_regular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_email"/>
+            app:layout_constraintTop_toBottomOf="@id/ti_email"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/te_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                android:text="@={loginVM.password}"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!--        <EditText-->
+<!--            android:id="@+id/et_email"-->
+<!--            android:layout_width="340dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:background="@color/white"-->
+<!--            android:hint="@string/email"-->
+<!--            android:text="@={loginVM.email}"-->
+<!--            android:inputType="textEmailAddress"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/et_password"-->
+<!--            android:layout_width="340dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:background="@color/white"-->
+<!--            android:hint="@string/password"-->
+<!--            android:text="@={loginVM.password}"-->
+<!--            android:inputType="textPassword"-->
+<!--            android:layout_marginTop="@dimen/margin_regular"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/ti_email"/>-->
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -60,9 +105,9 @@
             android:layout_height="wrap_content"
             android:text="@string/login"
             android:layout_marginTop="@dimen/margin_regular"
-            app:layout_constraintEnd_toEndOf="@id/et_password"
-            app:layout_constraintStart_toStartOf="@id/et_password"
-            app:layout_constraintTop_toBottomOf="@id/et_password" />
+            app:layout_constraintEnd_toEndOf="@id/ti_password"
+            app:layout_constraintStart_toStartOf="@id/ti_password"
+            app:layout_constraintTop_toBottomOf="@id/ti_password" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_join"
