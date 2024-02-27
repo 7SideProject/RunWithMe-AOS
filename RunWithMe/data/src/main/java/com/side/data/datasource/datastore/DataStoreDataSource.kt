@@ -14,9 +14,13 @@ interface DataStoreDataSource {
 
     fun getUserWeight(): Flow<Int>
 
+    suspend fun saveTokenWhenSocialJoin(jwt: String)
+
     suspend fun saveToken(jwt: String, refreshToken: String)
 
     suspend fun saveTokenExpired(expired: Long)
+
+    fun getTokenWhenSocialJon(): Flow<String>
 
     fun getTokenExpired(): Flow<Long>
 

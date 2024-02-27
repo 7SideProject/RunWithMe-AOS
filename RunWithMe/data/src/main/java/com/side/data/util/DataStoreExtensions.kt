@@ -10,6 +10,7 @@ import java.io.IOException
 // DataStore 확장 함수
 object preferencesKeys {
     val JWT = stringPreferencesKey("jwt")
+    val JWT_WHEN_SOCIAL_JOIN = stringPreferencesKey("jwt_when_social_join")
     val TOKEN_EXPIRED_TIMESTAMP = longPreferencesKey("token_expired")
     val REFRESH_TOKEN = stringPreferencesKey("refresh-token")
     val EMAIL = stringPreferencesKey("email")
