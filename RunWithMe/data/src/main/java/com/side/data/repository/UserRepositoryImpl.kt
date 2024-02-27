@@ -7,9 +7,11 @@ import com.side.data.mapper.mapperToDuplicateCheck
 import com.side.data.mapper.mapperToEditProfileRequest
 import com.side.data.mapper.mapperToEmailLoginRequest
 import com.side.data.mapper.mapperToJoinRequest
+import com.side.data.mapper.mapperToSocialLogin
 import com.side.data.mapper.mapperToTotalRecord
 import com.side.data.mapper.mapperToUser
 import com.side.data.model.request.FindPasswordRequest
+import com.side.data.model.request.KakaoLoginRequest
 import com.side.data.model.response.EmailLoginResponse
 import com.side.data.util.ResponseCodeStatus
 import com.side.data.util.asResult
@@ -23,12 +25,14 @@ import com.side.domain.model.User
 import com.side.domain.repository.DailyCheckTypeResponse
 import com.side.domain.repository.DuplicateCheckTypeResponse
 import com.side.domain.repository.NullResponse
+import com.side.domain.repository.SocialLoginResponse
 import com.side.domain.repository.TotalRecordTypeResponse
 import com.side.domain.repository.UserRepository
 import com.side.domain.repository.UserTypeResponse
 import com.side.domain.utils.ResultType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -97,6 +101,37 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun loginWithKakako(accessToken: String): Flow<SocialLoginResponse> = userRemoteDataSource.loginWithKakao(
+        KakaoLoginRequest(accessToken)
+    ).asResultOtherType {
+        when(it.code){
+            ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                val kaKaoLoginResponse = it.data
+
+                if(kaKaoLoginResponse.isInitialized){
+                    dataStoreDataSource.saveToken("Bearer " + kaKaoLoginResponse.accessToken, kaKaoLoginResponse.refreshToken)
+
+                    userRemoteDataSource.getUserProfile(kaKaoLoginResponse.id).collectLatest { userResponse ->
+                        if(userResponse.code == ResponseCodeStatus.USER_REQUEST_SUCCESS.code){
+                            // user 정보 datastore 저장
+                            saveUserInfo(userResponse.data.mapperToUser())
+                        }
+                    }
+                } else {
+                    dataStoreDataSource.saveTokenWhenSocialJoin("Bearer " + kaKaoLoginResponse.accessToken)
+                }
+
+                ResultType.Success(
+                    it.changeData(it.data.mapperToSocialLogin())
+                )
+            }
+            else -> {
+                ResultType.Fail(
+                    it.changeData(null)
+                )
+            }
+        }
+    }
 
     override fun getUserProfile(userSeq: Long): Flow<UserTypeResponse> = userRemoteDataSource.getUserProfile(userSeq).asResultOtherType{
         when(it.code){
@@ -268,6 +303,23 @@ class UserRepositoryImpl @Inject constructor(
         }else {
             ResultType.Fail(it)
         }
+    }
 
+    override fun joinSocialUser(
+        userSeq: Long,
+        profile: Profile
+    ): Flow<UserTypeResponse>
+            = userRemoteDataSource.joinSocialUser(userSeq, profile.mapperToEditProfileRequest()).asResultOtherType {
+        when (it.code) {
+            ResponseCodeStatus.USER_REQUEST_SUCCESS.code -> {
+                dataStoreDataSource.saveTokenWhenSocialJoin("")
+
+                ResultType.Success(it.changeData(it.data.mapperToUser()))
+            }
+
+            else -> {
+                ResultType.Fail(it.changeData(null))
+            }
+        }
     }
 }
