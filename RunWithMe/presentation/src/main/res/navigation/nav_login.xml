@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_login"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.side.runwithme.view.login.LoginFragment"
+        tools:layout="@layout/fragment_login"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_socialJoinFragment"
+            app:destination="@id/socialJoinFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/socialJoinFragment"
+        android:name="com.side.runwithme.view.social_join.SocialJoinFragment"
+        android:label="SocialJoinFragment" >
+        <argument
+            android:name="userSeq"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
+</navigation>
