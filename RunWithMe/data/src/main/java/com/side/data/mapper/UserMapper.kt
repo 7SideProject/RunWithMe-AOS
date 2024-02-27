@@ -27,7 +27,7 @@ fun User.mapperToEmailLoginRequest(): EmailLoginRequest = this.run {
 }
 
 fun UserResponse.mapperToUser(): User = this.run {
-    User(seq, email, nickname, height, weight, point)
+    User(seq, email ?: "", nickname, height, weight, point)
 }
 
 fun DuplicateCheckResponse.mapperToDuplicateCheck(): DuplicateCheck = this.run {
