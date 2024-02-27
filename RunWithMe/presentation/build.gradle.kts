@@ -39,10 +39,12 @@ android {
 
         buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
         buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+        buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
         buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
         buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
 
         manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
+        manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
 
     }
 
@@ -234,4 +236,6 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.19.0")
 }
