@@ -25,8 +25,6 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(R.layout.fragment_oth
     }
 
     override fun init() {
-
-
         initClickListener()
 
         initViewModelCallbacks()

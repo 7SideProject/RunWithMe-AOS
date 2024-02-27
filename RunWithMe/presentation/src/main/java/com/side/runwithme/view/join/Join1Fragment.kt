@@ -2,7 +2,9 @@ package com.side.runwithme.view.join
 
 import android.content.Context
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
@@ -36,7 +38,6 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
 
     private fun initClickListener() {
         var waitTime = 0L
-        var verifyDelayTime = 0L
 
         binding.apply {
             toolbar.setBackButtonClickEvent {
@@ -49,25 +50,56 @@ class Join1Fragment : BaseFragment<FragmentJoin1Binding>(R.layout.fragment_join1
             }
 
             btnSendNumber.setOnClickListener {
-                if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
-                    verifyDelayTime = System.currentTimeMillis()
-                    layoutVerify.visibility = View.VISIBLE
-                    hideKeyboard(etJoinEmail)
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
-                    }
-                    showToast(resources.getString(R.string.message_send_mail))
-                } else {
-                    showToast(resources.getString(R.string.message_delay_send_mail))
-                }
+                sendNumber()
             }
 
             btnVerify.setOnClickListener {
-                if(etJoinVerifyNumber.text.toString() == mailSender.getEmailCode()){
-                    joinViewModel.checkIdIsDuplicate()
-                }else{
-                    showToast(resources.getString(R.string.message_not_equal_verify))
+                verifyNumber()
+            }
+
+            etJoinEmail.setOnEditorActionListener { textView, actionId, keyEvent ->
+                if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || keyEvent.action == KeyEvent.KEYCODE_ENTER){
+                    sendNumber()
+                    true
+                } else {
+                    false
                 }
+            }
+
+            etJoinVerifyNumber.setOnEditorActionListener { textView, actionId, keyEvent ->
+                if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || keyEvent.action == KeyEvent.KEYCODE_ENTER){
+                    verifyNumber()
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+    }
+
+    private var verifyDelayTime = 0L
+    private fun sendNumber() {
+        binding.run {
+            if (System.currentTimeMillis() - verifyDelayTime >= delayTime) {
+                verifyDelayTime = System.currentTimeMillis()
+                layoutVerify.visibility = View.VISIBLE
+                hideKeyboard(etJoinEmail)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    mailSender.sendSecurityCode(requireContext(), etJoinEmail.text.toString())
+                }
+                showToast(resources.getString(R.string.message_send_mail))
+            } else {
+                showToast(resources.getString(R.string.message_delay_send_mail))
+            }
+        }
+    }
+
+    private fun verifyNumber(){
+        binding.run {
+            if(etJoinVerifyNumber.text.toString() == mailSender.getEmailCode()){
+                joinViewModel.checkIdIsDuplicate()
+            }else{
+                showToast(resources.getString(R.string.message_not_equal_verify))
             }
         }
     }
