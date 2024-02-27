@@ -6,10 +6,12 @@ import com.google.gson.GsonBuilder
 import com.side.data.api.ChallengeApi
 import com.side.data.api.LoginApi
 import com.side.data.api.RunningApi
+import com.side.data.api.SocialJoinApi
 import com.side.data.api.TokenApi
 import com.side.data.api.UserApi
 import com.side.data.interceptor.AccessTokenAuthenticator
 import com.side.data.interceptor.LoginInterceptor
+import com.side.data.interceptor.SocialJoinTokenInterceptor
 import com.side.data.interceptor.XAccessTokenInterceptor
 import com.side.runwithme.util.BASE_URL
 import dagger.Module
@@ -33,6 +35,10 @@ object RemoteDataModule {
 
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
+    annotation class SocialJoinHeaderOkhttp
+
+    @Qualifier
+    @Retention(AnnotationRetention.RUNTIME)
     annotation class BearerHeaderOkhttp
 
     @Qualifier
@@ -42,6 +48,10 @@ object RemoteDataModule {
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
     annotation class LoginHeaderRetrofit
+
+    @Qualifier
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class SocialJoinHeaderRetrofit
 
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
@@ -67,6 +77,17 @@ object RemoteDataModule {
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addNetworkInterceptor(loginInterceptor)
+            .build()
+    }
+
+    @Provides
+    @SocialJoinHeaderOkhttp
+    @Singleton
+    fun provideSocialJoinHeaderOkHttpClient(
+        socialJoinTokenInterceptor: SocialJoinTokenInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addNetworkInterceptor(socialJoinTokenInterceptor)
             .build()
     }
 
@@ -104,6 +125,18 @@ object RemoteDataModule {
     @Singleton
     @LoginHeaderRetrofit
     fun provideLoginHeaderRetrofitInstance(@LoginHeaderOkhttp client: OkHttpClient, gson: Gson): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client)
+            .build()
+    }
+
+    //Retrofit DI
+    @Provides
+    @Singleton
+    @SocialJoinHeaderRetrofit
+    fun provideSocialJoinHeaderRetrofitInstance(@SocialJoinHeaderOkhttp client: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -165,5 +198,10 @@ object RemoteDataModule {
         return retrofit.create(ChallengeApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideSocialJoinApi(@SocialJoinHeaderRetrofit retrofit: Retrofit): SocialJoinApi {
+        return retrofit.create(SocialJoinApi::class.java)
+    }
 
 }

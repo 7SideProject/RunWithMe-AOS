@@ -1,5 +1,6 @@
 package com.side.data.interceptor
 
+import android.util.Log
 import com.side.data.datasource.datastore.DataStoreDataSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -9,9 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class XAccessTokenInterceptor @Inject constructor(
+class SocialJoinTokenInterceptor @Inject constructor(
     private val dataStoreDataSource: DataStoreDataSource
-    ) : Interceptor {
+) : Interceptor {
 
     companion object {
         private const val AUTHORIZATION = "authorization"
@@ -19,7 +20,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response = synchronized(chain) {
         val token = runBlocking {
-            dataStoreDataSource.getJWT().first()
+            dataStoreDataSource.getTokenWhenSocialJon().first()
         }
 
         val request = chain.request()
@@ -30,6 +31,4 @@ class XAccessTokenInterceptor @Inject constructor(
 
         return response
     }
-
 }
-

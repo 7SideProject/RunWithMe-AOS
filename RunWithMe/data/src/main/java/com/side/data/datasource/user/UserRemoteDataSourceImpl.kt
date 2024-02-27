@@ -1,15 +1,18 @@
 package com.side.data.datasource.user
 
 import com.side.data.api.LoginApi
+import com.side.data.api.SocialJoinApi
 import com.side.data.api.UserApi
 import com.side.data.model.request.EditProfileRequest
 import com.side.data.model.request.EmailLoginRequest
 import com.side.data.model.request.FindPasswordRequest
 import com.side.data.model.request.JoinRequest
+import com.side.data.model.request.KakaoLoginRequest
 import com.side.data.model.request.LoginRequest
 import com.side.data.model.response.DailyCheckResponse
 import com.side.data.model.response.DuplicateCheckResponse
 import com.side.data.model.response.EmailLoginResponse
+import com.side.data.model.response.KaKaoLoginResponse
 import com.side.data.model.response.TotalRecordResponse
 import com.side.data.model.response.UserResponse
 import com.side.domain.base.BaseResponse
@@ -23,11 +26,12 @@ import javax.inject.Singleton
 @Singleton
 class UserRemoteDataSourceImpl @Inject constructor(
     private val userApi: UserApi,
-    private val loginApi: LoginApi
+    private val loginApi: LoginApi,
+    private val socialJoinApi: SocialJoinApi
 ): UserRemoteDataSource {
-    override fun login(loginRequest: LoginRequest): Flow<BaseResponse<User>> = flow {
-        emit(userApi.login(loginRequest.code, loginRequest.state))
-    }
+//    override fun login(loginRequest: LoginRequest): Flow<BaseResponse<User>> = flow {
+//        emit(userApi.login(loginRequest.code, loginRequest.state))
+//    }
 
     override fun join(joinRequest: JoinRequest): Flow<BaseResponse<UserResponse>> = flow {
         emit(userApi.join(joinRequest))
@@ -37,6 +41,10 @@ class UserRemoteDataSourceImpl @Inject constructor(
         flow {
             emit(loginApi.loginWithEmail(emailLoginRequest))
         }
+
+    override fun loginWithKakao(kakaoLoginRequest: KakaoLoginRequest): Flow<BaseResponse<KaKaoLoginResponse>> = flow {
+        emit(loginApi.loginWithKakao(kakaoLoginRequest))
+    }
 
     override fun getUserProfile(userSeq: Long): Flow<BaseResponse<UserResponse>> = flow {
         emit(userApi.getUserProfile(userSeq))
@@ -80,5 +88,12 @@ class UserRemoteDataSourceImpl @Inject constructor(
         }else{
             emit(response.body())
         }
+    }
+
+    override fun joinSocialUser(
+        userSeq: Long,
+        editProfileRequest: EditProfileRequest
+    ): Flow<BaseResponse<UserResponse>> = flow {
+        emit(socialJoinApi.joinSocialUser(userSeq, editProfileRequest))
     }
 }

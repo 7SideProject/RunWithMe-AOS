@@ -2,6 +2,8 @@ package com.side.runwithme.view.home
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.side.domain.usecase.datastore.GetUserSeqDataStoreUseCase
 import com.side.domain.usecase.user.DailyCheckUseCase
 import com.side.runwithme.R
@@ -54,9 +56,9 @@ class HomeViewModel @Inject constructor(
                     _userSeq.value = userSeq
                     dailyCheck()
                 }.onFailure { error->
-                    Log.d("getUserSeqError", "${error} ")
+
                 }.onError { error ->
-                    Log.d("getUserSeqError", "${error.message} ")
+                    Firebase.crashlytics.recordException(error)
                 }
             }
         }
@@ -74,6 +76,7 @@ class HomeViewModel @Inject constructor(
                     _dailyCheckEvent.emit(DailyCheckEvent.Fail(fail.message))
                 }.onError {error->
                     _dailyCheckEvent.emit(DailyCheckEvent.Fail("다시 시도해주세요."))
+                    Firebase.crashlytics.recordException(error)
                 }
             }
         }

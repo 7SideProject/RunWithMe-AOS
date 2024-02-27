@@ -13,6 +13,7 @@ import com.side.data.util.preferencesKeys.EMAIL
 import com.side.data.util.preferencesKeys.GOAL_AMOUNT
 import com.side.data.util.preferencesKeys.GOAL_TYPE
 import com.side.data.util.preferencesKeys.JWT
+import com.side.data.util.preferencesKeys.JWT_WHEN_SOCIAL_JOIN
 import com.side.data.util.preferencesKeys.PERMISSION_CHECK
 import com.side.data.util.preferencesKeys.REFRESH_TOKEN
 import com.side.data.util.preferencesKeys.SEQ
@@ -51,6 +52,15 @@ class DataStoreDataSourceImpl @Inject constructor(
         emit(dataStore.getValue(WEIGHT, DATASTORE_KEY.TYPE_STRING).first().toString().toInt())
     }
 
+    override fun getTokenWhenSocialJon(): Flow<String> = flow {
+        emit(dataStore.getDecryptStringValue(JWT_WHEN_SOCIAL_JOIN).first().toString())
+    }
+
+    override suspend fun saveTokenWhenSocialJoin(jwt: String) {
+        Log.d("test123", "saveTokenWhenSocialJoin: ${jwt}")
+        dataStore.saveEncryptStringValue(JWT_WHEN_SOCIAL_JOIN, jwt)
+    }
+
     override suspend fun saveToken(jwt: String, refreshToken: String) {
         dataStore.saveEncryptStringValue(JWT, jwt)
         if(refreshToken != NOT_YET_REFRESH_EXPIRED) {
@@ -63,8 +73,6 @@ class DataStoreDataSourceImpl @Inject constructor(
     }
 
     override fun getTokenExpired(): Flow<Long> = flow {
-        val long = dataStore.getValue(TOKEN_EXPIRED_TIMESTAMP, DATASTORE_KEY.TYPE_LONG).first().toString()
-        Log.d("test123", "getTokenExpired: ${long}")
         emit(dataStore.getValue(TOKEN_EXPIRED_TIMESTAMP, DATASTORE_KEY.TYPE_LONG).first().toString().toLong())
     }
 
