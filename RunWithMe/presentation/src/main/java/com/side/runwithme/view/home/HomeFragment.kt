@@ -1,5 +1,7 @@
 package com.side.runwithme.view.home
 
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.side.runwithme.R
@@ -41,15 +43,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             homeViewModel.dailyCheckEvent.collectLatest {
                 when(it){
                     is HomeViewModel.DailyCheckEvent.Response ->{
-                        showToast(resources.getString(it.message))
+                        alertDailCheck(it.message)
                     }
                     is HomeViewModel.DailyCheckEvent.Fail ->{
-                        showToast(it.message)
+                        alertFailDailyCheck(it.message)
                     }
                 }
 
             }
         }
+    }
+
+    private fun alertDailCheck(message : Int){
+        AlertDialog.Builder(requireContext())
+            .setMessage(resources.getString(message))
+            .setPositiveButton(resources.getString(R.string.ok)
+            ) { _, _ ->
+
+            }
+            .create()
+            .show()
+    }
+
+    private fun alertFailDailyCheck(message: String){
+        AlertDialog.Builder(requireContext())
+            .setMessage(message)
+            .setPositiveButton(resources.getString(R.string.ok)
+            ) { _, _ ->
+
+            }
+            .create()
+            .show()
     }
 
     private fun moveChallengeList(){
