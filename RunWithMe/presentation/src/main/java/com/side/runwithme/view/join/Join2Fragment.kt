@@ -1,5 +1,7 @@
 package com.side.runwithme.view.join
 
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.side.runwithme.R
@@ -55,6 +57,15 @@ class Join2Fragment : BaseFragment<FragmentJoin2Binding>(R.layout.fragment_join2
             }
             btnNext.setOnClickListener {
                 joinViewModel.clickJoin2NextButton()
+            }
+
+            etJoinPasswordConfirm.setOnEditorActionListener { textView, actionId, keyEvent ->
+                if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || keyEvent.action == KeyEvent.KEYCODE_ENTER){
+                    joinViewModel.clickJoin2NextButton()
+                    true
+                } else {
+                    false
+                }
             }
         }
     }

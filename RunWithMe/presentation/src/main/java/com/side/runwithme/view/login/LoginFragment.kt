@@ -2,6 +2,8 @@ package com.side.runwithme.view.login
 
 import android.content.Intent
 import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -44,14 +46,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
     private fun initClickListener() {
         binding.apply {
             tvJoin.setOnClickListener {
-                //회원가입
                 startActivity(Intent(requireActivity(), JoinActivity::class.java))
             }
 
             btnLogin.setOnClickListener {
-                initKeyStore(Calendar.getInstance().timeInMillis.toString())
-                loading()
-                loginViewModel.loginWithEmail()
+                emailLogin()
             }
 
             tvFindPassword.setOnClickListener {
@@ -61,7 +60,22 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             btnLoginKakao.setOnClickListener {
                 kakaoLogin()
             }
+
+            tePassword.setOnEditorActionListener { textView, actionId, keyEvent ->
+                if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO || keyEvent.action == KeyEvent.KEYCODE_ENTER){
+                    emailLogin()
+                    true
+                } else {
+                    false
+                }
+            }
         }
+    }
+
+    private fun emailLogin(){
+        initKeyStore(Calendar.getInstance().timeInMillis.toString())
+        loading()
+        loginViewModel.loginWithEmail()
     }
 
     private fun kakaoLogin() {
@@ -115,7 +129,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             is LoginViewModel.Event.Success -> {
 
                 lifecycleScope.launch {
-
                     showToast("로그인 성공")
                     loadingDialog?.dismiss()
 
@@ -130,7 +143,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             }
 
             is LoginViewModel.Event.NotInitalized -> {
-                // join으로 보내기
                 val action = LoginFragmentDirections.actionLoginFragmentToSocialJoinFragment(event.seq)
                 findNavController().navigate(action)
             }
@@ -140,9 +152,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
     private fun loading() {
         loadingDialog = LoadingDialog(requireContext())
         loadingDialog!!.show()
-        // 로딩이 진행되지 않았을 경우
+
         lifecycleScope.launch {
-            delay(500)
+            delay(3000L)
             if (loadingDialog?.isShowing ?: false) {
                 loadingDialog?.dismiss()
             }

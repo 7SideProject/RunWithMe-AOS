@@ -80,6 +80,8 @@
                 android:text="@={joinVM.password}"
                 android:maxLines="1"
                 android:maxLength="28"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@id/et_join_password_confirm"
                 app:layout_constraintStart_toStartOf="@id/tv_join_password"
                 app:layout_constraintTop_toBottomOf="@id/tv_join_password" />
 
@@ -103,6 +105,7 @@
                 android:text="@={joinVM.passwordConfirm}"
                 android:maxLines="1"
                 android:maxLength="28"
+                android:imeOptions="actionDone"
                 app:layout_constraintStart_toStartOf="@id/tv_join_password_confirm"
                 app:layout_constraintTop_toBottomOf="@id/tv_join_password_confirm" />
 

@@ -47,6 +47,12 @@ class ChallengeListFragment :
             fabCreateChallenge.setOnClickListener {
                 startActivity(Intent(requireContext(), ChallengeCreateActivity::class.java))
             }
+            toolbarChallengeList.setBackButtonClickEvent {
+                findNavController().popBackStack()
+            }
+            toolbarChallengeList.setOptionButtonClickEvent(1) {
+                findNavController().navigate(ChallengeListFragmentDirections.actionChallengeListFragmentToChallengeSearchFragment())
+            }
         }
     }
 
