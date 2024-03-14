@@ -1,7 +1,5 @@
 package com.side.runwithme.view.others.dialog
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import com.side.runwithme.R
 import com.side.runwithme.base.BaseDialogFragment
 import com.side.runwithme.databinding.DialogDeleteUserBinding
@@ -10,7 +8,7 @@ class DeleteUserDialog(private val deleteUserDialogClickListener: DeleteUserDial
     BaseDialogFragment<DialogDeleteUserBinding>(R.layout.dialog_delete_user) {
 
     override fun init() {
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        dialog?.window?.setBackgroundDrawableResource(R.color.white)
 
 
         initClickListener()

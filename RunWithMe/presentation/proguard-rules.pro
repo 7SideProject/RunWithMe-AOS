@@ -42,6 +42,12 @@
 -keep class com.side.runwithme.util.SaveableMutableStateFlow { *; }
 -keep class com.side.runwithme.view.join.GMailSender { *; }
 -keep class com.side.runwithme.view.join.SendMail { *; }
+-keep class com.kakao.sdk.**.model.* { *; }
+-keep class * extends com.google.gson.TypeAdapter
+
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.*
+-dontwarn org.openjsse.**
 -dontwarn javax.mail.**
 -dontwarn com.sun.mail.**
 -dontwarn com.side.data.model.**

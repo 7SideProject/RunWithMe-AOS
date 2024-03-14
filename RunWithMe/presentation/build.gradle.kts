@@ -29,14 +29,6 @@ android {
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = DefaultConfig.HILT_TEST_RUNNER
 
-
-//        buildConfigField("String", "BASEURL", getProperty("BASEURL"))
-//        buildConfigField("String", "KAKAOAPIKEY", getProperty("KAKAOAPIKEY"))
-//        buildConfigField("String", "NAVERAPIKEY", getProperty("NAVERAPIKEY"))
-//
-//        manifestPlaceholders["KAKAOAPIKEY"] = getProperty("KAKAOAPIKEY")
-//        manifestPlaceholders["NAVERAPIKEY"] = getProperty("NAVERAPIKEY")
-
         buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
         buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
         buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
@@ -45,7 +37,6 @@ android {
 
         manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
         manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
-
     }
 
 //    android {
@@ -87,11 +78,12 @@ android {
             }
             buildConfigField("String", "BASEURL", project.properties["BASEURL"].toString())
             buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
+            buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
             buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
             buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
 
             manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
-
+            manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
         }
     }
     compileOptions {
