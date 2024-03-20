@@ -32,6 +32,7 @@
 -keep class com.side.data.util.** { *; }
 -keep class com.side.domain.base.BaseResponse { *; }
 -keep class com.side.domain.utils.ResultType { *; }
+-keep class com.side.domain.model.** { *; }
 -keep class com.side.runwithme.model.** { *;}
 -keep class com.side.runwithme.mapper.** { *;}
 -keep class com.side.runwithme.base.** { *; }
@@ -56,6 +57,7 @@
 -dontwarn com.side.data.util.**
 -dontwarn com.side.domain.base.BaseResponse
 -dontwarn com.side.domain.utils.ResultType
+-dontwarn com.side.domain.model.**
 -dontwarn com.side.runwithme.model.**
 -dontwarn com.side.runwithme.mapper.**
 -dontwarn com.side.runwithme.base.**
