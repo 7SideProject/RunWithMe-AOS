@@ -51,7 +51,7 @@ interface ChallengeApi {
     @GET("challenge/{challengeSeq}")
     suspend fun getChallengeDetail(@Path("challengeSeq") challengeSeq: Long): BaseResponse<ChallengeDetailResponse>
 
-    @GET("challenge/{challengeSeq}/all")
+    @GET("challenge/{challengeSeq}/record/all")
     suspend fun getRecordsList(@Path("challengeSeq") challengeSeq: Long, @Query("size") size: Int): BaseResponse<List<ChallengeRecordsResponse>>
 
     @Multipart
