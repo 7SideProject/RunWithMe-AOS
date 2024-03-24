@@ -1,5 +1,7 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.android.build.gradle.internal.dsl.ManagedVirtualDevice
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id(Plugins.ANDROID_APPLICATION)
@@ -14,7 +16,10 @@ plugins {
     id(Plugins.FIREBASE_CRASHLYTICS_PLUGINS)
 }
 
-
+val localProperties = Properties().apply {
+    // `rootProject.file("local.properties")`를 통해 프로젝트 루트에 위치한 `local.properties` 파일을 참조합니다.
+    load(FileInputStream(rootProject.file("local.properties")))
+}
 
 android {
     namespace = "com.side.runwithme"
@@ -56,23 +61,37 @@ android {
 //        }
 //    }
 
-    android {
-        testOptions {
 
-                ManagedVirtualDevice("pixel2api30").apply {
-                    device = "Pixel 2"
-                    apiLevel = 30
-                    systemImageSource = "aosp"
-                }
+    testOptions {
 
+        ManagedVirtualDevice("pixel2api30").apply {
+            device = "Pixel 2"
+            apiLevel = 30
+            systemImageSource = "aosp"
+        }
+
+    }
+
+    signingConfigs {
+        create("release") {
+            // keystore
+            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: throw IllegalStateException("keyalias not found")
+            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: throw IllegalStateException("keypassword not found")
+            storePassword = localProperties.getProperty("STORE_PASSWORD") ?: throw IllegalStateException("storepassword not found")
+            storeFile = file(localProperties.getProperty("STORE_FILE") ?: throw IllegalStateException("storefile not found"))
         }
     }
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled  =  true
+            signingConfig = signingConfigs.getByName("release")
+
+            isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             ndk {
                 debugSymbolLevel = "SYMBOL_TABLE"
             }
@@ -80,12 +99,19 @@ android {
             buildConfigField("String", "NAVERAPIKEY", project.properties["NAVERAPIKEY"].toString())
             buildConfigField("String", "KAKAOAPIKEY", project.properties["KAKAOAPIKEY"].toString())
             buildConfigField("String", "MAIL_ID", project.properties["MAIL_ID"].toString())
-            buildConfigField("String", "MAIL_PASSWORD", project.properties["MAIL_PASSWORD"].toString())
+            buildConfigField(
+                "String",
+                "MAIL_PASSWORD",
+                project.properties["MAIL_PASSWORD"].toString()
+            )
 
             manifestPlaceholders["NAVERAPIKEY"] = project.properties["NAVERAPIKEY"].toString()
             manifestPlaceholders["KAKAOAPIKEY"] = project.properties["KAKAOAPIKEY"].toString()
+
         }
     }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
