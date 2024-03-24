@@ -2,7 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - "dev"
+      - "feat/challenge_members_records"
   pull_request:
     branches: [ "dev" ]
 
@@ -14,14 +16,15 @@ jobs:
     steps:
       - name: Check out Repository
         uses: actions/checkout@v3
-      - name: set up JDK 11
+      - name: set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'zulu'
           cache: gradle
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+
       - name: Create google-services
         run: |
           echo '${{ secrets.GOOGLE_SERVICES }}' > ./RunWithMe/presentation/google-services.json
@@ -35,14 +38,47 @@ jobs:
           NAVERAPIKEY: ${{ secrets.NAVERAPIKEY }}
       - name: Access BASEURL
         run: echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
+      - name: Access MAIL_ID
+        run: echo "MAIL_ID={{ secrets.MAIL_ID }}" > ./RunWithMe/local.properties
+      - name: Access MAIL_PASSWORD
+        run: echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" > ./RunWithMe/local.properties
+      - name: Access KEY_ALIAS
+        run: echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" > ./RunWithMe/local.properties
+      - name: Acess KEY_PASSWORD
+        run: echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" > ./RunWithMe/local.properties
+      - name: Access STORE_FILE
+        run: echo "STORE_FILE={{ secrets.STORE_FILE }}" > ./RunWithMe/local.properties
+      - name: Access STORE_PASSWORD
+        run: echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" > ./RunWithMe/local.properties
+      - name: Restore Release_KeyStore File
+        run: echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > ./RunWithMe/release_keystore.jks
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: Build and run tests
-        run: |
-          cd RunWithMe
-          ./gradlew clean build test
-          if [ $? -eq 0 ]; then
-            echo "All tests passed successfully."
-          else
-            echo "Some tests failed. Please check the test results."
-          fi
+      - name: Build release # apk 빌드
+        run: ./gradlew assembleRelease
+#      - name: Set up Ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: 2.7 # Fastlane이 호환되는 Ruby 버전 선택
+#      - name: Install Fastlane
+#        run: gem install fastlane
+#      - name: Run Fastlane
+#        run: fastlane my_lane
+#        env:
+#          MY_SECRET: ${{ secrets.MY_SECRET }}
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: ./RunWithMe/build/outputs/apk/release/app-release.apk
+#      - name: Build and run tests
+#        run: |
+#          cd RunWithMe
+#          ./gradlew clean build test
+#          if [ $? -eq 0 ]; then
+#            echo "All tests passed successfully."
+#          else
+#            echo "Some tests failed. Please check the test results."
+#          fi
