@@ -55,7 +55,9 @@ jobs:
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
       - name: Build release # apk 빌드
-        run: ./gradlew assembleRelease
+        run: |
+          cd RunWithMe
+          ./gradlew assembleRelease
 #      - name: Set up Ruby
 #        uses: ruby/setup-ruby@v1
 #        with:
