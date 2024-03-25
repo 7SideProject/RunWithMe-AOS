@@ -54,17 +54,22 @@ jobs:
         run: echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > ./RunWithMe/release_keystore.jks
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: cd runwithme
-        run: cd RunWithMe
       - name: directory path
-        run: cd
+        run: |
+          cd RunWithMe
+          cd
       - name: ls
-        run: ls
+        run: |
+          cd RunWithMe
+          ls
       - name: check local.properties
-        run: cat local.properties
+        run: |
+          cd RunWithMe
+          cat local.properties
       - name: Build release # apk 빌드
-        run: ./gradlew assembleRelease --stacktrace
-#          cd RunWithMe
+        run: |
+          cd RunWithMe
+          ./gradlew assembleRelease --stacktrace
 #      - name: Set up Ruby
 #        uses: ruby/setup-ruby@v1
 #        with:
