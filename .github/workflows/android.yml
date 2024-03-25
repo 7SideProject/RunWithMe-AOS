@@ -56,6 +56,10 @@ jobs:
         run: chmod +x RunWithMe/gradlew
       - name: cd runwithme
         run: cd RunWithMe
+      - name: directory path
+        run: cd
+      - name: ls
+        run: ls
       - name: check local.properties
         run: cat local.properties
       - name: Build release # apk 빌드
