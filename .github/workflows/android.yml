@@ -53,4 +53,4 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: ./RunWithMe/build/outputs/apk/release/presentation-release.apk
+          file: ./RunWithMe/presentation/build/outputs/apk/release/presentation-release.apk
