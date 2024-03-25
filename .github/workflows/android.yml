@@ -57,6 +57,7 @@ jobs:
       - name: Build release # apk 빌드
         run: |
           cd RunWithMe
+          cat local.properties
           ./gradlew assembleRelease --stacktrace
 #      - name: Set up Ruby
 #        uses: ruby/setup-ruby@v1
