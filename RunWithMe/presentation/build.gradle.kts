@@ -18,7 +18,8 @@ plugins {
 
 val localProperties = Properties().apply {
     // `rootProject.file("local.properties")`를 통해 프로젝트 루트에 위치한 `local.properties` 파일을 참조합니다.
-    load(FileInputStream(rootProject.file("local.properties")))
+//    load(FileInputStream(rootProject.file("local.properties")))
+    load(FileInputStream(project.rootProject.file("local.properties")))
 }
 
 android {
