@@ -28,28 +28,39 @@ jobs:
       - name: Create google-services
         run: |
           echo '${{ secrets.GOOGLE_SERVICES }}' > ./RunWithMe/presentation/google-services.json
-      - name: Access KAKAOAPIKEY
-        run: echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
-        env:
-          KAKAOAPIKEY: ${{ secrets.KAKAOAPIKEY }}
-      - name: Access NAVERAPIKEY
-        run: echo NAVERAPIKEY=\"$NAVERAPIKEY\" > ./RunWithMe/local.properties
-        env:
-          NAVERAPIKEY: ${{ secrets.NAVERAPIKEY }}
-      - name: Access BASEURL
-        run: echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
-      - name: Access MAIL_ID
-        run: echo "MAIL_ID={{ secrets.MAIL_ID }}" > ./RunWithMe/local.properties
-      - name: Access MAIL_PASSWORD
-        run: echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" > ./RunWithMe/local.properties
-      - name: Access KEY_ALIAS
-        run: echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" > ./RunWithMe/local.properties
-      - name: Acess KEY_PASSWORD
-        run: echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" > ./RunWithMe/local.properties
-      - name: Access STORE_FILE
-        run: echo "STORE_FILE={{ secrets.STORE_FILE }}" > ./RunWithMe/local.properties
-      - name: Access STORE_PASSWORD
-        run: echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" > ./RunWithMe/local.properties
+      - name: Create local.properties
+        run: |
+          echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
+          echo NAVERAPIKEY=\"$NAVERAPIKEY\" > ./RunWithMe/local.properties
+          echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
+          echo "MAIL_ID={{ secrets.MAIL_ID }}" > ./RunWithMe/local.properties
+          echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" > ./RunWithMe/local.properties
+          echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" > ./RunWithMe/local.properties
+          echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" > ./RunWithMe/local.properties
+          echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" > ./RunWithMe/local.properties
+          echo "STORE_FILE={{ secrets.STORE_FILE }}" > ./RunWithMe/local.properties
+#      - name: Access KAKAOAPIKEY
+#        run: echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
+#        env:
+#          KAKAOAPIKEY: ${{ secrets.KAKAOAPIKEY }}
+#      - name: Access NAVERAPIKEY
+#        run: echo NAVERAPIKEY=\"$NAVERAPIKEY\" > ./RunWithMe/local.properties
+#        env:
+#          NAVERAPIKEY: ${{ secrets.NAVERAPIKEY }}
+#      - name: Access BASEURL
+#        run: echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
+#      - name: Access MAIL_ID
+#        run: echo "MAIL_ID={{ secrets.MAIL_ID }}" > ./RunWithMe/local.properties
+#      - name: Access MAIL_PASSWORD
+#        run: echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" > ./RunWithMe/local.properties
+#      - name: Access KEY_ALIAS
+#        run: echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" > ./RunWithMe/local.properties
+#      - name: Acess KEY_PASSWORD
+#        run: echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" > ./RunWithMe/local.properties
+#      - name: Access STORE_FILE
+#        run: echo "STORE_FILE={{ secrets.STORE_FILE }}" > ./RunWithMe/local.properties
+#      - name: Access STORE_PASSWORD
+#        run: echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" > ./RunWithMe/local.properties
       - name: Restore Release_KeyStore File
         run: echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > ./RunWithMe/release_keystore.jks
       - name: Grant execute permissions for gradlew
