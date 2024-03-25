@@ -11,7 +11,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Repository
@@ -43,18 +43,6 @@ jobs:
         run: echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > ./RunWithMe/release_keystore.jks
       - name: Grant execute permissions for gradlew
         run: chmod +x RunWithMe/gradlew
-      - name: directory path
-        run: |
-          cd RunWithMe
-          cd
-      - name: ls
-        run: |
-          cd RunWithMe
-          ls
-      - name: check local.properties
-        run: |
-          cd RunWithMe
-          cat local.properties
       - name: Build release # apk 빌드
         run: |
           cd RunWithMe
@@ -65,4 +53,4 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: ./RunWithMe/build/outputs/apk/release/app-release.apk
+          file: ./RunWithMe/build/outputs/apk/release/presentation-release.apk
