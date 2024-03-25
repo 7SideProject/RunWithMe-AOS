@@ -31,14 +31,14 @@ jobs:
       - name: Create local.properties
         run: |
           echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
-          echo NAVERAPIKEY=\"$NAVERAPIKEY\" > ./RunWithMe/local.properties
-          echo "BASEURL={{ secrets.BASEURL }}" > ./RunWithMe/local.properties
-          echo "MAIL_ID={{ secrets.MAIL_ID }}" > ./RunWithMe/local.properties
-          echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" > ./RunWithMe/local.properties
-          echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" > ./RunWithMe/local.properties
-          echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" > ./RunWithMe/local.properties
-          echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" > ./RunWithMe/local.properties
-          echo "STORE_FILE={{ secrets.STORE_FILE }}" > ./RunWithMe/local.properties
+          echo NAVERAPIKEY=\"$NAVERAPIKEY\" >> ./RunWithMe/local.properties
+          echo "BASEURL={{ secrets.BASEURL }}" >> ./RunWithMe/local.properties
+          echo "MAIL_ID={{ secrets.MAIL_ID }}" >> ./RunWithMe/local.properties
+          echo "MAIL_PASSWORD={{ secrets.MAIL_PASSWORD }}" >> ./RunWithMe/local.properties
+          echo "KEY_ALIAS={{ secrets.KEY_ALIAS }}" >> ./RunWithMe/local.properties
+          echo "KEY_PASSWORD={{ secrets.KEY_PASSWORD }}" >> ./RunWithMe/local.properties
+          echo "STORE_PASSWORD={{ secrets.STORE_PASSWORD }}" >> ./RunWithMe/local.properties
+          echo "STORE_FILE={{ secrets.STORE_FILE }}" >> ./RunWithMe/local.properties
 #      - name: Access KAKAOAPIKEY
 #        run: echo KAKAOAPIKEY=\"$KAKAOAPIKEY\" > ./RunWithMe/local.properties
 #        env:
